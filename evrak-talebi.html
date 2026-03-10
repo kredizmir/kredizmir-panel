@@ -70,6 +70,7 @@
 </div>
 
 <script>
+/* ── helpers ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function wrap(text, max){
@@ -78,189 +79,422 @@ function wrap(text, max){
   if(cur)lines.push(cur); return lines;
 }
 
+/* ── phone-screenshot style SVG (turkiye.gov.tr) ── */
 function makeSvg({institution, service, items}){
-  let body=''; let y=178;
+  let body=''; let y=204; // after header + social row
+
   for(const item of items){
     if(item.t==='warn'){
       const ls=wrap(item.text,34); const h=16+ls.length*13+6;
       body+=`<rect x="12" y="${y}" width="276" height="${h}" rx="6" fill="#fff7e6" stroke="#e5a623" stroke-width="1"/>`;
-      body+=`<text x="25" y="${y+14}" font-size="12" fill="#e67e22" font-weight="bold">!</text>`;
-      ls.forEach((l,i)=>{ body+=`<text x="40" y="${y+14+i*13}" font-size="8.5" fill="#555">${esc(l)}</text>`; });
+      // triangle icon
+      body+=`<polygon points="25,${y+h-7} 30,${y+8} 35,${y+h-7}" fill="#e67e22"/>`;
+      body+=`<text x="30" y="${y+h-9}" font-size="7" fill="#fff" text-anchor="middle" font-weight="bold">!</text>`;
+      ls.forEach((l,i)=>{ body+=`<text x="42" y="${y+13+i*13}" font-size="8.5" fill="#555">${esc(l)}</text>`; });
       y+=h+8;
-    } else if(item.t==='info'){
-      const ls=wrap(item.text,36); const h=10+ls.length*14;
-      body+=`<rect x="12" y="${y}" width="276" height="${h}" rx="4" fill="#e8f0fb"/>`;
-      ls.forEach((l,i)=>{ body+=`<text x="20" y="${y+13+i*14}" font-size="9" fill="#1a47a0">${esc(l)}</text>`; });
+    } else if(item.t==='blueinfo'){
+      const ls=wrap(item.text,34); const h=14+ls.length*13+6;
+      body+=`<rect x="12" y="${y}" width="276" height="${h}" rx="6" fill="#e8f3ff" stroke="#a8cff5" stroke-width="1"/>`;
+      body+=`<circle cx="28" cy="${y+14}" r="8" fill="#5b9bd5"/>`;
+      body+=`<text x="28" y="${y+18}" font-size="9" fill="#fff" text-anchor="middle" font-weight="bold">i</text>`;
+      ls.forEach((l,i)=>{ body+=`<text x="42" y="${y+13+i*13}" font-size="8.5" fill="#445">${esc(l)}</text>`; });
       y+=h+8;
     } else if(item.t==='label'){
-      body+=`<text x="12" y="${y+11}" font-size="9" fill="#777" font-weight="bold">${esc(item.text)}</text>`;
+      body+=`<text x="12" y="${y+11}" font-size="9" fill="#888" font-weight="bold">${esc(item.text)}</text>`;
       y+=20;
     } else if(item.t==='select'){
-      body+=`<rect x="12" y="${y}" width="160" height="24" rx="4" fill="#f8f8f8" stroke="#ddd" stroke-width="1"/>`;
+      body+=`<rect x="12" y="${y}" width="160" height="24" rx="4" fill="#f5f5f5" stroke="#ddd" stroke-width="1"/>`;
       body+=`<text x="20" y="${y+15}" font-size="9" fill="#333">${esc(item.text)}</text>`;
+      body+=`<text x="162" y="${y+16}" font-size="10" fill="#999">&#9660;</text>`;
       y+=32;
     } else if(item.t==='radio'){
-      body+=`<circle cx="22" cy="${y+9}" r="8" fill="#1a47a0"/>`;
-      body+=`<circle cx="22" cy="${y+9}" r="4" fill="white"/>`;
+      // checked radio
+      body+=`<circle cx="22" cy="${y+9}" r="9" fill="#1a47a0"/>`;
+      body+=`<circle cx="22" cy="${y+9}" r="4.5" fill="#fff"/>`;
       body+=`<text x="36" y="${y+13}" font-size="9" fill="#333">${esc(item.text)}</text>`;
-      body+=`<circle cx="110" cy="${y+9}" r="8" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>`;
-      body+=`<text x="124" y="${y+13}" font-size="9" fill="#999">Hay&#305;r</text>`;
+      // unchecked
+      body+=`<circle cx="100" cy="${y+9}" r="9" fill="#f0f0f0" stroke="#ccc" stroke-width="1.2"/>`;
+      body+=`<text x="114" y="${y+13}" font-size="9" fill="#999">Hay&#305;r</text>`;
       y+=26;
     } else if(item.t==='btn'){
-      body+=`<rect x="12" y="${y}" width="276" height="30" rx="7" fill="#1a47a0"/>`;
-      body+=`<text x="150" y="${y+19}" font-size="10" fill="white" text-anchor="middle" font-weight="bold">${esc(item.text)}</text>`;
-      y+=42;
+      body+=`<rect x="12" y="${y}" width="276" height="32" rx="8" fill="#1a47a0"/>`;
+      body+=`<text x="150" y="${y+20}" font-size="10" fill="white" text-anchor="middle" font-weight="bold">${esc(item.text)}</text>`;
+      y+=44;
     } else if(item.t==='date'){
-      body+=`<text x="150" y="${y+11}" font-size="8" fill="#bbb" text-anchor="middle">${esc(item.text)} itibarıyla üretilmiştir.</text>`;
+      body+=`<text x="150" y="${y+11}" font-size="8" fill="#bbb" text-anchor="middle">&#128197; ${esc(item.text)} itibar&#305;yla &#252;retilmi&#351;tir.</text>`;
       y+=22;
     } else if(item.t==='space'){ y+=item.h||12; }
   }
-  const H=Math.max(340,y+24);
-  const ins=institution.length>28?institution.slice(0,26)+'...':institution;
-  const svc=service.length>30?service.slice(0,28)+'...':service;
-  return `<svg viewBox="0 0 300 ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
-<rect width="300" height="${H}" fill="#ebebeb"/>
+
+  const contentH=Math.max(260,y+16);
+  const totalH=contentH+44; // +44 for bottom toolbar
+  const ins=institution.length>26?institution.slice(0,24)+'...':institution;
+  const svc=service.length>28?service.slice(0,26)+'...':service;
+
+  return `<svg viewBox="0 0 300 ${totalH}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
+<!-- bg -->
+<rect width="300" height="${totalH}" fill="#ebebeb"/>
+<!-- status bar -->
 <rect width="300" height="20" fill="#111"/>
 <text x="8" y="14" font-size="9" fill="#fff">00:41</text>
-<text x="240" y="14" font-size="8" fill="#fff">&#9646;&#9646;&#9646; WiFi &#9646;</text>
-<rect y="20" width="300" height="36" fill="#2a2a2a"/>
-<rect x="44" y="27" width="172" height="22" rx="11" fill="#404040"/>
-<text x="130" y="42" font-size="9" fill="#ccc" text-anchor="middle">turkiye.gov.tr</text>
-<rect y="56" width="300" height="52" fill="#1847a0"/>
-<text x="16" y="76" font-size="12" fill="#fff" font-weight="bold">turkiye.gov.tr</text>
-<rect x="16" y="82" width="200" height="18" rx="9" fill="rgba(255,255,255,0.15)"/>
-<text x="26" y="93" font-size="8" fill="rgba(255,255,255,0.55)">Nas&#305;l yard&#305;m edebilirim?</text>
-<rect y="108" width="300" height="${H-108}" fill="white"/>
-<rect y="108" width="300" height="22" fill="#f2f2f2"/>
-<text x="12" y="122" font-size="8" fill="#888">Ana Sayfa &gt; ${esc(ins)}</text>
-<line x1="0" y1="130" x2="300" y2="130" stroke="#e0e0e0" stroke-width="1"/>
-<circle cx="28" cy="152" r="14" fill="#e8effd"/>
-<text x="28" y="156" font-size="8" text-anchor="middle" fill="#1847a0" font-weight="bold">TC</text>
-<text x="50" y="147" font-size="9" fill="#666">${esc(ins)}</text>
-<text x="50" y="162" font-size="10" fill="#111" font-weight="bold">${esc(svc)}</text>
-<line x1="0" y1="170" x2="300" y2="170" stroke="#f0f0f0" stroke-width="1"/>
+<text x="230" y="14" font-size="8" fill="#fff">&#9646;&#9646;&#9646; WiFi &#9646;</text>
+<!-- browser top bar -->
+<rect y="20" width="300" height="36" fill="#f7f7f7" stroke="#ddd" stroke-width="0.5"/>
+<text x="16" y="43" font-size="16" fill="#007aff">&#8635;</text>
+<rect x="52" y="26" width="190" height="22" rx="11" fill="#e2e2e2"/>
+<text x="147" y="41" font-size="9" fill="#555" text-anchor="middle">turkiye.gov.tr</text>
+<text x="260" y="43" font-size="13" fill="#007aff">&#11014;</text>
+<!-- e-Devlet header -->
+<rect y="56" width="300" height="58" fill="#1847a0"/>
+<!-- logo spiral placeholder -->
+<circle cx="26" cy="76" r="10" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+<text x="26" y="80" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold">e</text>
+<text x="44" y="74" font-size="11" fill="#fff" font-weight="bold">t&#252;rkiye.gov.tr</text>
+<!-- hamburger menu -->
+<rect x="272" y="68" width="18" height="2" rx="1" fill="#fff"/>
+<rect x="272" y="74" width="18" height="2" rx="1" fill="#fff"/>
+<rect x="272" y="80" width="18" height="2" rx="1" fill="#fff"/>
+<!-- search bar -->
+<rect x="16" y="87" width="220" height="20" rx="10" fill="rgba(255,255,255,0.15)"/>
+<text x="26" y="100" font-size="8" fill="rgba(255,255,255,0.6)">&#128269; Nas&#305;l yard&#305;m edebilirim?</text>
+<!-- user badge -->
+<rect x="244" y="87" width="46" height="20" rx="10" fill="rgba(255,255,255,0.2)"/>
+<text x="254" y="100" font-size="8" fill="#fff">&#128100; SİZ</text>
+<!-- content area -->
+<rect y="114" width="300" height="${contentH-114}" fill="#fff"/>
+<!-- breadcrumb -->
+<rect y="114" width="300" height="22" fill="#f0f0f0"/>
+<text x="10" y="128" font-size="8" fill="#888">&#127968; ${esc(ins.split(' ')[0])} &gt; ${esc(svc.split(' ')[0])}...</text>
+<!-- forward chevron button -->
+<rect x="10" y="138" width="22" height="22" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="21" y="153" font-size="11" fill="#888" text-anchor="middle">&gt;</text>
+<!-- institution logo + title -->
+<circle cx="28" cy="178" r="16" fill="#eef2fb" stroke="#d0ddf7" stroke-width="1"/>
+<text x="28" y="182" font-size="9" text-anchor="middle" fill="#1847a0" font-weight="bold">TC</text>
+<text x="52" y="172" font-size="8.5" fill="#777">${esc(ins)}</text>
+<text x="52" y="186" font-size="10" fill="#111" font-weight="bold">${esc(svc)}</text>
+<!-- social buttons -->
+<text x="210" y="188" font-size="16" fill="#aaa">&#9734;</text>
+<text x="234" y="188" font-size="16" fill="#aaa">&#128172;</text>
+<text x="258" y="188" font-size="16" fill="#aaa">&#11014;</text>
+<line x1="0" y1="196" x2="300" y2="196" stroke="#f0f0f0" stroke-width="1"/>
 ${body}
+<!-- bottom toolbar -->
+<rect y="${contentH}" width="300" height="44" fill="#f7f7f7" stroke="#ddd" stroke-width="0.5"/>
+<line x1="0" y1="${contentH}" x2="300" y2="${contentH}" stroke="#ddd" stroke-width="1"/>
+<text x="24" y="${contentH+27}" font-size="18" fill="#007aff" text-anchor="middle">&#8592;</text>
+<text x="72" y="${contentH+27}" font-size="18" fill="#ccc" text-anchor="middle">&#8594;</text>
+<text x="150" y="${contentH+28}" font-size="18" fill="#007aff" text-anchor="middle">+</text>
+<rect x="212" y="${contentH+12}" width="18" height="18" rx="3" fill="none" stroke="#007aff" stroke-width="1.5"/>
+<text x="221" y="${contentH+24}" font-size="8" fill="#007aff" text-anchor="middle">6</text>
+<text x="275" y="${contentH+30}" font-size="16" fill="#007aff" text-anchor="middle">&#8943;</text>
 </svg>`;
 }
 
+/* ── table SVG for Araç Tescil ── */
+function makeAracSvg(){
+  const totalH=560;
+  const tbY=248;
+  const rowH=44;
+  // columns: x widths
+  const cols=[
+    {x:12, w:52, label:'Araç\nPlakası'},
+    {x:64, w:72, label:'Araç\nCinsi'},
+    {x:136, w:72, label:'Araç\nMarkası'},
+    {x:208, w:38, label:'Araç\nModeli'},
+    {x:246, w:42, label:'Tescil\nBelgesi'}
+  ];
+  const contentH=totalH-44;
+
+  let thead='', trow='';
+  cols.forEach(c=>{
+    thead+=`<rect x="${c.x}" y="${tbY}" width="${c.w}" height="32" fill="#f0f0f0" stroke="#ddd" stroke-width="0.5"/>`;
+    const lparts=c.label.split('\n');
+    lparts.forEach((p,i)=>{ thead+=`<text x="${c.x+c.w/2}" y="${tbY+13+i*11}" font-size="7" fill="#444" text-anchor="middle">${esc(p)}</text>`; });
+  });
+  // data row
+  const rowData=['[plaka]','OTOMOBİL-\nAB Heçbek','VOLKSWAGEN','2013','[No]'];
+  rowData.forEach((d,ci)=>{
+    const c=cols[ci];
+    trow+=`<rect x="${c.x}" y="${tbY+32}" width="${c.w}" height="${rowH}" fill="${ci%2===0?'#fff':'#fafafa'}" stroke="#eee" stroke-width="0.5"/>`;
+    const dparts=d.split('\n');
+    dparts.forEach((p,i)=>{
+      const txt=ci===0||ci===4?'░░░░░░':esc(p);
+      trow+=`<text x="${c.x+c.w/2}" y="${tbY+32+16+i*12}" font-size="${ci===0||ci===4?9:8}" fill="${ci===0||ci===4?'#bbb':'#333'}" text-anchor="middle">${txt}</text>`;
+    });
+  });
+
+  return `<svg viewBox="0 0 300 ${totalH}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
+<rect width="300" height="${totalH}" fill="#ebebeb"/>
+<rect width="300" height="20" fill="#111"/>
+<text x="8" y="14" font-size="9" fill="#fff">00:32</text>
+<text x="230" y="14" font-size="8" fill="#fff">&#9646;&#9646;&#9646; WiFi &#9646;</text>
+<rect y="20" width="300" height="36" fill="#f7f7f7" stroke="#ddd" stroke-width="0.5"/>
+<text x="16" y="43" font-size="16" fill="#007aff">&#8635;</text>
+<rect x="52" y="26" width="190" height="22" rx="11" fill="#e2e2e2"/>
+<text x="147" y="41" font-size="9" fill="#555" text-anchor="middle">turkiye.gov.tr</text>
+<text x="260" y="43" font-size="13" fill="#007aff">&#11014;</text>
+<rect y="56" width="300" height="58" fill="#1847a0"/>
+<circle cx="26" cy="76" r="10" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+<text x="26" y="80" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold">e</text>
+<text x="44" y="74" font-size="11" fill="#fff" font-weight="bold">t&#252;rkiye.gov.tr</text>
+<rect x="272" y="68" width="18" height="2" rx="1" fill="#fff"/>
+<rect x="272" y="74" width="18" height="2" rx="1" fill="#fff"/>
+<rect x="272" y="80" width="18" height="2" rx="1" fill="#fff"/>
+<rect x="16" y="87" width="220" height="20" rx="10" fill="rgba(255,255,255,0.15)"/>
+<text x="26" y="100" font-size="8" fill="rgba(255,255,255,0.6)">&#128269; Nas&#305;l yard&#305;m edebilirim?</text>
+<rect x="244" y="87" width="46" height="20" rx="10" fill="rgba(255,255,255,0.2)"/>
+<text x="250" y="100" font-size="8" fill="#fff">&#128100; YA&#286;MUR</text>
+<rect y="114" width="300" height="${contentH-114}" fill="#fff"/>
+<rect y="114" width="300" height="22" fill="#f0f0f0"/>
+<text x="10" y="128" font-size="8" fill="#888">&#127968; T&#252;rkiye Noterler Birli&#287;i &gt; Ara&#231; Sorgulama</text>
+<rect x="10" y="138" width="22" height="22" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+<text x="21" y="153" font-size="11" fill="#888" text-anchor="middle">&gt;</text>
+<circle cx="28" cy="178" r="16" fill="#eef2fb" stroke="#d0ddf7" stroke-width="1"/>
+<text x="28" y="182" font-size="7" text-anchor="middle" fill="#1847a0" font-weight="bold">TNB</text>
+<text x="52" y="172" font-size="8.5" fill="#777">T&#252;rkiye Noterler Birli&#287;i</text>
+<text x="52" y="186" font-size="9.5" fill="#111" font-weight="bold">Ad&#305;ma Tescilli Ara&#231; Sorgulama</text>
+<text x="210" y="188" font-size="16" fill="#aaa">&#9734;</text>
+<text x="234" y="188" font-size="16" fill="#aaa">&#128172;</text>
+<text x="258" y="188" font-size="16" fill="#aaa">&#11014;</text>
+<line x1="0" y1="196" x2="300" y2="196" stroke="#f0f0f0" stroke-width="1"/>
+<!-- info text -->
+<text x="12" y="216" font-size="8.5" fill="#444">Bu hizmeti kullanarak, ad&#305;n&#305;za tescilli arac&#305;n plaka, cins,</text>
+<text x="12" y="228" font-size="8.5" fill="#444">markas&#305;, modeli, hak mahrumiyeti olup olmad&#305;&#287;&#305;na ili&#351;kin</text>
+<text x="12" y="240" font-size="8.5" fill="#444">bilgilere ula&#351;abilirsiniz.</text>
+<!-- "Araç Bilgileri" header -->
+<rect x="12" y="${tbY-22}" width="276" height="20" rx="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="0.5"/>
+<text x="20" y="${tbY-8}" font-size="9" fill="#333" font-weight="bold">Ara&#231; Bilgileri</text>
+<!-- table -->
+${thead}${trow}
+<!-- dark footer -->
+<rect y="${tbY+32+rowH+12}" width="300" height="36" fill="#3a3a3a"/>
+<text x="12" y="${tbY+32+rowH+30}" font-size="9" fill="#aaa">e-Devlet Kap&#305;s&#305;</text>
+<text x="12" y="${tbY+32+rowH+42}" font-size="8" fill="#888">English</text>
+<!-- bottom toolbar -->
+<rect y="${contentH}" width="300" height="44" fill="#f7f7f7"/>
+<line x1="0" y1="${contentH}" x2="300" y2="${contentH}" stroke="#ddd" stroke-width="1"/>
+<text x="24" y="${contentH+27}" font-size="18" fill="#007aff" text-anchor="middle">&#8592;</text>
+<text x="72" y="${contentH+27}" font-size="18" fill="#ccc" text-anchor="middle">&#8594;</text>
+<text x="150" y="${contentH+28}" font-size="18" fill="#007aff" text-anchor="middle">+</text>
+<rect x="212" y="${contentH+12}" width="18" height="18" rx="3" fill="none" stroke="#007aff" stroke-width="1.5"/>
+<text x="221" y="${contentH+24}" font-size="8" fill="#007aff" text-anchor="middle">6</text>
+<text x="275" y="${contentH+30}" font-size="16" fill="#007aff" text-anchor="middle">&#8943;</text>
+</svg>`;
+}
+
+/* ── document/certificate style SVG for Adli Sicil ── */
+function makeAdliSicilSvg(){
+  const W=300, H=520;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
+<!-- paper -->
+<rect width="${W}" height="${H}" fill="#fff" stroke="#ccc" stroke-width="1"/>
+<!-- top border strip -->
+<rect width="${W}" height="6" fill="#c0392b"/>
+<!-- header -->
+<circle cx="150" cy="40" r="22" fill="#f8f8f8" stroke="#c0392b" stroke-width="2"/>
+<text x="150" y="43" font-size="10" text-anchor="middle" fill="#c0392b" font-weight="bold">T.C.</text>
+<text x="150" y="76" font-size="10" text-anchor="middle" fill="#333" font-weight="bold">T&#220;RK&#304;YE CUMHUR&#304;YET&#304;</text>
+<text x="150" y="90" font-size="10" text-anchor="middle" fill="#333" font-weight="bold">ADALET BAKANLI&#286;I</text>
+<text x="150" y="104" font-size="8.5" text-anchor="middle" fill="#555">Adli Sicil ve &#304;statistik Genel M&#252;d&#252;rl&#252;&#287;&#252;</text>
+<line x1="16" y1="112" x2="${W-16}" y2="112" stroke="#ddd" stroke-width="1"/>
+<!-- meta -->
+<text x="16" y="126" font-size="8" fill="#777">SAYI</text>
+<text x="80" y="126" font-size="8" fill="#333">: 0900-2026-3898112428 / 00:17</text>
+<text x="16" y="139" font-size="8" fill="#777">YER/TAR&#304;H</text>
+<text x="80" y="139" font-size="8" fill="#333">: &#304;nternet (www.turkiye.gov.tr) / 08.03.2026</text>
+<text x="16" y="152" font-size="8" fill="#777">SORGU T&#220;R&#220;</text>
+<text x="80" y="152" font-size="8" fill="#333">: KRED&#304; BA&#350;VURU</text>
+<text x="16" y="165" font-size="8" fill="#777">KULLANI M AMACI</text>
+<text x="80" y="165" font-size="8" fill="#333">: OTOVADELİ</text>
+<text x="16" y="178" font-size="8" fill="#777">K&#304;ML&#304;K T&#220;R&#220;</text>
+<text x="80" y="178" font-size="8" fill="#333">: MERN&#304;S</text>
+<line x1="16" y1="186" x2="${W-16}" y2="186" stroke="#ddd" stroke-width="1"/>
+<!-- identity section -->
+<text x="16" y="200" font-size="8.5" fill="#333" font-weight="bold">SORGULAMAYA ESAS K&#304;ML&#304;K B&#304;LG&#304;LER&#304;</text>
+<text x="16" y="214" font-size="8" fill="#777">K&#304;ML&#304;K NUMARASI</text>
+<text x="120" y="214" font-size="8" fill="#888">: ██████████</text>
+<text x="16" y="227" font-size="8" fill="#777">AD SOYAD</text>
+<text x="120" y="227" font-size="8" fill="#888">: ███████ ████████</text>
+<text x="16" y="240" font-size="8" fill="#777">ANNE ADI / BABA ADI</text>
+<text x="120" y="240" font-size="8" fill="#888">: ████████ / ████████</text>
+<text x="16" y="253" font-size="8" fill="#777">DO&#286;UM YER&#304; / TAR&#304;H&#304;</text>
+<text x="120" y="253" font-size="8" fill="#888">: ████████ / ████████</text>
+<line x1="16" y1="262" x2="${W-16}" y2="262" stroke="#ddd" stroke-width="1"/>
+<!-- result -->
+<text x="16" y="278" font-size="8.5" fill="#333" font-weight="bold">ADL&#304; S&#304;C&#304;L KAYDI SORGULAMA SONU&#199;LARI :</text>
+<text x="16" y="298" font-size="9.5" fill="#111" font-weight="bold">YUKARIDA K&#304;ML&#304;K B&#304;LG&#304;LER&#304; BULUNAN K&#304;&#350;&#304;N&#304;N</text>
+<text x="16" y="313" font-size="9.5" fill="#111" font-weight="bold">ADL&#304; S&#304;C&#304;L KAYDI YOKTUR.</text>
+<line x1="16" y1="325" x2="${W-16}" y2="325" stroke="#ddd" stroke-width="1"/>
+<!-- note -->
+<text x="16" y="340" font-size="7.5" fill="#888">NOT: Bu sorgulama yukar&#305;daki bilgiler esas al&#305;narak yap&#305;lm&#305;&#351;t&#305;r.</text>
+<!-- disclaimer small text block -->
+<rect x="16" y="350" width="${W-32}" height="52" rx="3" fill="#f9f9f9" stroke="#eee" stroke-width="1"/>
+<text x="22" y="363" font-size="6.5" fill="#999">Bu belgenin do&#287;rulu&#287;unu https://www.mernis.gov.tr adresinden</text>
+<text x="22" y="374" font-size="6.5" fill="#999">teyit edebilirsiniz. Elektronik imzal&#305; r&#233;smi belgedir. Do&#287;rulama</text>
+<text x="22" y="385" font-size="6.5" fill="#999">kodunu kullanarak ge&#231;erlili&#287;ini kontrol edebilirsiniz.</text>
+<text x="22" y="396" font-size="6.5" fill="#999">Elektronik imzas&#305; bulunmayan basil&#305; sureti ge&#231;ersizdir.</text>
+<!-- QR code placeholder -->
+<rect x="${W-68}" y="${H-76}" width="56" height="56" rx="4" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+<rect x="${W-66}" y="${H-74}" width="52" height="52" fill="#fff"/>
+<!-- QR pattern placeholder -->
+<rect x="${W-64}" y="${H-72}" width="12" height="12" fill="#111" rx="1"/>
+<rect x="${W-64}" y="${H-72+14}" width="8" height="8" fill="#555" rx="1"/>
+<rect x="${W-64+14}" y="${H-72}" width="8" height="8" fill="#555" rx="1"/>
+<rect x="${W-64+22}" y="${H-72}" width="12" height="12" fill="#111" rx="1"/>
+<rect x="${W-64+14}" y="${H-72+14}" width="6" height="6" fill="#111" rx="1"/>
+<rect x="${W-64}" y="${H-72+22}" width="12" height="12" fill="#111" rx="1"/>
+<rect x="${W-64+22}" y="${H-72+22}" width="12" height="12" fill="#111" rx="1"/>
+<!-- page number -->
+<text x="${W-16}" y="${H-8}" font-size="8" fill="#aaa" text-anchor="end">1/1</text>
+<!-- bottom border -->
+<rect y="${H-4}" width="${W}" height="4" fill="#c0392b"/>
+</svg>`;
+}
+
+/* ── data ── */
 const evraklar=[
   { num:'1', title:'Vukuatl&#305; N&#252;fus Kay&#305;t &#214;rne&#287;i', tag:'Barkodlu',
     subtitle:'N&#252;fus Kay&#305;t &#214;rne&#287;i Belgesi Sorgulama',
     link:'https://www.turkiye.gov.tr/nvi-vukuatli-nufus-kayit-ornegi-sorgulama',
-    svg:{ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'N&#252;fus Kay&#305;t &#214;rne&#287;i Sorgulama',
+    svgFn:()=>makeSvg({ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'N&#252;fus Kay&#305;t &#214;rne&#287;i',
       items:[
-        {t:'space',h:8},{t:'label',text:'* Kay&#305;t &#214;rne&#287;i T&#252;r&#252;'},{t:'select',text:'Aile'},
-        {t:'label',text:'* Han Ek Listesi'},{t:'radio',text:'Evet'},
-        {t:'label',text:'* &#214;l&#252;leyen Birli&#287;i G&#246;sterilsin'},{t:'radio',text:'Evet'},
-        {t:'label',text:'* Belgemi nereden alaca&#287;&#305;m'},{t:'select',text:'Kuruma Ba&#351;vur'},
-        {t:'label',text:'* Kurum Ad&#305;'},{t:'select',text:'&#214;l&#252;m ve Evlenme...'},
-        {t:'space',h:10},{t:'btn',text:'Sorgula'}
+        {t:'space',h:4},
+        {t:'label',text:'* Nufus Aile Kay&#305;t &#214;rne&#287;i T&#252;r&#252;'},
+        {t:'select',text:'Aile'},
+        {t:'label',text:'* Han Ek Listesi'},
+        {t:'radio',text:'Evet'},
+        {t:'label',text:'* &#214;l&#252;leyen Birli&#287;ini G&#246;steren'},
+        {t:'radio',text:'Evet'},
+        {t:'label',text:'* Belgemi nereden alaca&#287;&#305;m'},
+        {t:'select',text:'Kuruma Ba&#351;vur'},
+        {t:'label',text:'* Kurum Ad&#305;'},
+        {t:'select',text:'&#214;l&#252;m ve Evlenme...'},
+        {t:'space',h:8},
+        {t:'btn',text:'Sorgula'}
       ]
-    }
+    })
   },
   { num:'2', title:'&#304;kametg&#226;h Belgesi', tag:'Barkodlu',
-    subtitle:'Yerle&#351;im Yeri ve Di&#287;er Adres Belgesi Sorgulama',
+    subtitle:'Yerle&#351;im Yeri Belgesi Sorgulama',
     link:'https://www.turkiye.gov.tr/nvi-ikametgah-belgesi',
-    svg:{ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'&#304;kametgah Belgesi',
-      items:[
-        {t:'space',h:10},{t:'info',text:'Adresiniz sistemde kay&#305;tl&#305;d&#305;r.'},
-        {t:'space',h:8},{t:'info',text:'&#304;zmir / Bornova Mahallesi'},
-        {t:'space',h:8},{t:'info',text:'Belge barkodlu olarak haz&#305;rlanabilir.'},
-        {t:'space',h:14},{t:'btn',text:'Belge Al (Barkodlu PDF)'}
-      ]
-    }
-  },
-  { num:'3', title:'Mahkeme Dava Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
-    subtitle:'Dava Dosyas&#305; Sorgulama &#8212; Yak&#305;n tarih varsa detayl&#305; ekranlar',
-    link:'https://www.turkiye.gov.tr/adalet-bakanligi-dava-dosyasi-sorgulama',
-    svg:{ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'Dava Dosyas&#305; Sorgulama',
+    svgFn:()=>makeSvg({ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'&#304;kametgah Belgesi',
       items:[
         {t:'space',h:10},
-        {t:'info',text:'"Icra Dosyasi Sorgulama Hizmeti" yeni UYAP hizmetleri basliginda sunulmaktadir.'},
+        {t:'blueinfo',text:'Adresiniz sistemde kay&#305;tl&#305;d&#305;r.'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'&#304;zmir / Bornova Mahallesi'},
+        {t:'space',h:12},
+        {t:'btn',text:'Belge Al (Barkodlu PDF)'}
+      ]
+    })
+  },
+  { num:'3', title:'Adli Sicil Kayd&#305;', tag:'Barkodlu PDF',
+    subtitle:'Sabıka Kaydı — Adalet Bakanlığı belgesi',
+    link:'https://www.turkiye.gov.tr/adalet-bakanligi-adli-sicil-kaydi-sorgulama',
+    svgFn:()=>makeAdliSicilSvg()
+  },
+  { num:'4', title:'Mahkeme Dava Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'Dava Dosyas&#305; Sorgulama — Yak&#305;n tarih varsa detayl&#305; ekranlar',
+    link:'https://www.turkiye.gov.tr/adalet-bakanligi-dava-dosyasi-sorgulama',
+    svgFn:()=>makeSvg({ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'Dava Dosyas&#305; Sorgulama',
+      items:[
+        {t:'space',h:8},
+        {t:'blueinfo',text:'"&#304;cra Dosyas&#305; Sorgulama Hizmeti" UYAP Hizmetleri ba&#351;l&#305;&#287;&#305; alt&#305;nda sunulmakta olup, &#304;cra Dosyas&#305; i&#351;lemleri bu alandan yap&#305;lmal&#305;d&#305;r.'},
         {t:'space',h:8},
         {t:'warn',text:'Ad&#305;n&#305;za a&#231;&#305;lm&#305;&#351; ya da m&#252;dahil oldu&#287;unuz bir dava kayd&#305; bulunamamı&#351;t&#305;r.'},
         {t:'date',text:'08 Mart 2026 00:27'}
       ]
-    }
+    })
   },
-  { num:'4', title:'Mahkeme &#304;cra Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
-    subtitle:'&#304;cra Dosyas&#305; Sorgulama &#8212; Yak&#305;n tarih varsa detayl&#305; ekranlar',
+  { num:'5', title:'Mahkeme &#304;cra Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'&#304;cra Dosyas&#305; Sorgulama — Yak&#305;n tarih varsa detayl&#305; ekranlar',
     link:'https://www.turkiye.gov.tr/adalet-bakanligi-icra-dosyasi-sorgulama',
-    svg:{ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'&#304;cra Dosyas&#305; Sorgulama',
+    svgFn:()=>makeSvg({ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'&#304;cra Dosyas&#305; Sorgulama',
       items:[
         {t:'space',h:14},
         {t:'warn',text:'Ad&#305;n&#305;za a&#231;&#305;lm&#305;&#351; ya da m&#252;dahil oldu&#287;unuz bir icra kayd&#305; bulunamamı&#351;t&#305;r.'},
         {t:'date',text:'08 Mart 2026 00:25'}
       ]
-    }
+    })
   },
-  { num:'5', title:'SGK 4A / 4B Hizmet Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+  { num:'6', title:'SGK 4A / 4B Hizmet Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
     subtitle:'&#199;al&#305;&#351;ma durumu ve SGK tescil kayd&#305;',
     link:'https://www.turkiye.gov.tr/sgk-4a-aktif-hizmet-cetveli-sorgulama',
-    svg:{ institution:'SGK', service:'4A Aktif Hizmet Cetveli',
+    svgFn:()=>makeSvg({ institution:'SGK', service:'4A Aktif Hizmet Cetveli',
       items:[
-        {t:'space',h:10},{t:'info',text:'Sigorta No: 123 456 789'},
-        {t:'space',h:6},{t:'info',text:'I&#351;veren: ABC Ticaret A.S.'},
-        {t:'space',h:6},{t:'info',text:'I&#351;e Giris: 01.01.2022'},
-        {t:'space',h:6},{t:'info',text:'Durum: Aktif Sigortali'}
+        {t:'space',h:10},
+        {t:'blueinfo',text:'Sigorta No: ██████████'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'&#304;&#351;veren: ABC Ticaret A.&#350;.'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'&#304;&#351;e Giri&#351;: 01.01.2022'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'Durum: Aktif Sigortali'}
       ]
-    }
+    })
   },
-  { num:'6', title:'Tapu Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+  { num:'7', title:'Ad&#305;ma Tescilli Ara&#231; Sorgulama', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'Arac&#305;n&#305;z&#305;n plaka, marka, model ve tescil bilgileri',
+    link:'https://www.turkiye.gov.tr/tnb-adima-tescilli-arac-sorgulama',
+    svgFn:()=>makeAracSvg()
+  },
+  { num:'8', title:'Tapu Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
     subtitle:'Tapu Bilgileri Sorgulama Ekran&#305;',
     link:'https://www.turkiye.gov.tr/tkgm-tapu-bilgileri-sorgulama',
-    svg:{ institution:'Tapu ve Kadastro Genel M&#252;d&#252;rl&#252;&#287;&#252;', service:'Tapu Bilgileri Sorgulama',
+    svgFn:()=>makeSvg({ institution:'Tapu ve Kadastro GMd.', service:'Tapu Bilgileri Sorgulama',
       items:[
         {t:'space',h:10},
         {t:'warn',text:'T.C. Kimlik numaraniz ile esle&#351;en herhangi bir tapu kaydi bulunamamistir.'},
         {t:'space',h:6},
-        {t:'warn',text:'Yukaridaki bilginin dogru olmadigini dusunuyorsaniz ilgili Tapu Mudurluğune basvurunuz.'}
+        {t:'blueinfo',text:'Yukar&#305;daki bilginin do&#287;ru olmad&#305;&#287;&#305;n&#305; d&#252;&#351;&#252;n&#252;yorsaniz ilgili Tapu M&#252;d&#252;rl&#252;&#287;&#252;ne ba&#351;vurunuz.'}
       ]
-    }
+    })
   },
-  { num:'7', title:'Emekli Ayl&#305;k Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+  { num:'9', title:'Emekli Ayl&#305;k Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
     subtitle:'4A / 4B / 4C Emekli Ayl&#305;k Sorgulama',
     link:'https://www.turkiye.gov.tr/sgk-emekli-aylik-sorgulama',
-    svg:{ institution:'SGK', service:'Emekli Ayl&#305;k Sorgulama',
+    svgFn:()=>makeSvg({ institution:'SGK', service:'Emekli Ayl&#305;k Sorgulama',
       items:[
         {t:'space',h:14},
-        {t:'warn',text:'Sisteme kayıtlı 4A Emekli Aylık bilginiz bulunmuyor.'},
+        {t:'warn',text:'Sisteme kayitli 4A Emekli Aylik bilginiz bulunmuyor.'},
         {t:'space',h:8},
-        {t:'info',text:'4/1-(a) (SSK) ve 4/1-(b) (Bagkur) kapsaminda gelir veya aylik alanlarin sorgusudur.'}
+        {t:'blueinfo',text:'4/1-(a) (SSK) ve 4/1-(b) (Bagkur) kapsaminda gelir veya aylik alanlar icin sorgu yapilmaktadir.'}
       ]
-    }
+    })
   },
   { num:'8B', title:'SGK Hizmet D&#246;k&#252;m&#252;', tag:'Barkodlu PDF',
     subtitle:'4A Hizmet D&#246;k&#252;m&#252; + 4B Hizmet Bilgisi + SGK Tescil / Hizmet',
     link:'https://www.turkiye.gov.tr/sgk-hizmet-dokumu',
-    svg:{ institution:'SGK', service:'SGK Hizmet D&#246;k&#252;m&#252;',
+    svgFn:()=>makeSvg({ institution:'SGK', service:'SGK Hizmet D&#246;k&#252;m&#252;',
       items:[
-        {t:'space',h:10},{t:'info',text:'4A Hizmet D&#246;k&#252;m&#252; mevcut'},
-        {t:'space',h:6},{t:'info',text:'4B Hizmet Bilgisi mevcut'},
-        {t:'space',h:6},{t:'info',text:'SGK Tescil / Hizmet kayd&#305;'},
-        {t:'space',h:14},{t:'btn',text:'PDF Indir (Barkodlu)'}
+        {t:'space',h:10},
+        {t:'blueinfo',text:'4A Hizmet D&#246;k&#252;m&#252; mevcut'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'4B Hizmet Bilgisi mevcut'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:'SGK Tescil / Hizmet kaydi'},
+        {t:'space',h:14},
+        {t:'btn',text:'PDF Indir (Barkodlu)'}
       ]
-    }
+    })
   }
 ];
 
+/* ── render ── */
 const container=document.getElementById('cards');
 evraklar.forEach(e=>{
-  const svgStr=makeSvg(e.svg);
-  const hasSvg=e.svg.items.length>0;
+  const svgStr=e.svgFn();
   const card=document.createElement('div');
   card.className='evrak-card';
-  const screenshotHtml=hasSvg
-    ?`<div class="screenshot-wrap" onclick="openLb(this)" data-svg="${encodeURIComponent(svgStr)}">${svgStr}</div>
-     <div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>`
-    :'';
   card.innerHTML=`
     <div class="evrak-header">
       <div class="num-badge">${e.num}</div>
       <div><span class="evrak-title">${e.title}</span><span class="evrak-tag">(${e.tag})</span></div>
     </div>
     <div class="evrak-subtitle">${e.subtitle}</div>
-    ${screenshotHtml}
+    <div class="screenshot-wrap" onclick="openLb(this)" data-svg="${encodeURIComponent(svgStr)}">${svgStr}</div>
+    <div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>
     <div class="btn-row">
       <a href="${e.link}" target="_blank" class="btn-edevlet">&#128279; E-Devlet'te A&#231;</a>
       <button class="btn-copy" onclick="copyLink('${e.link}',this)">&#128203; Linki Kopyala</button>
@@ -272,22 +506,16 @@ function openLb(wrap){
   document.getElementById('lb-inner').innerHTML=decodeURIComponent(wrap.getAttribute('data-svg'));
   document.getElementById('lightbox').classList.add('open');
 }
-document.getElementById('lightbox').addEventListener('click',function(e){
-  if(e.target===this)this.classList.remove('open');
-});
+document.getElementById('lightbox').addEventListener('click',function(e){ if(e.target===this)this.classList.remove('open'); });
 
 function copyLink(url,btn){
-  const done=()=>{
-    btn.textContent='&#10003; Kopyaland&#305;';btn.classList.add('copied');
-    setTimeout(()=>{btn.innerHTML='&#128203; Linki Kopyala';btn.classList.remove('copied');},2000);
-  };
-  if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{fb(url);done();});}
-  else{fb(url);done();}
+  const done=()=>{ btn.textContent='&#10003; Kopyaland&#305;'; btn.classList.add('copied'); setTimeout(()=>{ btn.innerHTML='&#128203; Linki Kopyala'; btn.classList.remove('copied'); },2000); };
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(done).catch(()=>{ fb(url); done(); }); } else { fb(url); done(); }
 }
-function fb(url){const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}
+function fb(url){ const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
 
 function wpGonder(){
-  const m=`*KREDİZMİR — Evrak Rehberi*\n━━━━━━━━━━━━━━━━━━\n\nKredi başvurunuz için e-Devlet'ten alınması gereken evraklar:\n\n1️⃣ Vukuatlı Nüfus Kayıt Örneği (Barkodlu)\n2️⃣ İkametgah Belgesi (Barkodlu)\n3️⃣ Mahkeme Dava Dosyası (Ekran görüntüsü)\n4️⃣ Mahkeme İcra Dosyası (Ekran görüntüsü)\n5️⃣ SGK 4A/4B Hizmet Bilgisi (Ekran görüntüsü)\n6️⃣ Tapu Bilgisi (Ekran görüntüsü)\n7️⃣ Emekli Aylık Bilgisi (Ekran görüntüsü)\n8️⃣ SGK Hizmet Dökümü (Barkodlu PDF)\n\n━━━━━━━━━━━━━━━━━━\n📱 turkiye.gov.tr adresinden alınabilir.\n_KREDİZMİR Finansal Çözümler_`;
+  const m=`*KREDİZMİR — Evrak Rehberi*\n━━━━━━━━━━━━━━━━━━\n\nKredi başvurunuz için e-Devlet'ten alınması gereken evraklar:\n\n1️⃣ Vukuatlı Nüfus Kayıt Örneği (Barkodlu)\n2️⃣ İkametgah Belgesi (Barkodlu)\n3️⃣ Adli Sicil Kaydı (Barkodlu PDF)\n4️⃣ Mahkeme Dava Dosyası (Ekran görüntüsü)\n5️⃣ Mahkeme İcra Dosyası (Ekran görüntüsü)\n6️⃣ SGK 4A/4B Hizmet Bilgisi (Ekran görüntüsü)\n7️⃣ Adıma Tescilli Araç Sorgulama (Ekran görüntüsü)\n8️⃣ Tapu Bilgisi (Ekran görüntüsü)\n9️⃣ Emekli Aylık Bilgisi (Ekran görüntüsü)\n🔟 SGK Hizmet Dökümü (Barkodlu PDF)\n\n━━━━━━━━━━━━━━━━━━\n📱 turkiye.gov.tr adresinden alınabilir.\n_KREDİZMİR Finansal Çözümler_`;
   window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank');
 }
 </script>

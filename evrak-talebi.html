@@ -3,484 +3,293 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evrak Talebi — KREDİZMİR</title>
+  <title>Evrak Rehberi — KREDİZMİR</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0d1b2a;
-      color: #e8f0fe;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      padding: 20px 16px 40px;
-    }
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .back-btn {
-      background: #1a2d45;
-      border: none;
-      color: #4db8ff;
-      font-size: 22px;
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none;
-    }
-    .topbar h2 { font-size: 18px; font-weight: 700; color: #fff; }
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #8e44ad;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-    }
-    .card {
-      background: #1a2d45;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-      border: 1px solid #1e3a56;
-    }
-    label.field-label {
-      display: block;
-      font-size: 12px;
-      color: #8aaccc;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-    input[type="text"] {
-      width: 100%;
-      background: #0d1b2a;
-      border: 1px solid #1e3a56;
-      border-radius: 8px;
-      color: #e8f0fe;
-      font-size: 15px;
-      padding: 10px 12px;
-      outline: none;
-      margin-bottom: 16px;
-    }
-    input[type="text"]:focus { border-color: #8e44ad; }
-
-    .evrak-list { display: flex; flex-direction: column; gap: 10px; }
-    .evrak-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #0d1b2a;
-      border-radius: 10px;
-      padding: 12px 14px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.15s;
-      user-select: none;
-    }
-    .evrak-item.checked { border-color: #8e44ad; }
-    .evrak-item input[type="checkbox"] { display: none; }
-    .check-box {
-      width: 22px; height: 22px;
-      border-radius: 6px;
-      border: 2px solid #1e3a56;
-      background: #1a2d45;
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      transition: all 0.15s;
-    }
-    .evrak-item.checked .check-box {
-      background: #8e44ad;
-      border-color: #8e44ad;
-    }
-    .evrak-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #e8f0fe;
-    }
-    .evrak-desc {
-      font-size: 11px;
-      color: #8aaccc;
-      margin-top: 2px;
-    }
-
-    .group-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #8aaccc;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin: 16px 0 8px;
-    }
-    .group-title:first-child { margin-top: 0; }
-
-    .select-all-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      gap: 8px;
-    }
-    .sel-btn {
-      flex: 1;
-      background: #1a2d45;
-      border: 1px solid #1e3a56;
-      color: #8aaccc;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .wp-btn {
-      width: 100%;
-      background: #25d366;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      padding: 15px;
-      border-radius: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .wp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .secilen-badge {
-      background: #8e44ad;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-left: auto;
-    }
-
-    /* Dosya Yükleme */
-    .upload-area {
-      border: 2px dashed #1e3a56;
-      border-radius: 12px;
-      padding: 24px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      background: #0d1b2a;
-      margin-bottom: 12px;
-    }
-    .upload-area:hover, .upload-area.drag-over {
-      border-color: #8e44ad;
-      background: #14223a;
-    }
-    .upload-icon { font-size: 32px; margin-bottom: 8px; }
-    .upload-text { font-size: 14px; font-weight: 600; color: #8aaccc; }
-    .upload-sub { font-size: 11px; color: #4a6d8c; margin-top: 4px; }
-    #fileInput { display: none; }
-
-    .file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
-    .file-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #0d1b2a;
-      border-radius: 8px;
-      padding: 10px 12px;
-      border: 1px solid #1e3a56;
-    }
-    .file-icon { font-size: 20px; flex-shrink: 0; }
-    .file-info { flex: 1; min-width: 0; }
-    .file-name { font-size: 13px; font-weight: 600; color: #e8f0fe; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .file-size { font-size: 11px; color: #8aaccc; margin-top: 2px; }
-    .file-remove {
-      background: none;
-      border: none;
-      color: #c0392b;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 0 4px;
-      flex-shrink: 0;
-    }
-    .file-count-badge {
-      background: #8e44ad;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 20px;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#0d1b2a; color:#e8f0fe; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; padding:20px 16px 40px; }
+    .topbar { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .back-btn { background:#1a2d45; border:none; color:#4db8ff; font-size:22px; width:40px; height:40px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; }
+    .topbar h2 { font-size:18px; font-weight:700; color:#fff; }
+    .evrak-card { background:#1a2d45; border-radius:16px; padding:16px; margin-bottom:16px; border:1px solid #1e3a56; }
+    .evrak-header { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+    .num-badge { background:#1e3a56; color:#e8f0fe; font-size:13px; font-weight:700; min-width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .evrak-title { font-size:15px; font-weight:700; color:#fff; }
+    .evrak-tag { font-size:11px; color:#8e44ad; font-weight:600; margin-left:6px; }
+    .evrak-subtitle { font-size:12px; color:#8aaccc; margin-bottom:12px; padding-left:48px; }
+    .screenshot-wrap { background:#fff; border-radius:12px; overflow:hidden; margin-bottom:8px; cursor:pointer; border:1px solid #e0e0e0; }
+    .screenshot-wrap svg { width:100%; display:block; }
+    .zoom-hint { text-align:center; font-size:12px; color:#8aaccc; margin-bottom:12px; }
+    .btn-row { display:flex; gap:8px; }
+    .btn-edevlet { flex:1; background:#1e3a6e; border:none; color:#4db8ff; font-size:13px; font-weight:700; padding:11px 8px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
+    .btn-copy { flex:1; background:#1e3a56; border:none; color:#8aaccc; font-size:13px; font-weight:700; padding:11px 8px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+    .btn-copy.copied { color:#2ecc71; }
+    .onemli-card { background:#1a2d45; border:1px solid rgba(230,126,34,0.5); border-radius:16px; padding:16px; margin-bottom:20px; }
+    .onemli-title { font-size:14px; font-weight:800; color:#e67e22; margin-bottom:10px; }
+    .onemli-body { font-size:13px; line-height:1.75; color:#c8d8e8; }
+    .onemli-body b { color:#fff; }
+    .onemli-body .hl { color:#f39c12; font-weight:700; }
+    .cta-label { font-size:15px; font-weight:700; color:#fff; margin-bottom:4px; }
+    .cta-sub { font-size:12px; color:#8aaccc; margin-bottom:14px; }
+    .wp-btn { width:100%; background:#25d366; border:none; color:#fff; font-size:16px; font-weight:700; padding:15px; border-radius:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.93); z-index:999; align-items:center; justify-content:center; padding:16px; }
+    #lightbox.open { display:flex; }
+    #lb-inner { max-width:340px; width:100%; max-height:90vh; overflow-y:auto; border-radius:12px; }
+    #lb-inner svg { width:100%; display:block; border-radius:12px; }
+    #lb-close { position:fixed; top:14px; right:14px; background:rgba(255,255,255,0.2); border:none; color:#fff; font-size:20px; width:38px; height:38px; border-radius:50%; cursor:pointer; z-index:1000; display:flex; align-items:center; justify-content:center; }
   </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <a href="index.html" class="back-btn">‹</a>
-    <h2>📋 Evrak Talebi</h2>
+<div class="topbar">
+  <a href="index.html" class="back-btn">&#8249;</a>
+  <h2>&#128203; Evrak Rehberi</h2>
+</div>
+
+<div id="cards"></div>
+
+<div class="onemli-card">
+  <div class="onemli-title">&#9888;&#65039; &#214;NEML&#304; NOT</div>
+  <div class="onemli-body">
+    Al&#305;nan evraklar&#305;n &#252;zerinde <b>&#304;S&#304;M g&#246;z&#252;kmek zorundad&#305;r.</b>
+    Evraklar&#305; <span class="hl">PDF olarak</span> veya <span class="hl">ekran resmi (kamera)</span> olarak
+    iletebilirsiniz. E&#287;er e-Devlet <span class="hl">uygulamas&#305;</span> &#252;zerinden isim g&#246;z&#252;km&#252;yorsa
+    &#171;<span class="hl">Linki Kopyala</span>&#187; y&#246;ntemi ile veya en sa&#287;l&#305;kl&#305;s&#305;
+    <span class="hl">laptop &#252;zerinden</span> iletmenizdir.
   </div>
+</div>
 
-  <div class="card">
-    <label class="field-label">Müşteri Adı Soyadı</label>
-    <input type="text" id="musteriAd" placeholder="Ahmet Yılmaz (opsiyonel)">
+<div>
+  <div class="cta-label">T&#252;m evraklar&#305; haz&#305;rlad&#305;n&#305;z m&#305;?</div>
+  <div class="cta-sub">&#350;ablonu kopyalay&#305;p WhatsApp'tan g&#246;nderin.</div>
+  <button class="wp-btn" onclick="wpGonder()">&#128242; WhatsApp'ta G&#246;nder</button>
+</div>
 
-    <p class="section-title">Evrak Seçimi</p>
+<div id="lightbox">
+  <button id="lb-close" onclick="document.getElementById('lightbox').classList.remove('open')">&#10005;</button>
+  <div id="lb-inner"></div>
+</div>
 
-    <div class="select-all-row">
-      <button class="sel-btn" onclick="tumunuSec()">✓ Tümünü Seç</button>
-      <button class="sel-btn" onclick="tumunuKaldir()">✕ Tümünü Kaldır</button>
-      <span class="secilen-badge" id="secilenSayac">0 seçili</span>
+<script>
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function wrap(text, max){
+  const words=text.split(' '); const lines=[]; let cur='';
+  for(const w of words){ const t=cur?cur+' '+w:w; if(t.length>max){if(cur)lines.push(cur);cur=w;}else cur=t; }
+  if(cur)lines.push(cur); return lines;
+}
+
+function makeSvg({institution, service, items}){
+  let body=''; let y=178;
+  for(const item of items){
+    if(item.t==='warn'){
+      const ls=wrap(item.text,34); const h=16+ls.length*13+6;
+      body+=`<rect x="12" y="${y}" width="276" height="${h}" rx="6" fill="#fff7e6" stroke="#e5a623" stroke-width="1"/>`;
+      body+=`<text x="25" y="${y+14}" font-size="12" fill="#e67e22" font-weight="bold">!</text>`;
+      ls.forEach((l,i)=>{ body+=`<text x="40" y="${y+14+i*13}" font-size="8.5" fill="#555">${esc(l)}</text>`; });
+      y+=h+8;
+    } else if(item.t==='info'){
+      const ls=wrap(item.text,36); const h=10+ls.length*14;
+      body+=`<rect x="12" y="${y}" width="276" height="${h}" rx="4" fill="#e8f0fb"/>`;
+      ls.forEach((l,i)=>{ body+=`<text x="20" y="${y+13+i*14}" font-size="9" fill="#1a47a0">${esc(l)}</text>`; });
+      y+=h+8;
+    } else if(item.t==='label'){
+      body+=`<text x="12" y="${y+11}" font-size="9" fill="#777" font-weight="bold">${esc(item.text)}</text>`;
+      y+=20;
+    } else if(item.t==='select'){
+      body+=`<rect x="12" y="${y}" width="160" height="24" rx="4" fill="#f8f8f8" stroke="#ddd" stroke-width="1"/>`;
+      body+=`<text x="20" y="${y+15}" font-size="9" fill="#333">${esc(item.text)}</text>`;
+      y+=32;
+    } else if(item.t==='radio'){
+      body+=`<circle cx="22" cy="${y+9}" r="8" fill="#1a47a0"/>`;
+      body+=`<circle cx="22" cy="${y+9}" r="4" fill="white"/>`;
+      body+=`<text x="36" y="${y+13}" font-size="9" fill="#333">${esc(item.text)}</text>`;
+      body+=`<circle cx="110" cy="${y+9}" r="8" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>`;
+      body+=`<text x="124" y="${y+13}" font-size="9" fill="#999">Hay&#305;r</text>`;
+      y+=26;
+    } else if(item.t==='btn'){
+      body+=`<rect x="12" y="${y}" width="276" height="30" rx="7" fill="#1a47a0"/>`;
+      body+=`<text x="150" y="${y+19}" font-size="10" fill="white" text-anchor="middle" font-weight="bold">${esc(item.text)}</text>`;
+      y+=42;
+    } else if(item.t==='date'){
+      body+=`<text x="150" y="${y+11}" font-size="8" fill="#bbb" text-anchor="middle">${esc(item.text)} itibarıyla üretilmiştir.</text>`;
+      y+=22;
+    } else if(item.t==='space'){ y+=item.h||12; }
+  }
+  const H=Math.max(340,y+24);
+  const ins=institution.length>28?institution.slice(0,26)+'...':institution;
+  const svc=service.length>30?service.slice(0,28)+'...':service;
+  return `<svg viewBox="0 0 300 ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif">
+<rect width="300" height="${H}" fill="#ebebeb"/>
+<rect width="300" height="20" fill="#111"/>
+<text x="8" y="14" font-size="9" fill="#fff">00:41</text>
+<text x="240" y="14" font-size="8" fill="#fff">&#9646;&#9646;&#9646; WiFi &#9646;</text>
+<rect y="20" width="300" height="36" fill="#2a2a2a"/>
+<rect x="44" y="27" width="172" height="22" rx="11" fill="#404040"/>
+<text x="130" y="42" font-size="9" fill="#ccc" text-anchor="middle">turkiye.gov.tr</text>
+<rect y="56" width="300" height="52" fill="#1847a0"/>
+<text x="16" y="76" font-size="12" fill="#fff" font-weight="bold">turkiye.gov.tr</text>
+<rect x="16" y="82" width="200" height="18" rx="9" fill="rgba(255,255,255,0.15)"/>
+<text x="26" y="93" font-size="8" fill="rgba(255,255,255,0.55)">Nas&#305;l yard&#305;m edebilirim?</text>
+<rect y="108" width="300" height="${H-108}" fill="white"/>
+<rect y="108" width="300" height="22" fill="#f2f2f2"/>
+<text x="12" y="122" font-size="8" fill="#888">Ana Sayfa &gt; ${esc(ins)}</text>
+<line x1="0" y1="130" x2="300" y2="130" stroke="#e0e0e0" stroke-width="1"/>
+<circle cx="28" cy="152" r="14" fill="#e8effd"/>
+<text x="28" y="156" font-size="8" text-anchor="middle" fill="#1847a0" font-weight="bold">TC</text>
+<text x="50" y="147" font-size="9" fill="#666">${esc(ins)}</text>
+<text x="50" y="162" font-size="10" fill="#111" font-weight="bold">${esc(svc)}</text>
+<line x1="0" y1="170" x2="300" y2="170" stroke="#f0f0f0" stroke-width="1"/>
+${body}
+</svg>`;
+}
+
+const evraklar=[
+  { num:'1', title:'Vukuatl&#305; N&#252;fus Kay&#305;t &#214;rne&#287;i', tag:'Barkodlu',
+    subtitle:'N&#252;fus Kay&#305;t &#214;rne&#287;i Belgesi Sorgulama',
+    link:'https://www.turkiye.gov.tr/nvi-vukuatli-nufus-kayit-ornegi-sorgulama',
+    svg:{ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'N&#252;fus Kay&#305;t &#214;rne&#287;i Sorgulama',
+      items:[
+        {t:'space',h:8},{t:'label',text:'* Kay&#305;t &#214;rne&#287;i T&#252;r&#252;'},{t:'select',text:'Aile'},
+        {t:'label',text:'* Han Ek Listesi'},{t:'radio',text:'Evet'},
+        {t:'label',text:'* &#214;l&#252;leyen Birli&#287;i G&#246;sterilsin'},{t:'radio',text:'Evet'},
+        {t:'label',text:'* Belgemi nereden alaca&#287;&#305;m'},{t:'select',text:'Kuruma Ba&#351;vur'},
+        {t:'label',text:'* Kurum Ad&#305;'},{t:'select',text:'&#214;l&#252;m ve Evlenme...'},
+        {t:'space',h:10},{t:'btn',text:'Sorgula'}
+      ]
+    }
+  },
+  { num:'2', title:'&#304;kametg&#226;h Belgesi', tag:'Barkodlu',
+    subtitle:'Yerle&#351;im Yeri ve Di&#287;er Adres Belgesi Sorgulama',
+    link:'https://www.turkiye.gov.tr/nvi-ikametgah-belgesi',
+    svg:{ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'&#304;kametgah Belgesi',
+      items:[
+        {t:'space',h:10},{t:'info',text:'Adresiniz sistemde kay&#305;tl&#305;d&#305;r.'},
+        {t:'space',h:8},{t:'info',text:'&#304;zmir / Bornova Mahallesi'},
+        {t:'space',h:8},{t:'info',text:'Belge barkodlu olarak haz&#305;rlanabilir.'},
+        {t:'space',h:14},{t:'btn',text:'Belge Al (Barkodlu PDF)'}
+      ]
+    }
+  },
+  { num:'3', title:'Mahkeme Dava Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'Dava Dosyas&#305; Sorgulama &#8212; Yak&#305;n tarih varsa detayl&#305; ekranlar',
+    link:'https://www.turkiye.gov.tr/adalet-bakanligi-dava-dosyasi-sorgulama',
+    svg:{ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'Dava Dosyas&#305; Sorgulama',
+      items:[
+        {t:'space',h:10},
+        {t:'info',text:'"Icra Dosyasi Sorgulama Hizmeti" yeni UYAP hizmetleri basliginda sunulmaktadir.'},
+        {t:'space',h:8},
+        {t:'warn',text:'Ad&#305;n&#305;za a&#231;&#305;lm&#305;&#351; ya da m&#252;dahil oldu&#287;unuz bir dava kayd&#305; bulunamamı&#351;t&#305;r.'},
+        {t:'date',text:'08 Mart 2026 00:27'}
+      ]
+    }
+  },
+  { num:'4', title:'Mahkeme &#304;cra Dosyas&#305;', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'&#304;cra Dosyas&#305; Sorgulama &#8212; Yak&#305;n tarih varsa detayl&#305; ekranlar',
+    link:'https://www.turkiye.gov.tr/adalet-bakanligi-icra-dosyasi-sorgulama',
+    svg:{ institution:'Adalet Bakanl&#305;&#287;&#305;', service:'&#304;cra Dosyas&#305; Sorgulama',
+      items:[
+        {t:'space',h:14},
+        {t:'warn',text:'Ad&#305;n&#305;za a&#231;&#305;lm&#305;&#351; ya da m&#252;dahil oldu&#287;unuz bir icra kayd&#305; bulunamamı&#351;t&#305;r.'},
+        {t:'date',text:'08 Mart 2026 00:25'}
+      ]
+    }
+  },
+  { num:'5', title:'SGK 4A / 4B Hizmet Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'&#199;al&#305;&#351;ma durumu ve SGK tescil kayd&#305;',
+    link:'https://www.turkiye.gov.tr/sgk-4a-aktif-hizmet-cetveli-sorgulama',
+    svg:{ institution:'SGK', service:'4A Aktif Hizmet Cetveli',
+      items:[
+        {t:'space',h:10},{t:'info',text:'Sigorta No: 123 456 789'},
+        {t:'space',h:6},{t:'info',text:'I&#351;veren: ABC Ticaret A.S.'},
+        {t:'space',h:6},{t:'info',text:'I&#351;e Giris: 01.01.2022'},
+        {t:'space',h:6},{t:'info',text:'Durum: Aktif Sigortali'}
+      ]
+    }
+  },
+  { num:'6', title:'Tapu Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'Tapu Bilgileri Sorgulama Ekran&#305;',
+    link:'https://www.turkiye.gov.tr/tkgm-tapu-bilgileri-sorgulama',
+    svg:{ institution:'Tapu ve Kadastro Genel M&#252;d&#252;rl&#252;&#287;&#252;', service:'Tapu Bilgileri Sorgulama',
+      items:[
+        {t:'space',h:10},
+        {t:'warn',text:'T.C. Kimlik numaraniz ile esle&#351;en herhangi bir tapu kaydi bulunamamistir.'},
+        {t:'space',h:6},
+        {t:'warn',text:'Yukaridaki bilginin dogru olmadigini dusunuyorsaniz ilgili Tapu Mudurluğune basvurunuz.'}
+      ]
+    }
+  },
+  { num:'7', title:'Emekli Ayl&#305;k Bilgisi', tag:'Ekran g&#246;r&#252;nt&#252;s&#252;',
+    subtitle:'4A / 4B / 4C Emekli Ayl&#305;k Sorgulama',
+    link:'https://www.turkiye.gov.tr/sgk-emekli-aylik-sorgulama',
+    svg:{ institution:'SGK', service:'Emekli Ayl&#305;k Sorgulama',
+      items:[
+        {t:'space',h:14},
+        {t:'warn',text:'Sisteme kayıtlı 4A Emekli Aylık bilginiz bulunmuyor.'},
+        {t:'space',h:8},
+        {t:'info',text:'4/1-(a) (SSK) ve 4/1-(b) (Bagkur) kapsaminda gelir veya aylik alanlarin sorgusudur.'}
+      ]
+    }
+  },
+  { num:'8B', title:'SGK Hizmet D&#246;k&#252;m&#252;', tag:'Barkodlu PDF',
+    subtitle:'4A Hizmet D&#246;k&#252;m&#252; + 4B Hizmet Bilgisi + SGK Tescil / Hizmet',
+    link:'https://www.turkiye.gov.tr/sgk-hizmet-dokumu',
+    svg:{ institution:'SGK', service:'SGK Hizmet D&#246;k&#252;m&#252;',
+      items:[
+        {t:'space',h:10},{t:'info',text:'4A Hizmet D&#246;k&#252;m&#252; mevcut'},
+        {t:'space',h:6},{t:'info',text:'4B Hizmet Bilgisi mevcut'},
+        {t:'space',h:6},{t:'info',text:'SGK Tescil / Hizmet kayd&#305;'},
+        {t:'space',h:14},{t:'btn',text:'PDF Indir (Barkodlu)'}
+      ]
+    }
+  }
+];
+
+const container=document.getElementById('cards');
+evraklar.forEach(e=>{
+  const svgStr=makeSvg(e.svg);
+  const hasSvg=e.svg.items.length>0;
+  const card=document.createElement('div');
+  card.className='evrak-card';
+  const screenshotHtml=hasSvg
+    ?`<div class="screenshot-wrap" onclick="openLb(this)" data-svg="${encodeURIComponent(svgStr)}">${svgStr}</div>
+     <div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>`
+    :'';
+  card.innerHTML=`
+    <div class="evrak-header">
+      <div class="num-badge">${e.num}</div>
+      <div><span class="evrak-title">${e.title}</span><span class="evrak-tag">(${e.tag})</span></div>
     </div>
+    <div class="evrak-subtitle">${e.subtitle}</div>
+    ${screenshotHtml}
+    <div class="btn-row">
+      <a href="${e.link}" target="_blank" class="btn-edevlet">&#128279; E-Devlet'te A&#231;</a>
+      <button class="btn-copy" onclick="copyLink('${e.link}',this)">&#128203; Linki Kopyala</button>
+    </div>`;
+  container.appendChild(card);
+});
 
-    <div class="evrak-list" id="evrakList">
+function openLb(wrap){
+  document.getElementById('lb-inner').innerHTML=decodeURIComponent(wrap.getAttribute('data-svg'));
+  document.getElementById('lightbox').classList.add('open');
+}
+document.getElementById('lightbox').addEventListener('click',function(e){
+  if(e.target===this)this.classList.remove('open');
+});
 
-      <div class="group-title">Kimlik & Adres</div>
+function copyLink(url,btn){
+  const done=()=>{
+    btn.textContent='&#10003; Kopyaland&#305;';btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML='&#128203; Linki Kopyala';btn.classList.remove('copied');},2000);
+  };
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(done).catch(()=>{fb(url);done();});}
+  else{fb(url);done();}
+}
+function fb(url){const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}
 
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🪪 TC Kimlik Kartı (ön-arka fotokopi)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">TC Kimlik Kartı</div>
-          <div class="evrak-desc">Ön ve arka yüz fotokopisi</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="📄 Nüfus Cüzdanı Fotokopisi">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Nüfus Cüzdanı</div>
-          <div class="evrak-desc">Fotokopi veya tarama</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🏠 İkametgah Belgesi (son 3 ay)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">İkametgah Belgesi</div>
-          <div class="evrak-desc">Son 3 aya ait, e-devlet'ten alınabilir</div>
-        </div>
-      </div>
-
-      <div class="group-title">Gelir & Çalışma</div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="💼 Maaş Bordrosu (son 3 ay)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Maaş Bordrosu</div>
-          <div class="evrak-desc">Son 3 aylık</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🏢 İşe Giriş Bildirgesi / SGK Hizmet Dökümü">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">SGK Hizmet Dökümü</div>
-          <div class="evrak-desc">İşe giriş bildirgesi veya hizmet dökümü</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="📊 Vergi Levhası (esnaf/serbest meslek için)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Vergi Levhası</div>
-          <div class="evrak-desc">Esnaf ve serbest meslek sahipleri için</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="📑 Gelir-Gider Tablosu (esnaf/ticari)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Gelir-Gider Tablosu</div>
-          <div class="evrak-desc">Ticari işletmeler için</div>
-        </div>
-      </div>
-
-      <div class="group-title">Banka & Finansal</div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🏦 Banka Hesap Dökümü (son 6 ay)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Banka Hesap Dökümü</div>
-          <div class="evrak-desc">Son 6 aylık ekstre</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="💳 Kredi Kartı Ekstresi (son 3 ay)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Kredi Kartı Ekstresi</div>
-          <div class="evrak-desc">Son 3 aylık</div>
-        </div>
-      </div>
-
-      <div class="group-title">Taşıt / Konut (ihtiyaç varsa)</div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🚗 Araç Ruhsatı (taşıt kredisi için)">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Araç Ruhsatı</div>
-          <div class="evrak-desc">Taşıt kredisi başvurularında</div>
-        </div>
-      </div>
-
-      <div class="evrak-item" onclick="toggle(this)">
-        <input type="checkbox" value="🏠 Tapu / Kira Sözleşmesi">
-        <div class="check-box">✓</div>
-        <div>
-          <div class="evrak-label">Tapu / Kira Sözleşmesi</div>
-          <div class="evrak-desc">Konut sahibi veya kiracı belgesi</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="card">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-      <p class="section-title" style="margin-bottom:0;">Dosya Yükle</p>
-      <span class="file-count-badge" id="dosyaSayac">0 dosya</span>
-    </div>
-
-    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📎</div>
-      <div class="upload-text">Dosya seçmek için tıklayın</div>
-      <div class="upload-sub">veya buraya sürükleyip bırakın</div>
-      <div class="upload-sub" style="margin-top:6px;">PDF, JPG, PNG, DOCX — maks. 10 MB</div>
-    </div>
-    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.doc">
-
-    <div class="file-list" id="fileList"></div>
-  </div>
-
-  <button class="wp-btn" id="wpBtn" onclick="wpGonder()" disabled>
-    📲 WhatsApp ile Gönder
-  </button>
-
-  <script>
-    function toggle(item) {
-      item.classList.toggle('checked');
-      const cb = item.querySelector('input[type="checkbox"]');
-      cb.checked = item.classList.contains('checked');
-      updateSayac();
-    }
-
-    function updateSayac() {
-      const secilen = document.querySelectorAll('.evrak-item.checked').length;
-      document.getElementById('secilenSayac').textContent = secilen + ' seçili';
-      document.getElementById('wpBtn').disabled = secilen === 0;
-    }
-
-    function tumunuSec() {
-      document.querySelectorAll('.evrak-item').forEach(item => {
-        item.classList.add('checked');
-        item.querySelector('input[type="checkbox"]').checked = true;
-      });
-      updateSayac();
-    }
-
-    function tumunuKaldir() {
-      document.querySelectorAll('.evrak-item').forEach(item => {
-        item.classList.remove('checked');
-        item.querySelector('input[type="checkbox"]').checked = false;
-      });
-      updateSayac();
-    }
-
-    // Dosya yükleme
-    let yuklenenDosyalar = [];
-
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
-
-    fileInput.addEventListener('change', () => {
-      Array.from(fileInput.files).forEach(ekle);
-      fileInput.value = '';
-    });
-
-    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-    uploadArea.addEventListener('drop', e => {
-      e.preventDefault();
-      uploadArea.classList.remove('drag-over');
-      Array.from(e.dataTransfer.files).forEach(ekle);
-    });
-
-    function ekle(dosya) {
-      if (dosya.size > 10 * 1024 * 1024) { alert(dosya.name + ' dosyası 10 MB sınırını aşıyor.'); return; }
-      if (yuklenenDosyalar.find(d => d.name === dosya.name && d.size === dosya.size)) return;
-      yuklenenDosyalar.push(dosya);
-      renderDosyalar();
-    }
-
-    function kaldir(idx) {
-      yuklenenDosyalar.splice(idx, 1);
-      renderDosyalar();
-    }
-
-    function dosyaIkonu(name) {
-      const ext = name.split('.').pop().toLowerCase();
-      if (ext === 'pdf') return '📄';
-      if (['jpg','jpeg','png'].includes(ext)) return '🖼️';
-      if (['doc','docx'].includes(ext)) return '📝';
-      return '📎';
-    }
-
-    function formatBoyut(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    }
-
-    function renderDosyalar() {
-      const list = document.getElementById('fileList');
-      list.innerHTML = yuklenenDosyalar.map((d, i) => `
-        <div class="file-item">
-          <div class="file-icon">${dosyaIkonu(d.name)}</div>
-          <div class="file-info">
-            <div class="file-name">${d.name}</div>
-            <div class="file-size">${formatBoyut(d.size)}</div>
-          </div>
-          <button class="file-remove" onclick="kaldir(${i})" title="Kaldır">✕</button>
-        </div>
-      `).join('');
-      document.getElementById('dosyaSayac').textContent = yuklenenDosyalar.length + ' dosya';
-    }
-
-    function wpGonder() {
-      const ad = document.getElementById('musteriAd').value.trim();
-      const secilen = [];
-      document.querySelectorAll('.evrak-item.checked input[type="checkbox"]').forEach(cb => {
-        secilen.push('• ' + cb.value);
-      });
-      if (secilen.length === 0) return;
-
-      const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
-      const dosyaSatir = yuklenenDosyalar.length > 0
-        ? `\n\n📎 *Yüklenen Dosyalar (${yuklenenDosyalar.length}):*\n`
-          + yuklenenDosyalar.map(d => `• ${d.name} (${formatBoyut(d.size)})`).join('\n')
-        : '';
-      const mesaj = `${musteriSatir}*KREDİZMİR — Evrak Talebi*\n`
-        + `━━━━━━━━━━━━━━━━━━\n`
-        + `Kredi başvurunuz için aşağıdaki evrakların tarafımıza iletilmesi gerekmektedir:\n\n`
-        + secilen.join('\n')
-        + dosyaSatir
-        + `\n\n━━━━━━━━━━━━━━━━━━\n`
-        + `📸 Belgelerinizi WhatsApp üzerinden veya ofisimize getirerek teslim edebilirsiniz.\n`
-        + `_KREDİZMİR Finansal Çözümler_`;
-
-      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
-    }
-  </script>
+function wpGonder(){
+  const m=`*KREDİZMİR — Evrak Rehberi*\n━━━━━━━━━━━━━━━━━━\n\nKredi başvurunuz için e-Devlet'ten alınması gereken evraklar:\n\n1️⃣ Vukuatlı Nüfus Kayıt Örneği (Barkodlu)\n2️⃣ İkametgah Belgesi (Barkodlu)\n3️⃣ Mahkeme Dava Dosyası (Ekran görüntüsü)\n4️⃣ Mahkeme İcra Dosyası (Ekran görüntüsü)\n5️⃣ SGK 4A/4B Hizmet Bilgisi (Ekran görüntüsü)\n6️⃣ Tapu Bilgisi (Ekran görüntüsü)\n7️⃣ Emekli Aylık Bilgisi (Ekran görüntüsü)\n8️⃣ SGK Hizmet Dökümü (Barkodlu PDF)\n\n━━━━━━━━━━━━━━━━━━\n📱 turkiye.gov.tr adresinden alınabilir.\n_KREDİZMİR Finansal Çözümler_`;
+  window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank');
+}
+</script>
 </body>
 </html>

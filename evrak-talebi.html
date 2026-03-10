@@ -161,6 +161,58 @@
       border-radius: 20px;
       margin-left: auto;
     }
+
+    /* Dosya Yükleme */
+    .upload-area {
+      border: 2px dashed #1e3a56;
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #0d1b2a;
+      margin-bottom: 12px;
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: #8e44ad;
+      background: #14223a;
+    }
+    .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; font-weight: 600; color: #8aaccc; }
+    .upload-sub { font-size: 11px; color: #4a6d8c; margin-top: 4px; }
+    #fileInput { display: none; }
+
+    .file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0d1b2a;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid #1e3a56;
+    }
+    .file-icon { font-size: 20px; flex-shrink: 0; }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name { font-size: 13px; font-weight: 600; color: #e8f0fe; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-size { font-size: 11px; color: #8aaccc; margin-top: 2px; }
+    .file-remove {
+      background: none;
+      border: none;
+      color: #c0392b;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .file-count-badge {
+      background: #8e44ad;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
@@ -294,6 +346,23 @@
     </div>
   </div>
 
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <p class="section-title" style="margin-bottom:0;">Dosya Yükle</p>
+      <span class="file-count-badge" id="dosyaSayac">0 dosya</span>
+    </div>
+
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📎</div>
+      <div class="upload-text">Dosya seçmek için tıklayın</div>
+      <div class="upload-sub">veya buraya sürükleyip bırakın</div>
+      <div class="upload-sub" style="margin-top:6px;">PDF, JPG, PNG, DOCX — maks. 10 MB</div>
+    </div>
+    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.doc">
+
+    <div class="file-list" id="fileList"></div>
+  </div>
+
   <button class="wp-btn" id="wpBtn" onclick="wpGonder()" disabled>
     📲 WhatsApp ile Gönder
   </button>
@@ -328,6 +397,66 @@
       updateSayac();
     }
 
+    // Dosya yükleme
+    let yuklenenDosyalar = [];
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+
+    fileInput.addEventListener('change', () => {
+      Array.from(fileInput.files).forEach(ekle);
+      fileInput.value = '';
+    });
+
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      Array.from(e.dataTransfer.files).forEach(ekle);
+    });
+
+    function ekle(dosya) {
+      if (dosya.size > 10 * 1024 * 1024) { alert(dosya.name + ' dosyası 10 MB sınırını aşıyor.'); return; }
+      if (yuklenenDosyalar.find(d => d.name === dosya.name && d.size === dosya.size)) return;
+      yuklenenDosyalar.push(dosya);
+      renderDosyalar();
+    }
+
+    function kaldir(idx) {
+      yuklenenDosyalar.splice(idx, 1);
+      renderDosyalar();
+    }
+
+    function dosyaIkonu(name) {
+      const ext = name.split('.').pop().toLowerCase();
+      if (ext === 'pdf') return '📄';
+      if (['jpg','jpeg','png'].includes(ext)) return '🖼️';
+      if (['doc','docx'].includes(ext)) return '📝';
+      return '📎';
+    }
+
+    function formatBoyut(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function renderDosyalar() {
+      const list = document.getElementById('fileList');
+      list.innerHTML = yuklenenDosyalar.map((d, i) => `
+        <div class="file-item">
+          <div class="file-icon">${dosyaIkonu(d.name)}</div>
+          <div class="file-info">
+            <div class="file-name">${d.name}</div>
+            <div class="file-size">${formatBoyut(d.size)}</div>
+          </div>
+          <button class="file-remove" onclick="kaldir(${i})" title="Kaldır">✕</button>
+        </div>
+      `).join('');
+      document.getElementById('dosyaSayac').textContent = yuklenenDosyalar.length + ' dosya';
+    }
+
     function wpGonder() {
       const ad = document.getElementById('musteriAd').value.trim();
       const secilen = [];
@@ -337,10 +466,15 @@
       if (secilen.length === 0) return;
 
       const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
+      const dosyaSatir = yuklenenDosyalar.length > 0
+        ? `\n\n📎 *Yüklenen Dosyalar (${yuklenenDosyalar.length}):*\n`
+          + yuklenenDosyalar.map(d => `• ${d.name} (${formatBoyut(d.size)})`).join('\n')
+        : '';
       const mesaj = `${musteriSatir}*KREDİZMİR — Evrak Talebi*\n`
         + `━━━━━━━━━━━━━━━━━━\n`
         + `Kredi başvurunuz için aşağıdaki evrakların tarafımıza iletilmesi gerekmektedir:\n\n`
         + secilen.join('\n')
+        + dosyaSatir
         + `\n\n━━━━━━━━━━━━━━━━━━\n`
         + `📸 Belgelerinizi WhatsApp üzerinden veya ofisimize getirerek teslim edebilirsiniz.\n`
         + `_KREDİZMİR Finansal Çözümler_`;

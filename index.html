@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KREDİZMİR Panel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      color: #e8f0fe;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-box {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #1a6fa3, #0d4f7c);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .logo-text h1 span { color: #4db8ff; }
+    .logo-text p {
+      font-size: 10px;
+      color: #8aaccc;
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+    .badge {
+      background: #1a6fa3;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .hero-btn {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid #1a6fa3;
+      color: #4db8ff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 10px 24px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 13px;
+      color: #8aaccc;
+    }
+    .cards { display: flex; flex-direction: column; gap: 12px; }
+    .card {
+      background: #1a2d45;
+      border-radius: 16px;
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+      border: 1px solid #1e3a56;
+    }
+    .card:active { background: #1e3a56; }
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .icon-blue  { background: linear-gradient(135deg, #1a6fa3, #0d4f7c); }
+    .icon-green { background: linear-gradient(135deg, #2ecc71, #1a8a4a); }
+    .icon-orange{ background: linear-gradient(135deg, #e67e22, #a85309); }
+    .icon-purple{ background: linear-gradient(135deg, #8e44ad, #5b1f7a); }
+    .card-body { flex: 1; }
+    .card-body h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    .card-badge {
+      display: inline-block;
+      background: #1a6fa3;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .card-body p {
+      font-size: 12px;
+      color: #8aaccc;
+      line-height: 1.5;
+    }
+    .card-arrow {
+      color: #4db8ff;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: #3a5570;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-box">KZ</div>
+      <div class="logo-text">
+        <h1>KREDİ<span>ZMİR</span></h1>
+        <p>FİNANSAL ÇÖZÜMLER</p>
+      </div>
+    </div>
+    <div class="badge">v4.0 Premium</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-btn">KREDİZMİR EKİP ÇALIŞMASI</div>
+    <p>Tüm araçlar tek ekranda — hızlı ve profesyonel</p>
+  </div>
+
+  <div class="cards">
+    <a href="odeme-tablosu.html" class="card">
+      <div class="card-icon icon-blue">📊</div>
+      <div class="card-body">
+        <h3>Ödeme Tablosu <span class="card-badge">PDF</span></h3>
+        <p>Müşteri için DJS veya banka kredisi ödeme planı oluştur. 12-36 ay karşılaştırmalı tablo ve PDF indir.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+
+    <a href="sozlesme.html" class="card">
+      <div class="card-icon icon-green">📄</div>
+      <div class="card-body">
+        <h3>Sözleşme Gönder</h3>
+        <p>Müşteriye sözleşme mesajı oluştur ve WhatsApp veya e-posta üzerinden ilet.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+
+    <a href="konum-gonder.html" class="card">
+      <div class="card-icon icon-orange">📍</div>
+      <div class="card-body">
+        <h3>Konum Gönder</h3>
+        <p>Mevcut konumunu veya ofis adresini müşteriye harita linki olarak WhatsApp'tan gönder.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+
+    <a href="evrak-talebi.html" class="card">
+      <div class="card-icon icon-purple">📋</div>
+      <div class="card-body">
+        <h3>Evrak Talebi</h3>
+        <p>Müşteriden istenen evrakları seç ve WhatsApp mesajı olarak gönder.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="footer">KREDİZMİR &copy; 2024 — Tüm hakları saklıdır</div>
+
+</body>
+</html>

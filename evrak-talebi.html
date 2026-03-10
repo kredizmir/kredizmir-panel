@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evrak Talebi — KREDİZMİR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      color: #e8f0fe;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      background: #1a2d45;
+      border: none;
+      color: #4db8ff;
+      font-size: 22px;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+    }
+    .topbar h2 { font-size: 18px; font-weight: 700; color: #fff; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8e44ad;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    .card {
+      background: #1a2d45;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #1e3a56;
+    }
+    label.field-label {
+      display: block;
+      font-size: 12px;
+      color: #8aaccc;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"] {
+      width: 100%;
+      background: #0d1b2a;
+      border: 1px solid #1e3a56;
+      border-radius: 8px;
+      color: #e8f0fe;
+      font-size: 15px;
+      padding: 10px 12px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    input[type="text"]:focus { border-color: #8e44ad; }
+
+    .evrak-list { display: flex; flex-direction: column; gap: 10px; }
+    .evrak-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #0d1b2a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+      user-select: none;
+    }
+    .evrak-item.checked { border-color: #8e44ad; }
+    .evrak-item input[type="checkbox"] { display: none; }
+    .check-box {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid #1e3a56;
+      background: #1a2d45;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .evrak-item.checked .check-box {
+      background: #8e44ad;
+      border-color: #8e44ad;
+    }
+    .evrak-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e8f0fe;
+    }
+    .evrak-desc {
+      font-size: 11px;
+      color: #8aaccc;
+      margin-top: 2px;
+    }
+
+    .group-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8aaccc;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 16px 0 8px;
+    }
+    .group-title:first-child { margin-top: 0; }
+
+    .select-all-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 8px;
+    }
+    .sel-btn {
+      flex: 1;
+      background: #1a2d45;
+      border: 1px solid #1e3a56;
+      color: #8aaccc;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .wp-btn {
+      width: 100%;
+      background: #25d366;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .wp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .secilen-badge {
+      background: #8e44ad;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="back-btn">‹</a>
+    <h2>📋 Evrak Talebi</h2>
+  </div>
+
+  <div class="card">
+    <label class="field-label">Müşteri Adı Soyadı</label>
+    <input type="text" id="musteriAd" placeholder="Ahmet Yılmaz (opsiyonel)">
+
+    <p class="section-title">Evrak Seçimi</p>
+
+    <div class="select-all-row">
+      <button class="sel-btn" onclick="tumunuSec()">✓ Tümünü Seç</button>
+      <button class="sel-btn" onclick="tumunuKaldir()">✕ Tümünü Kaldır</button>
+      <span class="secilen-badge" id="secilenSayac">0 seçili</span>
+    </div>
+
+    <div class="evrak-list" id="evrakList">
+
+      <div class="group-title">Kimlik & Adres</div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🪪 TC Kimlik Kartı (ön-arka fotokopi)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">TC Kimlik Kartı</div>
+          <div class="evrak-desc">Ön ve arka yüz fotokopisi</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="📄 Nüfus Cüzdanı Fotokopisi">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Nüfus Cüzdanı</div>
+          <div class="evrak-desc">Fotokopi veya tarama</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🏠 İkametgah Belgesi (son 3 ay)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">İkametgah Belgesi</div>
+          <div class="evrak-desc">Son 3 aya ait, e-devlet'ten alınabilir</div>
+        </div>
+      </div>
+
+      <div class="group-title">Gelir & Çalışma</div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="💼 Maaş Bordrosu (son 3 ay)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Maaş Bordrosu</div>
+          <div class="evrak-desc">Son 3 aylık</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🏢 İşe Giriş Bildirgesi / SGK Hizmet Dökümü">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">SGK Hizmet Dökümü</div>
+          <div class="evrak-desc">İşe giriş bildirgesi veya hizmet dökümü</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="📊 Vergi Levhası (esnaf/serbest meslek için)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Vergi Levhası</div>
+          <div class="evrak-desc">Esnaf ve serbest meslek sahipleri için</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="📑 Gelir-Gider Tablosu (esnaf/ticari)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Gelir-Gider Tablosu</div>
+          <div class="evrak-desc">Ticari işletmeler için</div>
+        </div>
+      </div>
+
+      <div class="group-title">Banka & Finansal</div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🏦 Banka Hesap Dökümü (son 6 ay)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Banka Hesap Dökümü</div>
+          <div class="evrak-desc">Son 6 aylık ekstre</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="💳 Kredi Kartı Ekstresi (son 3 ay)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Kredi Kartı Ekstresi</div>
+          <div class="evrak-desc">Son 3 aylık</div>
+        </div>
+      </div>
+
+      <div class="group-title">Taşıt / Konut (ihtiyaç varsa)</div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🚗 Araç Ruhsatı (taşıt kredisi için)">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Araç Ruhsatı</div>
+          <div class="evrak-desc">Taşıt kredisi başvurularında</div>
+        </div>
+      </div>
+
+      <div class="evrak-item" onclick="toggle(this)">
+        <input type="checkbox" value="🏠 Tapu / Kira Sözleşmesi">
+        <div class="check-box">✓</div>
+        <div>
+          <div class="evrak-label">Tapu / Kira Sözleşmesi</div>
+          <div class="evrak-desc">Konut sahibi veya kiracı belgesi</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="wp-btn" id="wpBtn" onclick="wpGonder()" disabled>
+    📲 WhatsApp ile Gönder
+  </button>
+
+  <script>
+    function toggle(item) {
+      item.classList.toggle('checked');
+      const cb = item.querySelector('input[type="checkbox"]');
+      cb.checked = item.classList.contains('checked');
+      updateSayac();
+    }
+
+    function updateSayac() {
+      const secilen = document.querySelectorAll('.evrak-item.checked').length;
+      document.getElementById('secilenSayac').textContent = secilen + ' seçili';
+      document.getElementById('wpBtn').disabled = secilen === 0;
+    }
+
+    function tumunuSec() {
+      document.querySelectorAll('.evrak-item').forEach(item => {
+        item.classList.add('checked');
+        item.querySelector('input[type="checkbox"]').checked = true;
+      });
+      updateSayac();
+    }
+
+    function tumunuKaldir() {
+      document.querySelectorAll('.evrak-item').forEach(item => {
+        item.classList.remove('checked');
+        item.querySelector('input[type="checkbox"]').checked = false;
+      });
+      updateSayac();
+    }
+
+    function wpGonder() {
+      const ad = document.getElementById('musteriAd').value.trim();
+      const secilen = [];
+      document.querySelectorAll('.evrak-item.checked input[type="checkbox"]').forEach(cb => {
+        secilen.push('• ' + cb.value);
+      });
+      if (secilen.length === 0) return;
+
+      const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
+      const mesaj = `${musteriSatir}*KREDİZMİR — Evrak Talebi*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `Kredi başvurunuz için aşağıdaki evrakların tarafımıza iletilmesi gerekmektedir:\n\n`
+        + secilen.join('\n')
+        + `\n\n━━━━━━━━━━━━━━━━━━\n`
+        + `📸 Belgelerinizi WhatsApp üzerinden veya ofisimize getirerek teslim edebilirsiniz.\n`
+        + `_KREDİZMİR Finansal Çözümler_`;
+
+      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+    }
+  </script>
+</body>
+</html>

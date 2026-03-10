@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sözleşme Gönder — KREDİZMİR</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      color: #e8f0fe;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      background: #1a2d45;
+      border: none;
+      color: #4db8ff;
+      font-size: 22px;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+    }
+    .topbar h2 { font-size: 18px; font-weight: 700; color: #fff; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2ecc71;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .card {
+      background: #1a2d45;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #1e3a56;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #8aaccc;
+      margin-bottom: 6px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    label:first-child { margin-top: 0; }
+    input, select, textarea {
+      width: 100%;
+      background: #0d1b2a;
+      border: 1px solid #1e3a56;
+      border-radius: 8px;
+      color: #e8f0fe;
+      font-size: 15px;
+      padding: 10px 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #2ecc71; }
+    textarea { resize: vertical; min-height: 120px; font-size: 13px; line-height: 1.6; }
+    .gen-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2ecc71, #1a8a4a);
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .preview-area { display: none; }
+    .preview-area.visible { display: block; }
+    .sozlesme-box {
+      background: #0d1b2a;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #e8f0fe;
+      white-space: pre-wrap;
+      border: 1px solid #1e3a56;
+    }
+    .action-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-pdf {
+      flex: 1;
+      background: #c0392b;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .btn-wp {
+      flex: 1;
+      background: #25d366;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="back-btn">‹</a>
+    <h2>📄 Sözleşme Gönder</h2>
+  </div>
+
+  <div class="card">
+    <p class="section-title">Müşteri Bilgileri</p>
+
+    <label>Müşteri Adı Soyadı</label>
+    <input type="text" id="musteriAd" placeholder="Ahmet Yılmaz">
+
+    <label>TC Kimlik No</label>
+    <input type="text" id="musteriTC" placeholder="11234567890" maxlength="11" inputmode="numeric">
+
+    <label>Telefon</label>
+    <input type="tel" id="musteriTel" placeholder="05xx xxx xx xx" inputmode="tel">
+
+    <label>Kredi Tutarı (₺)</label>
+    <input type="number" id="sozTutar" placeholder="Örn: 150000" inputmode="numeric">
+
+    <label>Vade (Ay)</label>
+    <select id="sozVade">
+      <option value="12">12 Ay</option>
+      <option value="18">18 Ay</option>
+      <option value="24" selected>24 Ay</option>
+      <option value="30">30 Ay</option>
+      <option value="36">36 Ay</option>
+    </select>
+
+    <label>Sözleşme Tarihi</label>
+    <input type="date" id="sozTarih">
+
+    <button class="gen-btn" onclick="sozlesmeOlustur()">📄 Sözleşme Oluştur</button>
+  </div>
+
+  <div class="preview-area" id="previewArea">
+    <div class="card">
+      <p class="section-title">Sözleşme Önizleme</p>
+      <div class="sozlesme-box" id="sozlesmeMetin"></div>
+    </div>
+
+    <div class="action-btns">
+      <button class="btn-pdf" onclick="indir()">⬇️ PDF İndir</button>
+      <button class="btn-wp" onclick="wpGonder()">📲 WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    // Bugünün tarihini varsayılan yap
+    document.getElementById('sozTarih').valueAsDate = new Date();
+
+    let sozlesmeText = '';
+
+    function fmt(n) {
+      return parseFloat(n).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function sozlesmeOlustur() {
+      const ad = document.getElementById('musteriAd').value.trim();
+      const tc = document.getElementById('musteriTC').value.trim();
+      const tel = document.getElementById('musteriTel').value.trim();
+      const tutar = document.getElementById('sozTutar').value;
+      const vade = document.getElementById('sozVade').value;
+      const tarih = document.getElementById('sozTarih').value;
+
+      if (!ad) { alert('Lütfen müşteri adını girin.'); return; }
+      if (!tutar) { alert('Lütfen kredi tutarını girin.'); return; }
+
+      const tarihObj = tarih ? new Date(tarih) : new Date();
+      const tarihStr = tarihObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      sozlesmeText = `KREDİZMİR FİNANSAL ÇÖZÜMLER
+KREDI HİZMET SÖZLEŞMESİ
+
+Tarih: ${tarihStr}
+────────────────────────────────────────
+
+MÜŞTERİ BİLGİLERİ
+
+Ad Soyad       : ${ad || '—'}
+TC Kimlik No   : ${tc || '—'}
+Telefon        : ${tel || '—'}
+
+KREDİ BİLGİLERİ
+
+Kredi Tutarı   : ₺${tutar ? fmt(tutar) : '—'}
+Vade           : ${vade} Ay
+Başlangıç Tar. : ${tarihStr}
+
+────────────────────────────────────────
+
+SÖZLEŞME KOŞULLARI
+
+1. İşbu sözleşme, KREDİZMİR Finansal Çözümler ile yukarıda
+   kimlik bilgileri yazılı müşteri arasında düzenlenmiştir.
+
+2. Müşteri, belirtilen kredi tutarını ve vadesini kabul eder.
+   Geri ödeme planı taraflarca karşılıklı mutabık kalınarak
+   belirlenecektir.
+
+3. Müşteri, başvuru sürecinde gerçeğe aykırı belge ve bilgi
+   sunmayacağını beyan ve taahhüt eder.
+
+4. Kredi onay ve kullandırım süreci, banka/finans kuruluşunun
+   kararına tabidir. KREDİZMİR aracı kurum sıfatıyla hareket
+   eder.
+
+5. Bu sözleşme elektronik ortamda düzenlenmiş olup tarafların
+   onayıyla geçerlilik kazanır.
+
+────────────────────────────────────────
+
+MÜŞTERİ                    KREDİZMİR YETKİLİSİ
+
+${ad || '________________________'}
+
+İmza: ___________________   İmza: ___________________
+
+────────────────────────────────────────
+KREDİZMİR Finansal Çözümler © ${tarihObj.getFullYear()}`;
+
+      document.getElementById('sozlesmeMetin').textContent = sozlesmeText;
+      document.getElementById('previewArea').classList.add('visible');
+      document.getElementById('previewArea').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function indir() {
+      if (!sozlesmeText) return;
+      const element = document.getElementById('sozlesmeMetin');
+      const opt = {
+        margin: [15, 20],
+        filename: 'sozlesme-kredizmir.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      const origStyle = element.getAttribute('style') || '';
+      element.style.background = '#fff';
+      element.style.color = '#000';
+      element.style.border = '1px solid #ccc';
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        element.setAttribute('style', origStyle);
+      });
+    }
+
+    function wpGonder() {
+      if (!sozlesmeText) return;
+      window.open('https://wa.me/?text=' + encodeURIComponent(sozlesmeText), '_blank');
+    }
+  </script>
+</body>
+</html>

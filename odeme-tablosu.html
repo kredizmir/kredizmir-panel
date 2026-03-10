@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ödeme Tablosu — KREDİZMİR</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      color: #e8f0fe;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      background: #1a2d45;
+      border: none;
+      color: #4db8ff;
+      font-size: 22px;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+    }
+    .topbar h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4db8ff;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .card {
+      background: #1a2d45;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #1e3a56;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #8aaccc;
+      margin-bottom: 6px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    label:first-child { margin-top: 0; }
+    input, select {
+      width: 100%;
+      background: #0d1b2a;
+      border: 1px solid #1e3a56;
+      border-radius: 8px;
+      color: #e8f0fe;
+      font-size: 15px;
+      padding: 10px 12px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #1a6fa3; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid #1e3a56;
+      background: #0d1b2a;
+      color: #8aaccc;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      border-color: #1a6fa3;
+      background: #1a2d45;
+      color: #4db8ff;
+    }
+    .calc-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #1a6fa3, #0d4f7c);
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+    .result-area { display: none; }
+    .result-area.visible { display: block; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .summary-item {
+      background: #0d1b2a;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .summary-item .val {
+      font-size: 17px;
+      font-weight: 800;
+      color: #4db8ff;
+    }
+    .summary-item .lbl {
+      font-size: 11px;
+      color: #8aaccc;
+      margin-top: 4px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th {
+      background: #0d1b2a;
+      color: #8aaccc;
+      padding: 8px 6px;
+      text-align: center;
+      font-weight: 700;
+      border-bottom: 1px solid #1e3a56;
+    }
+    td {
+      padding: 8px 6px;
+      text-align: center;
+      border-bottom: 1px solid #1a2d45;
+      color: #e8f0fe;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: rgba(26,45,69,0.5); }
+    .action-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-pdf {
+      flex: 1;
+      background: #c0392b;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .btn-wp {
+      flex: 1;
+      background: #25d366;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .btn-pdf:disabled, .btn-wp:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* PDF print stili */
+    @media print {
+      body { background: #fff; color: #000; padding: 10px; }
+      .topbar, .card:first-of-type, .action-btns, .tabs { display: none !important; }
+      .result-area { display: block !important; }
+      .card { background: #fff; border: 1px solid #ccc; }
+      .summary-item { background: #f5f5f5; }
+      .summary-item .val { color: #1a6fa3; }
+      th { background: #eee; color: #333; }
+      td { color: #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="back-btn">‹</a>
+    <h2>📊 Ödeme Tablosu</h2>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="setMode('banka')">🏦 Banka Kredisi</button>
+    <button class="tab-btn" onclick="setMode('djs')">💼 DJS / Özel</button>
+  </div>
+
+  <div class="card">
+    <p class="section-title">Kredi Bilgileri</p>
+    <label>Kredi Tutarı (₺)</label>
+    <input type="number" id="tutar" placeholder="Örn: 100000" inputmode="numeric">
+
+    <label>Yıllık Faiz Oranı (%)</label>
+    <input type="number" id="faiz" placeholder="Örn: 3.5" step="0.1" inputmode="decimal">
+
+    <label>Vade (Ay)</label>
+    <select id="vade">
+      <option value="12">12 Ay</option>
+      <option value="18">18 Ay</option>
+      <option value="24" selected>24 Ay</option>
+      <option value="30">30 Ay</option>
+      <option value="36">36 Ay</option>
+      <option value="48">48 Ay</option>
+      <option value="60">60 Ay</option>
+    </select>
+
+    <label>Müşteri Adı (opsiyonel)</label>
+    <input type="text" id="musteri" placeholder="Müşteri adı soyadı">
+
+    <button class="calc-btn" onclick="hesapla()">📊 Tabloyu Oluştur</button>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="card" id="pdfContent">
+      <p class="section-title" id="tableTitle">Ödeme Planı</p>
+
+      <div class="summary-grid" id="summaryGrid"></div>
+
+      <div class="table-wrap">
+        <table id="odemeTable">
+          <thead>
+            <tr>
+              <th>Ay</th>
+              <th>Taksit (₺)</th>
+              <th>Ana Para</th>
+              <th>Faiz</th>
+              <th>Kalan Borç</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <button class="btn-pdf" onclick="indir()">⬇️ PDF İndir</button>
+      <button class="btn-wp" onclick="wpGonder()">📲 WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'banka';
+    let lastResult = null;
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', (mode === 'banka' && i === 0) || (mode === 'djs' && i === 1));
+      });
+    }
+
+    function fmt(n) {
+      return n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function hesapla() {
+      const tutar = parseFloat(document.getElementById('tutar').value);
+      const yillikFaiz = parseFloat(document.getElementById('faiz').value);
+      const vade = parseInt(document.getElementById('vade').value);
+      const musteri = document.getElementById('musteri').value.trim();
+
+      if (!tutar || tutar <= 0) { alert('Lütfen geçerli bir tutar girin.'); return; }
+      if (!yillikFaiz || yillikFaiz <= 0) { alert('Lütfen geçerli bir faiz oranı girin.'); return; }
+
+      const aylikFaiz = yillikFaiz / 100 / 12;
+      let taksit;
+      if (aylikFaiz === 0) {
+        taksit = tutar / vade;
+      } else {
+        taksit = tutar * (aylikFaiz * Math.pow(1 + aylikFaiz, vade)) / (Math.pow(1 + aylikFaiz, vade) - 1);
+      }
+
+      const toplamOdeme = taksit * vade;
+      const toplamFaiz = toplamOdeme - tutar;
+
+      // Tablo satırları
+      const rows = [];
+      let kalanBorc = tutar;
+      for (let i = 1; i <= vade; i++) {
+        const faizBedeli = kalanBorc * aylikFaiz;
+        const anaPara = taksit - faizBedeli;
+        kalanBorc -= anaPara;
+        if (kalanBorc < 0) kalanBorc = 0;
+        rows.push({ ay: i, taksit, anaPara, faiz: faizBedeli, kalan: kalanBorc });
+      }
+
+      lastResult = { tutar, yillikFaiz, vade, taksit, toplamOdeme, toplamFaiz, musteri, rows, mode: currentMode };
+
+      // Özet
+      const modeLabel = currentMode === 'djs' ? 'DJS / Özel Kredi' : 'Banka Kredisi';
+      document.getElementById('tableTitle').textContent =
+        (musteri ? musteri + ' — ' : '') + modeLabel + ' Ödeme Planı';
+
+      document.getElementById('summaryGrid').innerHTML = `
+        <div class="summary-item">
+          <div class="val">₺${fmt(taksit)}</div>
+          <div class="lbl">Aylık Taksit</div>
+        </div>
+        <div class="summary-item">
+          <div class="val">${vade} Ay</div>
+          <div class="lbl">Vade</div>
+        </div>
+        <div class="summary-item">
+          <div class="val">₺${fmt(toplamOdeme)}</div>
+          <div class="lbl">Toplam Ödeme</div>
+        </div>
+        <div class="summary-item">
+          <div class="val">₺${fmt(toplamFaiz)}</div>
+          <div class="lbl">Toplam Faiz</div>
+        </div>
+      `;
+
+      // Tablo
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.ay}</td>
+          <td>₺${fmt(r.taksit)}</td>
+          <td>₺${fmt(r.anaPara)}</td>
+          <td>₺${fmt(r.faiz)}</td>
+          <td>₺${fmt(r.kalan)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('resultArea').classList.add('visible');
+      document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function indir() {
+      if (!lastResult) return;
+      const element = document.getElementById('pdfContent');
+      const opt = {
+        margin: [10, 10],
+        filename: `odeme-plani-${lastResult.vade}ay.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      // PDF için geçici beyaz tema
+      element.style.background = '#fff';
+      element.style.color = '#000';
+      document.querySelectorAll('#pdfContent th').forEach(el => {
+        el.style.background = '#eee'; el.style.color = '#333';
+      });
+      document.querySelectorAll('#pdfContent td').forEach(el => el.style.color = '#000');
+      document.querySelectorAll('#pdfContent .summary-item').forEach(el => {
+        el.style.background = '#f0f0f0';
+      });
+      document.querySelectorAll('#pdfContent .summary-item .val').forEach(el => {
+        el.style.color = '#1a6fa3';
+      });
+      document.querySelectorAll('#pdfContent .summary-item .lbl').forEach(el => {
+        el.style.color = '#555';
+      });
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        // Tema geri al
+        element.style.background = '';
+        element.style.color = '';
+        document.querySelectorAll('#pdfContent th').forEach(el => {
+          el.style.background = ''; el.style.color = '';
+        });
+        document.querySelectorAll('#pdfContent td').forEach(el => el.style.color = '');
+        document.querySelectorAll('#pdfContent .summary-item').forEach(el => el.style.background = '');
+        document.querySelectorAll('#pdfContent .summary-item .val').forEach(el => el.style.color = '');
+        document.querySelectorAll('#pdfContent .summary-item .lbl').forEach(el => el.style.color = '');
+      });
+    }
+
+    function wpGonder() {
+      if (!lastResult) return;
+      const { tutar, yillikFaiz, vade, taksit, toplamOdeme, toplamFaiz, musteri, mode } = lastResult;
+      const modeLabel = mode === 'djs' ? 'DJS / Özel' : 'Banka Kredisi';
+      const musteriSatir = musteri ? `Sayın *${musteri}*,\n\n` : '';
+      const mesaj = `${musteriSatir}*KREDİZMİR — Ödeme Planı*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `📋 Kredi Türü: ${modeLabel}\n`
+        + `💰 Kredi Tutarı: ₺${fmt(tutar)}\n`
+        + `📅 Vade: ${vade} Ay\n`
+        + `📊 Faiz Oranı: %${yillikFaiz} (yıllık)\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `✅ Aylık Taksit: *₺${fmt(taksit)}*\n`
+        + `💳 Toplam Ödeme: ₺${fmt(toplamOdeme)}\n`
+        + `📈 Toplam Faiz: ₺${fmt(toplamFaiz)}\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `_KREDİZMİR Finansal Çözümler_`;
+
+      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+    }
+  </script>
+</body>
+</html>

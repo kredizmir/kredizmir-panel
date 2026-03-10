@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konum Gönder — KREDİZMİR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1b2a;
+      color: #e8f0fe;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      background: #1a2d45;
+      border: none;
+      color: #4db8ff;
+      font-size: 22px;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+    }
+    .topbar h2 { font-size: 18px; font-weight: 700; color: #fff; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e67e22;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    .card {
+      background: #1a2d45;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #1e3a56;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      border: 2px solid #1e3a56;
+      background: #0d1b2a;
+      color: #8aaccc;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      border-color: #e67e22;
+      background: #1a2d45;
+      color: #f0a050;
+    }
+
+    /* Mevcut konum paneli */
+    #panelMevcut { display: block; }
+    #panelOfis { display: none; }
+
+    .konum-status {
+      background: #0d1b2a;
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      margin-bottom: 14px;
+      border: 1px solid #1e3a56;
+    }
+    .konum-icon { font-size: 48px; margin-bottom: 12px; }
+    .konum-status h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .konum-status p { font-size: 13px; color: #8aaccc; line-height: 1.5; }
+    .konum-coords {
+      font-size: 12px;
+      color: #4db8ff;
+      margin-top: 8px;
+      font-family: monospace;
+    }
+
+    .loc-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #e67e22, #a85309);
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .loc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #8aaccc;
+      margin-bottom: 6px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    label:first-child { margin-top: 0; }
+    input, textarea {
+      width: 100%;
+      background: #0d1b2a;
+      border: 1px solid #1e3a56;
+      border-radius: 8px;
+      color: #e8f0fe;
+      font-size: 14px;
+      padding: 10px 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus { border-color: #e67e22; }
+    textarea { resize: vertical; min-height: 80px; font-size: 13px; line-height: 1.5; }
+
+    .map-preview {
+      display: none;
+      background: #0d1b2a;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid #1e3a56;
+      word-break: break-all;
+      font-size: 12px;
+      color: #4db8ff;
+    }
+    .map-preview.visible { display: block; }
+
+    .wp-btn {
+      width: 100%;
+      background: #25d366;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .wp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .error-msg {
+      background: rgba(192,57,43,0.2);
+      border: 1px solid #c0392b;
+      border-radius: 10px;
+      padding: 12px;
+      color: #ff7675;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="back-btn">‹</a>
+    <h2>📍 Konum Gönder</h2>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="setTab('mevcut')">📡 Mevcut Konumum</button>
+    <button class="tab-btn" onclick="setTab('ofis')">🏢 Ofis Adresi</button>
+  </div>
+
+  <!-- PANEL: Mevcut Konum -->
+  <div id="panelMevcut">
+    <div class="card">
+      <p class="section-title">GPS Konumum</p>
+
+      <div class="konum-status" id="konumStatus">
+        <div class="konum-icon">📍</div>
+        <h3>Konumunuz Henüz Alınmadı</h3>
+        <p>Aşağıdaki butona basarak cihazınızın GPS konumunu alın.</p>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="loc-btn" id="locBtn" onclick="konumAl()">📡 Konumu Al</button>
+
+      <div class="map-preview" id="mapPreview"></div>
+    </div>
+
+    <div id="musteriKartMevcut" style="display:none;">
+      <div class="card">
+        <label>Müşteri Adı (opsiyonel)</label>
+        <input type="text" id="musteriAdMevcut" placeholder="Ahmet Yılmaz">
+        <label>Ek Not (opsiyonel)</label>
+        <input type="text" id="notMevcut" placeholder="Ofisimize bekliyoruz...">
+      </div>
+      <button class="wp-btn" onclick="wpGonderMevcut()">📲 WhatsApp ile Gönder</button>
+    </div>
+  </div>
+
+  <!-- PANEL: Ofis Adresi -->
+  <div id="panelOfis">
+    <div class="card">
+      <p class="section-title">Ofis Bilgileri</p>
+
+      <label>Ofis Adı</label>
+      <input type="text" id="ofisAdi" placeholder="KREDİZMİR Finansal Çözümler">
+
+      <label>Adres</label>
+      <textarea id="ofisAdres" placeholder="Mahalle, Cadde, Sokak No, İlçe / İl"></textarea>
+
+      <label>Google Maps Linki (opsiyonel)</label>
+      <input type="url" id="ofisHarita" placeholder="https://maps.google.com/...">
+
+      <label>Telefon (opsiyonel)</label>
+      <input type="tel" id="ofisTel" placeholder="0xxx xxx xx xx">
+    </div>
+
+    <div class="card">
+      <label>Müşteri Adı (opsiyonel)</label>
+      <input type="text" id="musteriAdOfis" placeholder="Ahmet Yılmaz">
+
+      <label>Ek Not</label>
+      <input type="text" id="notOfis" placeholder="Sizi bekliyoruz...">
+    </div>
+
+    <button class="wp-btn" onclick="wpGonderOfis()">📲 WhatsApp ile Gönder</button>
+  </div>
+
+  <script>
+    let mevcutLat = null, mevcutLng = null;
+
+    function setTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', (tab === 'mevcut' && i === 0) || (tab === 'ofis' && i === 1));
+      });
+      document.getElementById('panelMevcut').style.display = tab === 'mevcut' ? 'block' : 'none';
+      document.getElementById('panelOfis').style.display = tab === 'ofis' ? 'block' : 'none';
+    }
+
+    function konumAl() {
+      const btn = document.getElementById('locBtn');
+      const errMsg = document.getElementById('errorMsg');
+      errMsg.classList.remove('visible');
+      btn.disabled = true;
+      btn.textContent = '⏳ Konum alınıyor...';
+
+      if (!navigator.geolocation) {
+        showError('Bu cihaz GPS desteklemiyor. Ofis Adresi sekmesini kullanın.');
+        btn.disabled = false;
+        btn.textContent = '📡 Konumu Al';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          mevcutLat = pos.coords.latitude.toFixed(6);
+          mevcutLng = pos.coords.longitude.toFixed(6);
+          const mapsUrl = `https://maps.google.com/?q=${mevcutLat},${mevcutLng}`;
+
+          document.getElementById('konumStatus').innerHTML = `
+            <div class="konum-icon">✅</div>
+            <h3>Konum Başarıyla Alındı!</h3>
+            <p>GPS konumunuz hazır. WhatsApp üzerinden gönderin.</p>
+            <div class="konum-coords">📌 ${mevcutLat}, ${mevcutLng}</div>
+          `;
+
+          const preview = document.getElementById('mapPreview');
+          preview.innerHTML = `🗺️ <a href="${mapsUrl}" target="_blank" style="color:#4db8ff;">${mapsUrl}</a>`;
+          preview.classList.add('visible');
+
+          document.getElementById('musteriKartMevcut').style.display = 'block';
+          btn.textContent = '🔄 Konumu Yenile';
+          btn.disabled = false;
+        },
+        (err) => {
+          let msg = 'Konum alınamadı. ';
+          if (err.code === 1) msg += 'Konum izni reddedildi. Tarayıcı ayarlarından izin verin.';
+          else if (err.code === 2) msg += 'GPS sinyali alınamıyor. Açık bir alanda deneyin.';
+          else msg += 'Lütfen tekrar deneyin.';
+          showError(msg);
+          btn.disabled = false;
+          btn.textContent = '📡 Tekrar Dene';
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = '⚠️ ' + msg;
+      el.classList.add('visible');
+    }
+
+    function wpGonderMevcut() {
+      if (!mevcutLat || !mevcutLng) return;
+      const ad = document.getElementById('musteriAdMevcut').value.trim();
+      const not = document.getElementById('notMevcut').value.trim();
+      const mapsUrl = `https://maps.google.com/?q=${mevcutLat},${mevcutLng}`;
+
+      const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
+      const notSatir = not ? `\n📝 ${not}` : '';
+      const mesaj = `${musteriSatir}*KREDİZMİR — Konum Bilgisi*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `📍 Mevcut konumumuz:\n${mapsUrl}`
+        + notSatir
+        + `\n━━━━━━━━━━━━━━━━━━\n`
+        + `_KREDİZMİR Finansal Çözümler_`;
+
+      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+    }
+
+    function wpGonderOfis() {
+      const ofisAdi = document.getElementById('ofisAdi').value.trim() || 'KREDİZMİR Finansal Çözümler';
+      const adres = document.getElementById('ofisAdres').value.trim();
+      const harita = document.getElementById('ofisHarita').value.trim();
+      const tel = document.getElementById('ofisTel').value.trim();
+      const ad = document.getElementById('musteriAdOfis').value.trim();
+      const not = document.getElementById('notOfis').value.trim();
+
+      if (!adres && !harita) {
+        alert('Lütfen en azından ofis adresini veya harita linkini girin.');
+        return;
+      }
+
+      const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
+      const haritaSatir = harita ? `\n🗺️ Harita: ${harita}` : '';
+      const telSatir = tel ? `\n📞 Tel: ${tel}` : '';
+      const notSatir = not ? `\n📝 ${not}` : '';
+      const adresSatir = adres ? `\n📍 Adres: ${adres}` : '';
+
+      const mesaj = `${musteriSatir}*KREDİZMİR — Ofis Adresimiz*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `🏢 ${ofisAdi}`
+        + adresSatir
+        + haritaSatir
+        + telSatir
+        + notSatir
+        + `\n━━━━━━━━━━━━━━━━━━\n`
+        + `_Sizi ofisimizde bekliyoruz!_`;
+
+      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+    }
+  </script>
+</body>
+</html>

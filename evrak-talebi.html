@@ -16,8 +16,9 @@
     .evrak-title { font-size:15px; font-weight:700; color:#fff; }
     .evrak-tag { font-size:11px; color:#8e44ad; font-weight:600; margin-left:6px; }
     .evrak-subtitle { font-size:12px; color:#8aaccc; margin-bottom:12px; padding-left:48px; }
-    .screenshot-wrap { background:#fff; border-radius:12px; overflow:hidden; margin-bottom:8px; cursor:pointer; border:1px solid #e0e0e0; }
-    .screenshot-wrap svg { width:100%; display:block; }
+    .screenshot-wrap { background:#fff; border-radius:12px; overflow:hidden; margin-bottom:8px; cursor:pointer; border:1px solid #e0e0e0; max-height:220px; }
+    .screenshot-wrap svg { width:100%; display:block; max-height:220px; }
+    .screenshot-wrap img { width:100%; display:block; max-height:220px; object-fit:cover; object-position:top; }
     .zoom-hint { text-align:center; font-size:12px; color:#8aaccc; margin-bottom:12px; }
     .btn-row { display:flex; gap:8px; }
     .btn-edevlet { flex:1; background:#1e3a6e; border:none; color:#4db8ff; font-size:13px; font-weight:700; padding:11px 8px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
@@ -356,24 +357,8 @@ function makeAdliSicilSvg(){
 const evraklar=[
   { num:'1', title:'Vukuatl&#305; N&#252;fus Kay&#305;t &#214;rne&#287;i', tag:'Barkodlu',
     subtitle:'N&#252;fus Kay&#305;t &#214;rne&#287;i Belgesi Sorgulama',
-    link:'https://www.turkiye.gov.tr/nvi-vukuatli-nufus-kayit-ornegi-sorgulama',
-    svgFn:()=>makeSvg({ institution:'N&#252;fus ve Vatanda&#351;l&#305;k &#304;&#351;leri', service:'N&#252;fus Kay&#305;t &#214;rne&#287;i',
-      items:[
-        {t:'space',h:4},
-        {t:'label',text:'* Nufus Aile Kay&#305;t &#214;rne&#287;i T&#252;r&#252;'},
-        {t:'select',text:'Aile'},
-        {t:'label',text:'* Han Ek Listesi'},
-        {t:'radio',text:'Evet'},
-        {t:'label',text:'* &#214;l&#252;leyen Birli&#287;ini G&#246;steren'},
-        {t:'radio',text:'Evet'},
-        {t:'label',text:'* Belgemi nereden alaca&#287;&#305;m'},
-        {t:'select',text:'Kuruma Ba&#351;vur'},
-        {t:'label',text:'* Kurum Ad&#305;'},
-        {t:'select',text:'&#214;l&#252;m ve Evlenme...'},
-        {t:'space',h:8},
-        {t:'btn',text:'Sorgula'}
-      ]
-    })
+    link:'https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama',
+    svgFn:null
   },
   { num:'2', title:'&#304;kametg&#226;h Belgesi', tag:'Barkodlu',
     subtitle:'Yerle&#351;im Yeri Belgesi Sorgulama',
@@ -484,7 +469,12 @@ const evraklar=[
 /* ── render ── */
 const container=document.getElementById('cards');
 evraklar.forEach(e=>{
-  const svgStr=e.svgFn();
+  const svgStr=e.svgFn ? e.svgFn() : null;
+  const imgHtml=e.img
+    ? `<div class="screenshot-wrap" onclick="openLbImg('${e.img}')"><img src="${e.img}" alt="Örnek belge"/></div><div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>`
+    : svgStr
+      ? `<div class="screenshot-wrap" onclick="openLb(this)" data-svg="${encodeURIComponent(svgStr)}">${svgStr}</div><div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>`
+      : '';
   const card=document.createElement('div');
   card.className='evrak-card';
   card.innerHTML=`
@@ -493,8 +483,7 @@ evraklar.forEach(e=>{
       <div><span class="evrak-title">${e.title}</span><span class="evrak-tag">(${e.tag})</span></div>
     </div>
     <div class="evrak-subtitle">${e.subtitle}</div>
-    <div class="screenshot-wrap" onclick="openLb(this)" data-svg="${encodeURIComponent(svgStr)}">${svgStr}</div>
-    <div class="zoom-hint">&#128070; &#214;rnek belge &#8212; t&#305;kla b&#252;y&#252;t</div>
+    ${imgHtml}
     <div class="btn-row">
       <a href="${e.link}" target="_blank" class="btn-edevlet">&#128279; E-Devlet'te A&#231;</a>
       <button class="btn-copy" onclick="copyLink('${e.link}',this)">&#128203; Linki Kopyala</button>
@@ -504,6 +493,10 @@ evraklar.forEach(e=>{
 
 function openLb(wrap){
   document.getElementById('lb-inner').innerHTML=decodeURIComponent(wrap.getAttribute('data-svg'));
+  document.getElementById('lightbox').classList.add('open');
+}
+function openLbImg(src){
+  document.getElementById('lb-inner').innerHTML=`<img src="${src}" style="width:100%;border-radius:12px;display:block;" alt="Örnek belge"/>`;
   document.getElementById('lightbox').classList.add('open');
 }
 document.getElementById('lightbox').addEventListener('click',function(e){ if(e.target===this)this.classList.remove('open'); });

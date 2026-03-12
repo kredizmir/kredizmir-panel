@@ -349,11 +349,20 @@ body::before{
 @page{size:A4 portrait;margin:13mm;}
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  #pdf-panel{position:static!important;background:#fff!important;}
-  .pdf-panel-bar,.ios-rehber{display:none!important;}
-  .pdf-a4-wrap{box-shadow:none!important;margin:0!important;padding:0!important;max-width:100%!important;border-radius:0!important;}
+  html,body{background:#fff!important;color:#000!important;}
+  body::before{display:none!important;}
   body > *:not(#pdf-panel){display:none!important;}
-  #pdf-panel{display:block!important;}
+  #pdf-panel{display:block!important;position:static!important;background:#fff!important;overflow:visible!important;}
+  .pdf-panel-bar,.ios-rehber{display:none!important;}
+  .pdf-a4-wrap{box-shadow:none!important;margin:0!important;padding:0!important;max-width:100%!important;border-radius:0!important;background:#fff!important;}
+  .hdr{background:#0D47A1!important;}
+  .kart.v{background:#0D47A1!important;}
+  .kart.v *{color:#fff!important;}
+  .kart.v .kart-lbl,.kart.v .kart-sub{color:rgba(255,255,255,.7)!important;}
+  .kart.v .kart-ay{color:#7DD4F8!important;}
+  .tur-badge{background:#0D47A1!important;}
+  .badge-green{background:#0EB87A!important;}
+  .footer{border-top:1.5px solid #C5D8F8!important;}
 }
 /* RESPONSIVE */
 @media(max-width:1100px){.summary-grid{grid-template-columns:repeat(2,1fr);}.pdf-detail-grid{grid-template-columns:repeat(2,1fr);}}
@@ -775,7 +784,7 @@ async function renderCustomerPDF(state){
         <div>
           <div class="pdf-ph-tag">FİNANSMAN TUTARI</div>
           <div class="pdf-ph-amount"><span>₺</span>${formatTL(state.tutar)}</div>
-          <div class="pdf-ph-sub">${state.hizmet>0 ? `+ ${formatTL(state.hizmet)} ₺ dosya bedeli dahil hesaplandı` : ''}</div>
+          <div class="pdf-ph-sub">${state.hizmet>0 ? '(+ ekstra dahil hesaplandı)' : ''}</div>
         </div>
         <div class="pdf-ph-right">
           <div class="pdf-ph-date-label">VADE SEÇENEKLERİ</div>
@@ -907,7 +916,7 @@ function buildA4HTML(state) {
     <div class="tek-box">
       <div class="tek-lbl">Finansman Tutarı</div>
       <div class="tek-tutar">₺${formatTL(state.tutar)}</div>
-      <div class="tek-sub">${state.hizmet>0 ? '(+ '+formatTL(state.hizmet)+' ₺ dosya bedeli dahil hesaplandı)' : ''}</div>
+      <div class="tek-sub">${state.hizmet>0 ? '(+ ekstra dahil hesaplandı)' : ''}</div>
     </div>
     ${pesinatSatir}
     <div class="sec-title">Vadeye Göre Taksit Seçenekleri</div>
@@ -918,7 +927,6 @@ function buildA4HTML(state) {
       <tr><td class="dt-lbl">Aylık Faiz Oranı</td><td class="dt-val">%${state.faiz.toFixed(2).replace('.',',')}</td></tr>
       <tr><td class="dt-lbl">Yıllık Faiz Oranı</td><td class="dt-val">%${(state.faiz*12).toFixed(2).replace('.',',')}</td></tr>
       <tr><td class="dt-lbl">BSMV / Vergi</td><td class="dt-val">%${state.vergi}</td></tr>
-      ${state.hizmet>0 ? `<tr><td class="dt-lbl">Dosya Bedeli</td><td class="dt-val">₺${formatTL(state.hizmet)}</td></tr>` : ''}
       ${state.pesinat>0 ? `<tr><td class="dt-lbl">Peşinat</td><td class="dt-val">₺${formatTL(state.pesinat)}</td></tr>` : ''}
       <tr><td class="dt-lbl">Maks. Toplam Ödeme (36 ay)</td><td class="dt-val">₺${toplamOdeme36}</td></tr>
     </table>

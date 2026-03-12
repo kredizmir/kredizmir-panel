@@ -141,6 +141,27 @@ body::before{
   background:rgba(232,160,32,.04);border:1px solid rgba(232,160,32,.15);
   border-radius:var(--radius-sm);padding:14px;margin-top:4px;
 }
+.tutar-hint{font-size:10.5px;color:rgba(125,212,248,.65);line-height:1.55;margin-top:6px;}
+.zorunlu-field{
+  background:rgba(232,69,69,.04);border:1px solid rgba(232,69,69,.2);
+  border-radius:var(--radius-sm);padding:14px;margin-top:4px;
+}
+.zorunlu-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px;}
+.zorunlu-btn{
+  padding:11px 4px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--card-bg);color:var(--text-3);
+  font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;
+  cursor:pointer;transition:all .18s;text-align:center;line-height:1.3;
+}
+.zorunlu-btn:hover{border-color:var(--danger);color:var(--text-2);}
+.zorunlu-btn.active{
+  background:rgba(232,69,69,.15);border-color:var(--danger);border-width:2px;
+  color:#FF9090;font-weight:800;box-shadow:0 0 10px rgba(232,69,69,.2);
+}
+.pdf-zorunlu-box{background:#FFF5F5;border:1px solid #F8C0C0;border-left:4px solid #E84545;border-radius:8px;padding:14px 18px;margin-bottom:16px;}
+.pdf-zorunlu-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C0392B;margin-bottom:10px;}
+.pdf-zorunlu-items{display:flex;flex-wrap:wrap;gap:8px;}
+.pdf-zorunlu-badge{background:#FDECEA;border:1px solid #F5B7B1;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;color:#C0392B;}
 .banka-limit-note{
   display:none;background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.22);
   border-radius:var(--radius-xs);padding:7px 11px;margin-top:6px;
@@ -464,6 +485,7 @@ body::before{
     <div class="field tutar-field">
       <label>💰 Finansman Tutarı (₺)</label>
       <input type="number" id="f-tutar" placeholder="örn. 400000" min="0"/>
+      <div class="tutar-hint">💡 Müşterinin eline geçecek tutarı seçiniz.<br/>Dosya masrafını alttan ekleyiniz.</div>
       <div class="banka-limit-note" id="banka-limit-note">🏦 Banka Kredisi maks. tutar: <strong>400.000 ₺</strong></div>
     </div>
     <div class="field pesinat-field">
@@ -483,7 +505,17 @@ body::before{
         <button class="hizmet-btn" onclick="selectHizmet(80000)">80.000 ₺</button>
       </div>
       <input type="hidden" id="f-hizmet" value="0"/>
-      <div class="hint" style="color:rgba(232,160,32,.8);font-size:11.5px;margin-top:8px;">⚠️ Hesaplamaya dahil edilir, PDF'te yalnızca <strong>(+ ekstra)</strong> görünür.</div>
+      <div class="hint" style="color:rgba(232,160,32,.8);font-size:11.5px;margin-top:8px;">⚠️ Hesaplamaya dahil edilir. Müşteriye <strong>"ekstra"</strong> olarak gösterilir — PDF'te tutar yansımaz.</div>
+    </div>
+
+    <div class="field zorunlu-field">
+      <label style="font-size:13px;font-weight:700;color:var(--text-1);">📋 Zorunlu Koşullar <span class="optional-tag">Opsiyonel</span></label>
+      <div class="hint" style="color:rgba(125,212,248,.65);font-size:11px;margin-top:5px;">Seçtikleriniz PDF ve ödeme tablosunda görünür. Seçilmeyenler gösterilmez.</div>
+      <div class="zorunlu-btns">
+        <button class="zorunlu-btn" id="btn-eksper" onclick="toggleZorunlu('eksper')">🔍 Eksper</button>
+        <button class="zorunlu-btn" id="btn-sigorta" onclick="toggleZorunlu('sigorta')">🛡️ Sigorta</button>
+        <button class="zorunlu-btn" id="btn-kasko" onclick="toggleZorunlu('kasko')">🚗 Kasko</button>
+      </div>
     </div>
   </div>
 
@@ -547,9 +579,12 @@ const VERGI_SABIT = 30;
 let selectedRate = 4.0;
 let logoDataURL = ""; // Logo buraya base64 ekleyin veya sol üstten yükleyin
 
+let zorunluState = { eksper:false, sigorta:false, kasko:false };
+
 let appState = {
   type:'djs', musteri:'', telefon:'', email:'', tarih:'',
   tutar:0, pesinat:0, vade:36, faiz:4.00, vergi:30, hizmet:0,
+  zorunlu:{ eksper:false, sigorta:false, kasko:false },
   tableData:[], summary:null, cokluSonuclar:null
 };
 
@@ -623,6 +658,8 @@ function clearForm(){
   document.getElementById('musteri-empty').style.display='';
   document.getElementById('musteri-content').style.display='none';
   ['s-taksit','s-tutar','s-vade','s-tur'].forEach(id=>document.getElementById(id).textContent='—');
+  zorunluState={eksper:false,sigorta:false,kasko:false};
+  ['btn-eksper','btn-sigorta','btn-kasko'].forEach(id=>document.getElementById(id).classList.remove('active'));
   showToast('Form temizlendi.');
 }
 
@@ -670,6 +707,7 @@ async function generateTable(){
     email:   document.getElementById('f-email').value.trim(),
     tarih:   document.getElementById('f-tarih').value,
     tutar:tutarGirilen, tutarHesap, hizmet, pesinat, vade, faiz, vergi,
+    zorunlu: { ...zorunluState },
   };
 
   const vadeler=[12,18,24,36];
@@ -817,6 +855,17 @@ async function renderCustomerPDF(state){
         </div>`}
       </div>
       ${bankaUyariHtml}
+      ${(()=>{
+        const zItems=[];
+        if(state.zorunlu?.eksper)  zItems.push('🔍 Eksper Zorunludur');
+        if(state.zorunlu?.sigorta) zItems.push('🛡️ Sigorta Zorunludur');
+        if(state.zorunlu?.kasko)   zItems.push('🚗 Kasko Zorunludur');
+        return zItems.length>0 ? `
+          <div class="pdf-zorunlu-box">
+            <div class="pdf-zorunlu-title">⚠️ Zorunlu Koşullar</div>
+            <div class="pdf-zorunlu-items">${zItems.map(i=>`<span class="pdf-zorunlu-badge">${i}</span>`).join('')}</div>
+          </div>` : '';
+      })()}
       ${qrHtml}
     </div>
     <div class="pdf-footer">
@@ -866,6 +915,11 @@ function showLoading(show) {
 
 function showVergiYakinda(){
   showToast('🔜 Vergi levhalılara özel bölüm çok yakında eklenecektir!','info');
+}
+
+function toggleZorunlu(key){
+  zorunluState[key] = !zorunluState[key];
+  document.getElementById('btn-'+key).classList.toggle('active', zorunluState[key]);
 }
 
 /* ── BUILD A4 HTML ────────────────────────────────────────── */
@@ -939,6 +993,13 @@ function buildA4HTML(state) {
       <tr><td class="dt-lbl">Maks. Toplam Ödeme (36 ay)</td><td class="dt-val">₺${toplamOdeme36}</td></tr>
     </table>
     ${bankaUyariSatir}
+    ${(()=>{
+      const zItems=[];
+      if(state.zorunlu?.eksper)  zItems.push('🔍 Eksper Zorunludur');
+      if(state.zorunlu?.sigorta) zItems.push('🛡️ Sigorta Zorunludur');
+      if(state.zorunlu?.kasko)   zItems.push('🚗 Kasko Zorunludur');
+      return zItems.length>0 ? `<div class="banka-uyari" style="border-left-color:#E84545;background:#FFF5F5;color:#7A0000;">⚠️ <strong>Zorunlu Koşullar:</strong> ${zItems.join(' &nbsp;·&nbsp; ')}</div>` : '';
+    })()}
     <div class="not-kutu">
       Bu teklif bilgilendirme amaçlı hazırlanmış olup tahmini hesaplama içermektedir. Kesin rakamlar sözleşme aşamasında netleşecektir. Teklif geçerlilik süresi: <strong>7 gün</strong>.
     </div>

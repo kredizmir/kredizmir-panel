@@ -70,7 +70,7 @@ body::before{
   display:flex;align-items:center;gap:8px;
 }
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1px;}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:1px;}
 .type-btn{
   padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);
   background:var(--card-bg);color:var(--text-2);
@@ -125,7 +125,7 @@ body::before{
   color:#FF9090;letter-spacing:.3px;line-height:1.5;
 }
 .tarih-uyari-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
-.hizmet-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:7px;}
+.hizmet-btns{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:7px;}
 .hizmet-btn{
   padding:14px 4px;border:1px solid var(--border);border-radius:var(--radius-sm);
   background:var(--card-bg);color:var(--text-2);
@@ -421,6 +421,7 @@ body::before{
     <div class="type-toggle">
       <button class="type-btn active" id="btn-djs" onclick="setType('djs')">DJS</button>
       <button class="type-btn" id="btn-banka" onclick="setType('banka')">Banka Kredisi</button>
+      <button class="type-btn" id="btn-vergi" onclick="showVergiYakinda()">🏢 Vergi Levhalı</button>
     </div>
     <div class="rate-selector">
       <div class="rate-selector-label" id="rate-label">Dijital Senet Faiz Oranı (%)</div>
@@ -428,6 +429,7 @@ body::before{
         <button class="rate-btn" onclick="selectRate(3.6)" style="position:relative;">3,60 <span class="gelgel-badge">GEL GEL</span></button>
         <button class="rate-btn active" onclick="selectRate(4.0)">4,00</button>
         <button class="rate-btn" onclick="selectRate(4.2)">4,20</button>
+        <button class="rate-btn" onclick="selectRate(4.45)">4,45</button>
       </div>
       <div class="rate-btns" id="rate-btns-banka" style="display:none;">
         <button class="rate-btn active" onclick="selectRate(2.4)" style="position:relative;">2,40 <span class="gelgel-badge">GEL GEL</span></button>
@@ -440,7 +442,7 @@ body::before{
 
   <div class="panel-section">
     <div class="section-label">Müşteri Bilgileri</div>
-    <div class="field"><label>Müşteri Adı Soyadı</label><input type="text" id="f-musteri" placeholder="Ad Soyad"/></div>
+    <div class="field"><label>Müşteri Adı Soyadı <span style="color:#E84545;font-size:13px;">*</span></label><input type="text" id="f-musteri" placeholder="Ad Soyad" required/></div>
     <div class="field"><label>Telefon</label><input type="tel" id="f-telefon" placeholder="05XX XXX XX XX"/></div>
     <div class="field">
       <label>E-posta <span class="optional-tag">Opsiyonel</span></label>
@@ -478,6 +480,7 @@ body::before{
         <button class="hizmet-btn" onclick="selectHizmet(20000)">20.000 ₺</button>
         <button class="hizmet-btn" onclick="selectHizmet(40000)">40.000 ₺</button>
         <button class="hizmet-btn" onclick="selectHizmet(60000)">60.000 ₺</button>
+        <button class="hizmet-btn" onclick="selectHizmet(80000)">80.000 ₺</button>
       </div>
       <input type="hidden" id="f-hizmet" value="0"/>
       <div class="hint" style="color:rgba(232,160,32,.8);font-size:11.5px;margin-top:8px;">⚠️ Hesaplamaya dahil edilir, PDF'te yalnızca <strong>(+ ekstra)</strong> görünür.</div>
@@ -653,6 +656,8 @@ async function generateTable(){
   const hizmet = parseFloat(document.getElementById('f-hizmet').value)||0;
   const vade   = 36;
 
+  const musteriVal = document.getElementById('f-musteri').value.trim();
+  if(!musteriVal){showToast('⚠️ Müşteri adı soyadı zorunludur.','error');document.getElementById('f-musteri').focus();return;}
   if(!tutarGirilen||isNaN(tutarGirilen)||tutarGirilen<=0){showToast('⚠️ Geçerli bir finansman tutarı girin.','error');return;}
   if(appState.type==='banka'&&tutarGirilen>BANKA_MAX){showToast(`⚠️ Banka Kredisi maks. ${formatTL(BANKA_MAX)} ₺`,'error');return;}
 
@@ -795,20 +800,21 @@ async function renderCustomerPDF(state){
       ${pesHtml}
       <div class="pdf-coklu-baslik">📊 Vadeye Göre Taksit Seçenekleri</div>
       <div class="pdf-coklu-grid">${cokluHtml}</div>
-      <div class="pdf-sec-title">Finansman Detayları</div>
-      <div class="pdf-detail-grid">
+      <div class="pdf-sec-title">Teklif Bilgileri</div>
+      <div class="pdf-detail-grid" style="grid-template-columns:repeat(2,1fr);">
         <div class="pdf-detail-cell">
-          <div class="pdf-detail-cell-label">Aylık Faiz</div>
-          <div class="pdf-detail-cell-val">%${state.faiz.toFixed(2).replace('.',',')}</div>
+          <div class="pdf-detail-cell-label">İşlem Türü</div>
+          <div class="pdf-detail-cell-val">${modeLabel}</div>
         </div>
+        ${state.pesinat>0 ? `
         <div class="pdf-detail-cell">
-          <div class="pdf-detail-cell-label">Yıllık Faiz</div>
-          <div class="pdf-detail-cell-val">%${(state.faiz*12).toFixed(2).replace('.',',')}</div>
-        </div>
+          <div class="pdf-detail-cell-label">Peşinat</div>
+          <div class="pdf-detail-cell-val">₺${formatTL(state.pesinat)}</div>
+        </div>` : `
         <div class="pdf-detail-cell">
-          <div class="pdf-detail-cell-label">BSMV / Vergi</div>
-          <div class="pdf-detail-cell-val">%${state.vergi}</div>
-        </div>
+          <div class="pdf-detail-cell-label">Teklif Tarihi</div>
+          <div class="pdf-detail-cell-val">${tarihStr}</div>
+        </div>`}
       </div>
       ${bankaUyariHtml}
       ${qrHtml}
@@ -856,6 +862,10 @@ function showToast(msg, type) {
 
 function showLoading(show) {
   document.getElementById('loading-overlay').classList.toggle('show', show);
+}
+
+function showVergiYakinda(){
+  showToast('🔜 Vergi levhalılara özel bölüm çok yakında eklenecektir!','info');
 }
 
 /* ── BUILD A4 HTML ────────────────────────────────────────── */
@@ -922,11 +932,9 @@ function buildA4HTML(state) {
     <div class="sec-title">Vadeye Göre Taksit Seçenekleri</div>
     <div class="kart-grid">${kartlarHTML}</div>
     <div class="spacer"></div>
-    <div class="sec-title">Finansman Detayları</div>
+    <div class="sec-title">Teklif Bilgileri</div>
     <table class="detay-tablo">
-      <tr><td class="dt-lbl">Aylık Faiz Oranı</td><td class="dt-val">%${state.faiz.toFixed(2).replace('.',',')}</td></tr>
-      <tr><td class="dt-lbl">Yıllık Faiz Oranı</td><td class="dt-val">%${(state.faiz*12).toFixed(2).replace('.',',')}</td></tr>
-      <tr><td class="dt-lbl">BSMV / Vergi</td><td class="dt-val">%${state.vergi}</td></tr>
+      <tr><td class="dt-lbl">İşlem Türü</td><td class="dt-val">${modeLabel}</td></tr>
       ${state.pesinat>0 ? `<tr><td class="dt-lbl">Peşinat</td><td class="dt-val">₺${formatTL(state.pesinat)}</td></tr>` : ''}
       <tr><td class="dt-lbl">Maks. Toplam Ödeme (36 ay)</td><td class="dt-val">₺${toplamOdeme36}</td></tr>
     </table>

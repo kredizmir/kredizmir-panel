@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root{
   --navy-900:#060c18;--navy-800:#0a1220;--navy-700:#0f1d30;--navy-600:#152840;
@@ -104,7 +105,15 @@ body::before{
   vertical-align:middle;margin-left:4px;text-transform:uppercase;line-height:1.4;
   box-shadow:0 2px 6px rgba(14,184,122,.45);
 }
-.rate-btn .gelgel-badge{font-size:7.5px;}
+.gercek-badge{
+  display:inline-block;font-size:8px;font-weight:800;letter-spacing:.8px;
+  background:#E8A020;color:#fff;border-radius:4px;padding:1px 5px;
+  vertical-align:middle;margin-left:4px;text-transform:uppercase;line-height:1.4;
+  box-shadow:0 2px 6px rgba(232,160,32,.5);
+}
+.rate-btn .gelgel-badge,.rate-btn .gercek-badge{font-size:7.5px;}
+.btn-pdfdown{background:linear-gradient(135deg,#6a1b9a,#8e24aa);color:#fff;box-shadow:0 3px 14px rgba(106,27,154,.35);}
+.btn-pdfdown:hover{box-shadow:0 5px 20px rgba(106,27,154,.55);}
 .rate-fixed-note{font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.3px;}
 .cok-yakinda-box{
   display:flex;align-items:center;gap:11px;
@@ -450,7 +459,7 @@ body::before{
         <button class="rate-btn" onclick="selectRate(3.6)" style="position:relative;">3,60 <span class="gelgel-badge">GEL GEL</span></button>
         <button class="rate-btn active" onclick="selectRate(4.0)">4,00</button>
         <button class="rate-btn" onclick="selectRate(4.2)">4,20</button>
-        <button class="rate-btn" onclick="selectRate(4.45)">4,45</button>
+        <button class="rate-btn" onclick="selectRate(4.45)" style="position:relative;">4,45 <span class="gercek-badge">GERÇEK</span></button>
       </div>
       <div class="rate-btns" id="rate-btns-banka" style="display:none;">
         <button class="rate-btn active" onclick="selectRate(2.4)" style="position:relative;">2,40 <span class="gelgel-badge">GEL GEL</span></button>
@@ -540,8 +549,9 @@ body::before{
   </div>
   <div id="musteri-content" style="display:none;" class="animate-in">
     <div class="action-bar">
-      <button class="btn-action btn-pdf" onclick="openPDFPanel()">🖨️ PDF Gör / Yazdır</button>
-      <button class="btn-action btn-img" onclick="saveGorsel()">🖼️ PNG Paylaş / İndir</button>
+      <button class="btn-action btn-pdf" onclick="openPDFPanel()">📄 PDF Önizle</button>
+      <button class="btn-action btn-pdfdown" onclick="savePDF()">📥 PDF İndir</button>
+      <button class="btn-action btn-img" onclick="saveGorsel()">🖼️ PNG</button>
       <button class="btn-action btn-wa"  onclick="openWhatsApp()">📲 WhatsApp</button>
       <button class="btn-action btn-mail" onclick="openMail()">✉️ Mail</button>
     </div>
@@ -556,19 +566,10 @@ body::before{
 <!-- PDF PANEL -->
 <div id="pdf-panel">
   <div class="pdf-panel-bar">
-    <button class="btn-pp-print" onclick="window.print()">🖨️ Yazdır / PDF Kaydet</button>
+    <button class="btn-pp-print" style="background:linear-gradient(135deg,#6a1b9a,#8e24aa);" onclick="savePDF()">📥 PDF İndir</button>
+    <button class="btn-pp-print" style="background:linear-gradient(135deg,#1a6b3a,#1e8449);" onclick="sharePDF()">📤 PDF Paylaş</button>
+    <button class="btn-pp-print" onclick="window.print()">🖨️ Yazdır</button>
     <button class="btn-pp-back"  onclick="kapatPDFPanel()">✕ Kapat</button>
-    <button class="btn-pp-print" id="btn-ios-share" style="display:none;background:linear-gradient(135deg,#1a6b3a,#1e8449);" onclick="sayfayiPaylas()">📤 Paylaş</button>
-  </div>
-  <div class="ios-rehber" id="ios-rehber" style="display:none;">
-    <div class="ios-rehber-baslik">📱 iPhone'da PDF Kaydetme</div>
-    <div class="ios-rehber-adimlar">
-      <div class="ios-adim"><span class="ios-no">1</span>Yukarıdaki <strong>"Paylaş"</strong> butonuna basın</div>
-      <div class="ios-adim"><span class="ios-no">2</span><strong>"Seçenekler"</strong>e dokunun</div>
-      <div class="ios-adim"><span class="ios-no">3</span><strong>PDF</strong> seçin → Geri dönün</div>
-      <div class="ios-adim"><span class="ios-no">4</span><strong>"Dosyalara Kaydet"</strong>e basın ✅</div>
-    </div>
-    <div class="ios-rehber-alt">Ya da: <strong>Paylaş ikonu → Seçenekler → PDF → Dosyalara Kaydet</strong></div>
   </div>
   <div class="pdf-a4-wrap" id="pdf-a4-content"></div>
 </div>
@@ -1022,10 +1023,66 @@ function openPDFPanel() {
   document.getElementById('pdf-a4-content').innerHTML = buildA4HTML(appState);
   const panel = document.getElementById('pdf-panel');
   panel.classList.add('active');
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  document.getElementById('btn-ios-share').style.display = isIOS ? 'inline-block' : 'none';
-  document.getElementById('ios-rehber').style.display   = isIOS ? 'block'        : 'none';
   panel.scrollTo(0,0);
+}
+
+/* ── PDF INDIRME / PAYLASMA ───────────────────────────────── */
+
+function _buildPDFWorker() {
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:210mm;background:#fff;font-family:sans-serif;';
+  wrapper.innerHTML = buildA4HTML(appState);
+  document.body.appendChild(wrapper);
+  const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
+  const opt = {
+    margin: 13,
+    filename: `kredizmir-${name}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#fff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  return { wrapper, opt, name };
+}
+
+async function savePDF() {
+  if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
+  showLoading(true);
+  const { wrapper, opt } = _buildPDFWorker();
+  try {
+    await html2pdf().set(opt).from(wrapper).save();
+    showToast('✅ PDF indirildi!', 'success');
+  } catch(e) {
+    showToast('⚠️ PDF oluşturulamadı.', 'error');
+  } finally {
+    document.body.removeChild(wrapper);
+    showLoading(false);
+  }
+}
+
+async function sharePDF() {
+  if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
+  showLoading(true);
+  const { wrapper, opt, name } = _buildPDFWorker();
+  try {
+    const pdfBlob = await html2pdf().set(opt).from(wrapper).outputPdf('blob');
+    document.body.removeChild(wrapper);
+    const file = new File([pdfBlob], `kredizmir-${name}.pdf`, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ title: 'KREDİZMİR Ödeme Teklifi', files: [file] });
+      showToast('✅ PDF paylaşıldı!', 'success');
+    } else {
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `kredizmir-${name}.pdf`; a.click();
+      URL.revokeObjectURL(url);
+      showToast('✅ PDF indirildi!', 'success');
+    }
+  } catch(e) {
+    if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
+    if (e.name !== 'AbortError') showToast('⚠️ PDF paylaşılamadı.', 'error');
+  } finally {
+    showLoading(false);
+  }
 }
 
 function kapatPDFPanel() {
@@ -1135,15 +1192,7 @@ function openMail() {
 /* ── IOS SHARE ────────────────────────────────────────────── */
 
 async function sayfayiPaylas() {
-  try {
-    await navigator.share({
-      title: 'KREDİZMİR Ödeme Teklifi',
-      text:  'KREDİZMİR tarafından hazırlanmış ödeme planı teklifinizi görüntüleyin.',
-      url:   window.location.href
-    });
-  } catch(e) {
-    if (e.name !== 'AbortError') showToast('Paylaşım tamamlanamadı.','error');
-  }
+  await sharePDF();
 }
 
 </script>

@@ -709,6 +709,7 @@ async function renderCustomerPDF(state){
       <div class="pdf-pesinat-value">${formatTL(state.pesinat)} ₺</div>
     </div>` : '';
 
+  const bankaUyariHtml = state.type==='banka' ? `
     <div style="background:#FFF8EC;border:1px solid #F0D87A;border-left:4px solid #E8A020;border-radius:8px;padding:14px 18px;margin-top:16px;">
       <div style="font-size:9px;color:#B07000;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;">⚠️ Banka Kredisi Bilgilendirme</div>
       <div style="font-size:12px;color:#7A5000;line-height:1.7;">Belirtilen taksit ve faiz bilgileri tahminidir. Kesin rakamlar banka onay sürecinde netleşir. Vergi oranları değişkenlik gösterebilir.</div>

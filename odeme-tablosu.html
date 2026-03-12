@@ -114,6 +114,8 @@ body::before{
 .rate-btn .gelgel-badge,.rate-btn .gercek-badge{font-size:7.5px;}
 .btn-pdfdown{background:linear-gradient(135deg,#6a1b9a,#8e24aa);color:#fff;box-shadow:0 3px 14px rgba(106,27,154,.35);}
 .btn-pdfdown:hover{box-shadow:0 5px 20px rgba(106,27,154,.55);}
+.btn-ig{background:linear-gradient(135deg,#833ab4,#C13584,#E1306C);color:#fff;box-shadow:0 3px 14px rgba(193,53,132,.35);}
+.btn-ig:hover{box-shadow:0 5px 20px rgba(193,53,132,.55);}
 .rate-fixed-note{font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.3px;}
 .cok-yakinda-box{
   display:flex;align-items:center;gap:11px;
@@ -551,7 +553,7 @@ body::before{
     <div class="action-bar">
       <button class="btn-action btn-pdf" onclick="openPDFPanel()">📄 PDF Önizle</button>
       <button class="btn-action btn-pdfdown" onclick="savePDF()">📥 PDF İndir</button>
-      <button class="btn-action btn-img" onclick="saveGorsel()">🖼️ PNG</button>
+      <button class="btn-action btn-ig" onclick="shareInstagram()">📸 Instagram</button>
       <button class="btn-action btn-wa"  onclick="openWhatsApp()">📲 WhatsApp</button>
       <button class="btn-action btn-mail" onclick="openMail()">✉️ Mail</button>
     </div>
@@ -567,7 +569,7 @@ body::before{
 <div id="pdf-panel">
   <div class="pdf-panel-bar">
     <button class="btn-pp-print" style="background:linear-gradient(135deg,#6a1b9a,#8e24aa);" onclick="savePDF()">📥 PDF İndir</button>
-    <button class="btn-pp-print" style="background:linear-gradient(135deg,#1a6b3a,#1e8449);" onclick="sharePDF()">📤 PDF Paylaş</button>
+    <button class="btn-pp-print" style="background:linear-gradient(135deg,#C13584,#E1306C);" onclick="shareInstagram()">📸 Instagram</button>
     <button class="btn-pp-print" onclick="window.print()">🖨️ Yazdır</button>
     <button class="btn-pp-back"  onclick="kapatPDFPanel()">✕ Kapat</button>
   </div>
@@ -1026,63 +1028,103 @@ function openPDFPanel() {
   panel.scrollTo(0,0);
 }
 
-/* ── PDF INDIRME / PAYLASMA ───────────────────────────────── */
+/* ── PDF / GÖRSEL YARDIMCI ────────────────────────────────── */
 
-function _buildPDFWorker() {
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:210mm;background:#fff;font-family:sans-serif;';
-  wrapper.innerHTML = buildA4HTML(appState);
-  document.body.appendChild(wrapper);
-  const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
-  const opt = {
-    margin: 13,
+// Paneli geçici görünür yap (opacity:0), render sonrası geri al
+async function _showPanelForRender() {
+  const panel = document.getElementById('pdf-panel');
+  const wasActive = panel.classList.contains('active');
+  document.getElementById('pdf-a4-content').innerHTML = buildA4HTML(appState);
+  if (!wasActive) {
+    panel.style.cssText = 'display:block!important;opacity:0!important;pointer-events:none!important;';
+    // 2 frame bekle: layout ve fontların yüklenmesi için
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    await new Promise(r => setTimeout(r, 120));
+  }
+  return wasActive;
+}
+
+function _restorePanel(wasActive) {
+  if (!wasActive) {
+    const panel = document.getElementById('pdf-panel');
+    panel.style.cssText = '';
+  }
+}
+
+function _pdfOpt(name) {
+  return {
+    margin: [10, 10, 10, 10],
     filename: `kredizmir-${name}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#fff' },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
-  return { wrapper, opt, name };
 }
+
+/* ── PDF İNDİR ────────────────────────────────────────────── */
 
 async function savePDF() {
   if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
   showLoading(true);
-  const { wrapper, opt } = _buildPDFWorker();
+  const wasActive = await _showPanelForRender();
   try {
-    await html2pdf().set(opt).from(wrapper).save();
+    const el   = document.getElementById('pdf-a4-content');
+    const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
+    await html2pdf().set(_pdfOpt(name)).from(el).save();
     showToast('✅ PDF indirildi!', 'success');
   } catch(e) {
-    showToast('⚠️ PDF oluşturulamadı.', 'error');
+    showToast('⚠️ PDF oluşturulamadı. Yazdır butonunu deneyin.', 'error');
   } finally {
-    document.body.removeChild(wrapper);
+    _restorePanel(wasActive);
     showLoading(false);
   }
 }
 
-async function sharePDF() {
+/* ── INSTAGRAM / GÖRSEL PAYLAŞ ────────────────────────────── */
+
+async function shareInstagram() {
   if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
   showLoading(true);
-  const { wrapper, opt, name } = _buildPDFWorker();
   try {
-    const pdfBlob = await html2pdf().set(opt).from(wrapper).outputPdf('blob');
-    document.body.removeChild(wrapper);
-    const file = new File([pdfBlob], `kredizmir-${name}.pdf`, { type: 'application/pdf' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ title: 'KREDİZMİR Ödeme Teklifi', files: [file] });
-      showToast('✅ PDF paylaşıldı!', 'success');
-    } else {
-      const url = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `kredizmir-${name}.pdf`; a.click();
-      URL.revokeObjectURL(url);
-      showToast('✅ PDF indirildi!', 'success');
-    }
+    // Önizleme elementini yüksek kalitede PNG yap
+    const el = document.getElementById('pdf-document');
+    const canvas = await html2canvas(el, { scale: 3, backgroundColor: '#FAFBFF', useCORS: true, logging: false });
+    canvas.toBlob(async (blob) => {
+      const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
+      const file = new File([blob], `kredizmir-${name}.png`, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: 'KREDİZMİR Ödeme Teklifi',
+            text: `${appState.musteri} için ödeme planı`,
+            files: [file]
+          });
+          showToast('✅ Paylaşıldı!', 'success');
+        } catch(e) {
+          if (e.name !== 'AbortError') {
+            // Share iptal edildi ya da başarısız, indir
+            _downloadBlob(blob, `kredizmir-${name}.png`);
+            showToast('📥 Görsel indirildi — Instagram\'dan paylaşabilirsiniz.', 'success');
+          }
+        }
+      } else {
+        // Masaüstü: direkt indir
+        _downloadBlob(blob, `kredizmir-${name}.png`);
+        showToast('📥 Görsel indirildi — Instagram\'a yükleyebilirsiniz.', 'success');
+      }
+      showLoading(false);
+    }, 'image/png');
   } catch(e) {
-    if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
-    if (e.name !== 'AbortError') showToast('⚠️ PDF paylaşılamadı.', 'error');
-  } finally {
+    showToast('⚠️ Görsel oluşturulamadı.', 'error');
     showLoading(false);
   }
+}
+
+function _downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
 }
 
 function kapatPDFPanel() {
@@ -1192,7 +1234,7 @@ function openMail() {
 /* ── IOS SHARE ────────────────────────────────────────────── */
 
 async function sayfayiPaylas() {
-  await sharePDF();
+  await savePDF();
 }
 
 </script>

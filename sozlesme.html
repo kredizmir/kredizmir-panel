@@ -181,6 +181,30 @@
 
     .kart-vergi { --accent: #9b59b6; }
     .kart-vergi .acc-icon  { background: rgba(155,89,182,.15); }
+
+    .opsiyonel-label {
+      font-size: 12px;
+      color: #8aaccc;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .opsiyonel-input {
+      width: 100%;
+      background: #0d1b2a;
+      border: 1px solid #1e3a56;
+      border-radius: 8px;
+      color: #e8f0fe;
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .opsiyonel-input:focus { border-color: #4db8ff; }
   </style>
 </head>
 <body>
@@ -208,10 +232,9 @@
         <li><span class="doc-num">2</span><span>Telefon No</span></li>
         <li><span class="doc-num">3</span><span>Kimlik Seri No</span></li>
         <li><span class="doc-num">4</span><span>Doğum Tarihi</span></li>
-        <li><span class="doc-num">5</span>
-          <span>Opsiyonel<span class="doc-optional">Sonradan eklenebilir</span></span>
-        </li>
       </ul>
+      <label class="opsiyonel-label">📝 Opsiyonel Not <span style="font-weight:400;color:#4db8ff;">(boş bırakılabilir)</span></label>
+      <textarea class="opsiyonel-input" id="tasitOpsiyonel" placeholder="Eklemek istediğiniz notu buraya yazın..."></textarea>
       <button class="wp-btn" onclick="wpGonder('tasit')">📲 WhatsApp ile Gönder</button>
     </div>
   </div>
@@ -267,34 +290,37 @@
       document.getElementById(id).classList.toggle('open');
     }
 
-    const MESAJLAR = {
-      tasit: `*KREDİZMİR — Taşıt Kredisi İstenen Bilgiler*\n`
-        + `━━━━━━━━━━━━━━━━━━\n`
-        + `1️⃣ TC Kimlik No\n`
-        + `2️⃣ Telefon No\n`
-        + `3️⃣ Kimlik Seri No\n`
-        + `4️⃣ Doğum Tarihi\n`
-        + `5️⃣ Opsiyonel (sonradan eklenebilir)\n`
-        + `━━━━━━━━━━━━━━━━━━\n`
-        + `_KREDİZMİR Finansal Çözümler_`,
-
-      djs: `*KREDİZMİR — DJS Sistemi İstenen Bilgiler*\n`
-        + `━━━━━━━━━━━━━━━━━━\n`
-        + `1️⃣ İsim Soyisim\n`
-        + `2️⃣ Cinsiyet\n`
-        + `3️⃣ TC Kimlik No\n`
-        + `4️⃣ Doğum Tarihi\n`
-        + `5️⃣ İkametgah İl / İlçe\n`
-        + `6️⃣ Telefon No\n`
-        + `7️⃣ Meslek\n`
-        + `8️⃣ İş Yeri Adı\n`
-        + `9️⃣ İlan Numarası\n`
-        + `━━━━━━━━━━━━━━━━━━\n`
-        + `_KREDİZMİR Finansal Çözümler_`
-    };
+    const KAPANIS = `\nBilgilerinizi iletmeniz halinde sonuçları 1 saat içerisinde sizlerle paylaşacağız. `
+      + `Dilerseniz ofisimize gelerek de girişlerinizi sağlayabilirsiniz.\n`
+      + `━━━━━━━━━━━━━━━━━━\n`
+      + `_KREDİZMİR Finansal Çözümler_`;
 
     function wpGonder(tip) {
-      const mesaj = MESAJLAR[tip];
+      let mesaj;
+      if (tip === 'tasit') {
+        const ops = document.getElementById('tasitOpsiyonel').value.trim();
+        mesaj = `*KREDİZMİR — Taşıt Kredisi İstenen Bilgiler*\n`
+          + `━━━━━━━━━━━━━━━━━━\n`
+          + `1️⃣ TC Kimlik No\n`
+          + `2️⃣ Telefon No\n`
+          + `3️⃣ Kimlik Seri No\n`
+          + `4️⃣ Doğum Tarihi\n`
+          + (ops ? `5️⃣ ${ops}\n` : '')
+          + KAPANIS;
+      } else {
+        mesaj = `*KREDİZMİR — DJS Sistemi İstenen Bilgiler*\n`
+          + `━━━━━━━━━━━━━━━━━━\n`
+          + `1️⃣ İsim Soyisim\n`
+          + `2️⃣ Cinsiyet\n`
+          + `3️⃣ TC Kimlik No\n`
+          + `4️⃣ Doğum Tarihi\n`
+          + `5️⃣ İkametgah İl / İlçe\n`
+          + `6️⃣ Telefon No\n`
+          + `7️⃣ Meslek\n`
+          + `8️⃣ İş Yeri Adı\n`
+          + `9️⃣ İlan Numarası\n`
+          + KAPANIS;
+      }
       window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
     }
   </script>

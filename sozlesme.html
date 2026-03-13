@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sözleşme Gönder — KREDİZMİR</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <title>İstenen Belgeler — KREDİZMİR</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -14,6 +13,7 @@
       min-height: 100vh;
       padding: 20px 16px 40px;
     }
+
     .topbar {
       display: flex;
       align-items: center;
@@ -32,248 +32,270 @@
       text-decoration: none;
     }
     .topbar h2 { font-size: 18px; font-weight: 700; color: #fff; }
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #2ecc71;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-    .card {
-      background: #1a2d45;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-      border: 1px solid #1e3a56;
-    }
-    label {
-      display: block;
+
+    .subtitle {
       font-size: 12px;
       color: #8aaccc;
-      margin-bottom: 6px;
-      margin-top: 12px;
-      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: .3px;
     }
-    label:first-child { margin-top: 0; }
-    input, select, textarea {
-      width: 100%;
-      background: #0d1b2a;
+
+    /* Accordion kart */
+    .acc-card {
+      background: #1a2d45;
+      border-radius: 14px;
       border: 1px solid #1e3a56;
-      border-radius: 8px;
-      color: #e8f0fe;
-      font-size: 15px;
-      padding: 10px 12px;
-      outline: none;
-      font-family: inherit;
+      margin-bottom: 14px;
+      overflow: hidden;
+      transition: border-color .2s;
     }
-    input:focus, select:focus, textarea:focus { border-color: #2ecc71; }
-    textarea { resize: vertical; min-height: 120px; font-size: 13px; line-height: 1.6; }
-    .gen-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #2ecc71, #1a8a4a);
-      border: none;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-    .preview-area { display: none; }
-    .preview-area.visible { display: block; }
-    .sozlesme-box {
-      background: #0d1b2a;
-      border-radius: 12px;
-      padding: 20px;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #e8f0fe;
-      white-space: pre-wrap;
-      border: 1px solid #1e3a56;
-    }
-    .action-btns {
+    .acc-card.open { border-color: var(--accent); }
+
+    .acc-header {
       display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .btn-pdf {
-      flex: 1;
-      background: #c0392b;
-      border: none;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 13px;
-      border-radius: 12px;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
       cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn-wp {
+    .acc-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .acc-title {
       flex: 1;
+    }
+    .acc-title h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .acc-title p {
+      font-size: 12px;
+      color: #8aaccc;
+    }
+    .acc-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+    }
+    .badge-yakinda {
+      background: rgba(155,89,182,.2);
+      color: #c39bd3;
+      border: 1px solid rgba(155,89,182,.3);
+    }
+    .acc-chevron {
+      font-size: 18px;
+      color: #4db8ff;
+      transition: transform .25s;
+      flex-shrink: 0;
+    }
+    .acc-card.open .acc-chevron { transform: rotate(90deg); }
+
+    .acc-body {
+      display: none;
+      padding: 0 18px 18px;
+    }
+    .acc-card.open .acc-body { display: block; }
+
+    .divider {
+      height: 1px;
+      background: #1e3a56;
+      margin-bottom: 16px;
+    }
+
+    .doc-list {
+      list-style: none;
+      margin-bottom: 16px;
+    }
+    .doc-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(30,58,86,.6);
+      font-size: 14px;
+      color: #e8f0fe;
+      line-height: 1.4;
+    }
+    .doc-list li:last-child { border-bottom: none; }
+    .doc-num {
+      font-size: 12px;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .doc-optional {
+      font-size: 11px;
+      color: #8aaccc;
+      font-style: italic;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .wp-btn {
+      width: 100%;
       background: #25d366;
       border: none;
       color: #fff;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       padding: 13px;
       border-radius: 12px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+    .wp-btn:active { opacity: .85; }
+
+    .yakinda-box {
+      text-align: center;
+      padding: 20px 0 4px;
+      color: #8aaccc;
+      font-size: 13px;
+    }
+    .yakinda-box span { font-size: 28px; display: block; margin-bottom: 8px; }
+
+    /* Renk değişkenleri per kart */
+    .kart-tasit  { --accent: #4db8ff; }
+    .kart-tasit  .acc-icon  { background: rgba(77,184,255,.15); }
+    .kart-tasit  .doc-num   { background: rgba(77,184,255,.18); color: #4db8ff; }
+
+    .kart-djs   { --accent: #e67e22; }
+    .kart-djs   .acc-icon  { background: rgba(230,126,34,.15); }
+    .kart-djs   .doc-num   { background: rgba(230,126,34,.18); color: #f0a050; }
+
+    .kart-vergi { --accent: #9b59b6; }
+    .kart-vergi .acc-icon  { background: rgba(155,89,182,.15); }
   </style>
 </head>
 <body>
 
   <div class="topbar">
     <a href="index.html" class="back-btn">‹</a>
-    <h2>📄 Sözleşme Gönder</h2>
+    <h2>📋 İstenen Belgeler</h2>
   </div>
+  <p class="subtitle">Kredi türünü seçin — gerekli bilgileri WhatsApp ile gönderin.</p>
 
-  <div class="card">
-    <p class="section-title">Müşteri Bilgileri</p>
-
-    <label>Müşteri Adı Soyadı</label>
-    <input type="text" id="musteriAd" placeholder="Ahmet Yılmaz">
-
-    <label>TC Kimlik No</label>
-    <input type="text" id="musteriTC" placeholder="11234567890" maxlength="11" inputmode="numeric">
-
-    <label>Telefon</label>
-    <input type="tel" id="musteriTel" placeholder="05xx xxx xx xx" inputmode="tel">
-
-    <label>Kredi Tutarı (₺)</label>
-    <input type="number" id="sozTutar" placeholder="Örn: 150000" inputmode="numeric">
-
-    <label>Vade (Ay)</label>
-    <select id="sozVade">
-      <option value="12">12 Ay</option>
-      <option value="18">18 Ay</option>
-      <option value="24" selected>24 Ay</option>
-      <option value="30">30 Ay</option>
-      <option value="36">36 Ay</option>
-    </select>
-
-    <label>Sözleşme Tarihi</label>
-    <input type="date" id="sozTarih">
-
-    <button class="gen-btn" onclick="sozlesmeOlustur()">📄 Sözleşme Oluştur</button>
-  </div>
-
-  <div class="preview-area" id="previewArea">
-    <div class="card">
-      <p class="section-title">Sözleşme Önizleme</p>
-      <div class="sozlesme-box" id="sozlesmeMetin"></div>
+  <!-- TAŞIT KREDİSİ -->
+  <div class="acc-card kart-tasit" id="cardTasit">
+    <div class="acc-header" onclick="toggle('cardTasit')">
+      <div class="acc-icon">🚗</div>
+      <div class="acc-title">
+        <h3>Taşıt Kredisi</h3>
+        <p>Banka taşıt kredisi için istenen bilgiler</p>
+      </div>
+      <div class="acc-chevron">›</div>
     </div>
+    <div class="acc-body">
+      <div class="divider"></div>
+      <ul class="doc-list">
+        <li><span class="doc-num">1</span><span>TC Kimlik No</span></li>
+        <li><span class="doc-num">2</span><span>Telefon No</span></li>
+        <li><span class="doc-num">3</span><span>Kimlik Seri No</span></li>
+        <li><span class="doc-num">4</span><span>Doğum Tarihi</span></li>
+        <li><span class="doc-num">5</span>
+          <span>Opsiyonel<span class="doc-optional">Sonradan eklenebilir</span></span>
+        </li>
+      </ul>
+      <button class="wp-btn" onclick="wpGonder('tasit')">📲 WhatsApp ile Gönder</button>
+    </div>
+  </div>
 
-    <div class="action-btns">
-      <button class="btn-pdf" onclick="indir()">⬇️ PDF İndir</button>
-      <button class="btn-wp" onclick="wpGonder()">📲 WhatsApp</button>
+  <!-- DJS SİSTEMİ -->
+  <div class="acc-card kart-djs" id="cardDjs">
+    <div class="acc-header" onclick="toggle('cardDjs')">
+      <div class="acc-icon">📱</div>
+      <div class="acc-title">
+        <h3>DJS Sistemi</h3>
+        <p>DJS / Dijital senet için istenen bilgiler</p>
+      </div>
+      <div class="acc-chevron">›</div>
+    </div>
+    <div class="acc-body">
+      <div class="divider"></div>
+      <ul class="doc-list">
+        <li><span class="doc-num">1</span><span>İsim Soyisim</span></li>
+        <li><span class="doc-num">2</span><span>Cinsiyet</span></li>
+        <li><span class="doc-num">3</span><span>TC Kimlik No</span></li>
+        <li><span class="doc-num">4</span><span>Doğum Tarihi</span></li>
+        <li><span class="doc-num">5</span><span>İkametgah İl / İlçe</span></li>
+        <li><span class="doc-num">6</span><span>Telefon No</span></li>
+        <li><span class="doc-num">7</span><span>Meslek</span></li>
+        <li><span class="doc-num">8</span><span>İş Yeri Adı</span></li>
+        <li><span class="doc-num">9</span><span>İlan Numarası</span></li>
+      </ul>
+      <button class="wp-btn" onclick="wpGonder('djs')">📲 WhatsApp ile Gönder</button>
+    </div>
+  </div>
+
+  <!-- VERGİ LEVHALI -->
+  <div class="acc-card kart-vergi" id="cardVergi">
+    <div class="acc-header" onclick="toggle('cardVergi')">
+      <div class="acc-icon">🏢</div>
+      <div class="acc-title">
+        <h3>Vergi Levhalı Sistem</h3>
+        <p>Vergi levhalı müşteriler için istenen bilgiler</p>
+      </div>
+      <span class="acc-badge badge-yakinda">YAKINDA</span>
+    </div>
+    <div class="acc-body">
+      <div class="divider"></div>
+      <div class="yakinda-box">
+        <span>🔜</span>
+        Bu bölüm yakında eklenecektir.
+      </div>
     </div>
   </div>
 
   <script>
-    // Bugünün tarihini varsayılan yap
-    document.getElementById('sozTarih').valueAsDate = new Date();
-
-    let sozlesmeText = '';
-
-    function fmt(n) {
-      return parseFloat(n).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    function toggle(id) {
+      document.getElementById(id).classList.toggle('open');
     }
 
-    function sozlesmeOlustur() {
-      const ad = document.getElementById('musteriAd').value.trim();
-      const tc = document.getElementById('musteriTC').value.trim();
-      const tel = document.getElementById('musteriTel').value.trim();
-      const tutar = document.getElementById('sozTutar').value;
-      const vade = document.getElementById('sozVade').value;
-      const tarih = document.getElementById('sozTarih').value;
+    const MESAJLAR = {
+      tasit: `*KREDİZMİR — Taşıt Kredisi İstenen Bilgiler*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `1️⃣ TC Kimlik No\n`
+        + `2️⃣ Telefon No\n`
+        + `3️⃣ Kimlik Seri No\n`
+        + `4️⃣ Doğum Tarihi\n`
+        + `5️⃣ Opsiyonel (sonradan eklenebilir)\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `_KREDİZMİR Finansal Çözümler_`,
 
-      if (!ad) { alert('Lütfen müşteri adını girin.'); return; }
-      if (!tutar) { alert('Lütfen kredi tutarını girin.'); return; }
+      djs: `*KREDİZMİR — DJS Sistemi İstenen Bilgiler*\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `1️⃣ İsim Soyisim\n`
+        + `2️⃣ Cinsiyet\n`
+        + `3️⃣ TC Kimlik No\n`
+        + `4️⃣ Doğum Tarihi\n`
+        + `5️⃣ İkametgah İl / İlçe\n`
+        + `6️⃣ Telefon No\n`
+        + `7️⃣ Meslek\n`
+        + `8️⃣ İş Yeri Adı\n`
+        + `9️⃣ İlan Numarası\n`
+        + `━━━━━━━━━━━━━━━━━━\n`
+        + `_KREDİZMİR Finansal Çözümler_`
+    };
 
-      const tarihObj = tarih ? new Date(tarih) : new Date();
-      const tarihStr = tarihObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
-
-      sozlesmeText = `KREDİZMİR FİNANSAL ÇÖZÜMLER
-KREDI HİZMET SÖZLEŞMESİ
-
-Tarih: ${tarihStr}
-────────────────────────────────────────
-
-MÜŞTERİ BİLGİLERİ
-
-Ad Soyad       : ${ad || '—'}
-TC Kimlik No   : ${tc || '—'}
-Telefon        : ${tel || '—'}
-
-KREDİ BİLGİLERİ
-
-Kredi Tutarı   : ₺${tutar ? fmt(tutar) : '—'}
-Vade           : ${vade} Ay
-Başlangıç Tar. : ${tarihStr}
-
-────────────────────────────────────────
-
-SÖZLEŞME KOŞULLARI
-
-1. İşbu sözleşme, KREDİZMİR Finansal Çözümler ile yukarıda
-   kimlik bilgileri yazılı müşteri arasında düzenlenmiştir.
-
-2. Müşteri, belirtilen kredi tutarını ve vadesini kabul eder.
-   Geri ödeme planı taraflarca karşılıklı mutabık kalınarak
-   belirlenecektir.
-
-3. Müşteri, başvuru sürecinde gerçeğe aykırı belge ve bilgi
-   sunmayacağını beyan ve taahhüt eder.
-
-4. Kredi onay ve kullandırım süreci, banka/finans kuruluşunun
-   kararına tabidir. KREDİZMİR aracı kurum sıfatıyla hareket
-   eder.
-
-5. Bu sözleşme elektronik ortamda düzenlenmiş olup tarafların
-   onayıyla geçerlilik kazanır.
-
-────────────────────────────────────────
-
-MÜŞTERİ                    KREDİZMİR YETKİLİSİ
-
-${ad || '________________________'}
-
-İmza: ___________________   İmza: ___________________
-
-────────────────────────────────────────
-KREDİZMİR Finansal Çözümler © ${tarihObj.getFullYear()}`;
-
-      document.getElementById('sozlesmeMetin').textContent = sozlesmeText;
-      document.getElementById('previewArea').classList.add('visible');
-      document.getElementById('previewArea').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function indir() {
-      if (!sozlesmeText) return;
-      const element = document.getElementById('sozlesmeMetin');
-      const opt = {
-        margin: [15, 20],
-        filename: 'sozlesme-kredizmir.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, backgroundColor: '#ffffff' },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      const origStyle = element.getAttribute('style') || '';
-      element.style.background = '#fff';
-      element.style.color = '#000';
-      element.style.border = '1px solid #ccc';
-
-      html2pdf().set(opt).from(element).save().then(() => {
-        element.setAttribute('style', origStyle);
-      });
-    }
-
-    function wpGonder() {
-      if (!sozlesmeText) return;
-      window.open('https://wa.me/?text=' + encodeURIComponent(sozlesmeText), '_blank');
+    function wpGonder(tip) {
+      const mesaj = MESAJLAR[tip];
+      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
     }
   </script>
 </body>

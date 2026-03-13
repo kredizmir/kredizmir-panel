@@ -964,7 +964,6 @@ function buildA4HTML(state) {
     </div>` : '';
 
   const s36 = state.cokluSonuclar ? state.cokluSonuclar.find(s=>s.vade===36) : null;
-  const toplamOdeme36 = s36 ? formatTL(s36.taksit * 36) : '—';
 
   return `
     <div class="hdr">
@@ -996,7 +995,7 @@ function buildA4HTML(state) {
     <table class="detay-tablo">
       <tr><td class="dt-lbl">İşlem Türü</td><td class="dt-val">${modeLabel}</td></tr>
       ${state.pesinat>0 ? `<tr><td class="dt-lbl">Peşinat</td><td class="dt-val">₺${formatTL(state.pesinat)}</td></tr>` : ''}
-      <tr><td class="dt-lbl">Maks. Toplam Ödeme (36 ay)</td><td class="dt-val">₺${toplamOdeme36}</td></tr>
+      <tr><td class="dt-lbl" colspan="2" style="color:#E1306C;font-weight:700;padding-top:8px;">⏳ Bu teklif 7 gün için geçerlidir.</td></tr>
     </table>
     ${bankaUyariSatir}
     ${(()=>{

@@ -114,8 +114,9 @@ body::before{
 .rate-btn .gelgel-badge,.rate-btn .gercek-badge{font-size:7.5px;}
 .btn-pdfdown{background:linear-gradient(135deg,#6a1b9a,#8e24aa);color:#fff;box-shadow:0 3px 14px rgba(106,27,154,.35);}
 .btn-pdfdown:hover{box-shadow:0 5px 20px rgba(106,27,154,.55);}
-.btn-ig{background:linear-gradient(135deg,#833ab4,#C13584,#E1306C);color:#fff;box-shadow:0 3px 14px rgba(193,53,132,.35);}
+.btn-ig{background:linear-gradient(135deg,#833ab4,#C13584,#E1306C);color:#fff;box-shadow:0 3px 14px rgba(193,53,132,.35);display:flex;flex-direction:column;align-items:center;gap:1px;}
 .btn-ig:hover{box-shadow:0 5px 20px rgba(193,53,132,.55);}
+.btn-ig-sub{font-size:9px;display:block;opacity:.85;letter-spacing:.6px;line-height:1;font-weight:700;}
 .rate-fixed-note{font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.3px;}
 .cok-yakinda-box{
   display:flex;align-items:center;gap:11px;
@@ -553,7 +554,7 @@ body::before{
     <div class="action-bar">
       <button class="btn-action btn-pdf" onclick="openPDFPanel()">📄 PDF Önizle</button>
       <button class="btn-action btn-pdfdown" onclick="savePDF()">📥 PDF İndir</button>
-      <button class="btn-action btn-ig" onclick="shareInstagram()">📸 Instagram</button>
+      <button class="btn-action btn-ig" onclick="shareInstagram()">📸 Instagram<span class="btn-ig-sub">BURDAN GÖNDER</span></button>
       <button class="btn-action btn-wa"  onclick="openWhatsApp()">📲 WhatsApp</button>
       <button class="btn-action btn-mail" onclick="openMail()">✉️ Mail</button>
     </div>
@@ -569,7 +570,7 @@ body::before{
 <div id="pdf-panel">
   <div class="pdf-panel-bar">
     <button class="btn-pp-print" style="background:linear-gradient(135deg,#6a1b9a,#8e24aa);" onclick="savePDF()">📥 PDF İndir</button>
-    <button class="btn-pp-print" style="background:linear-gradient(135deg,#C13584,#E1306C);" onclick="shareInstagram()">📸 Instagram</button>
+    <button class="btn-pp-print" style="background:linear-gradient(135deg,#C13584,#E1306C);" onclick="shareInstagram()">📸 Instagram<span class="btn-ig-sub" style="font-size:9px;display:block;opacity:.85;letter-spacing:.5px;">BURDAN GÖNDER</span></button>
     <button class="btn-pp-print" onclick="window.print()">🖨️ Yazdır</button>
     <button class="btn-pp-back"  onclick="kapatPDFPanel()">✕ Kapat</button>
   </div>
@@ -1030,35 +1031,14 @@ function openPDFPanel() {
 
 /* ── PDF / GÖRSEL YARDIMCI ────────────────────────────────── */
 
-// Paneli geçici görünür yap (opacity:0), render sonrası geri al
-async function _showPanelForRender() {
-  const panel = document.getElementById('pdf-panel');
-  const wasActive = panel.classList.contains('active');
-  document.getElementById('pdf-a4-content').innerHTML = buildA4HTML(appState);
-  if (!wasActive) {
-    panel.style.cssText = 'display:block!important;opacity:0!important;pointer-events:none!important;';
-    // 2 frame bekle: layout ve fontların yüklenmesi için
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-    await new Promise(r => setTimeout(r, 120));
-  }
-  return wasActive;
-}
-
-function _restorePanel(wasActive) {
-  if (!wasActive) {
-    const panel = document.getElementById('pdf-panel');
-    panel.style.cssText = '';
-  }
-}
-
-function _pdfOpt(name) {
-  return {
-    margin: [10, 10, 10, 10],
-    filename: `kredizmir-${name}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#fff' },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
+// Yükleme overlay'i (z-index 9998) açıkken, z-index:1 element kullanıcıya
+// görünmez ama html2canvas onu opacity:1 ile yakalayabilir → boş PDF olmaz.
+function _buildTempEl() {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;left:0;top:0;width:794px;background:#fff;z-index:1;pointer-events:none;overflow:visible;';
+  el.innerHTML = buildA4HTML(appState);
+  document.body.appendChild(el);
+  return el;
 }
 
 /* ── PDF İNDİR ────────────────────────────────────────────── */
@@ -1066,16 +1046,24 @@ function _pdfOpt(name) {
 async function savePDF() {
   if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
   showLoading(true);
-  const wasActive = await _showPanelForRender();
+  const temp = _buildTempEl();
+  await new Promise(r => setTimeout(r, 250)); // font/layout
   try {
-    const el   = document.getElementById('pdf-a4-content');
     const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
-    await html2pdf().set(_pdfOpt(name)).from(el).save();
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: `kredizmir-${name}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#fff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    await html2pdf().set(opt).from(temp).save();
     showToast('✅ PDF indirildi!', 'success');
   } catch(e) {
+    console.error(e);
     showToast('⚠️ PDF oluşturulamadı. Yazdır butonunu deneyin.', 'error');
   } finally {
-    _restorePanel(wasActive);
+    document.body.removeChild(temp);
     showLoading(false);
   }
 }
@@ -1085,36 +1073,29 @@ async function savePDF() {
 async function shareInstagram() {
   if (!appState.summary) { showToast('⚠️ Önce tablo oluşturun.','error'); return; }
   showLoading(true);
+  const temp = _buildTempEl();
+  await new Promise(r => setTimeout(r, 250));
   try {
-    // Önizleme elementini yüksek kalitede PNG yap
-    const el = document.getElementById('pdf-document');
-    const canvas = await html2canvas(el, { scale: 3, backgroundColor: '#FAFBFF', useCORS: true, logging: false });
+    const canvas = await html2canvas(temp, { scale: 3, backgroundColor: '#fff', useCORS: true, logging: false });
+    document.body.removeChild(temp);
     canvas.toBlob(async (blob) => {
       const name = (appState.musteri || 'teklif').replace(/\s+/g,'-').toLowerCase();
       const file = new File([blob], `kredizmir-${name}.png`, { type: 'image/png' });
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({
-            title: 'KREDİZMİR Ödeme Teklifi',
-            text: `${appState.musteri} için ödeme planı`,
-            files: [file]
-          });
+          await navigator.share({ title: 'KREDİZMİR Ödeme Teklifi', text: `${appState.musteri} için ödeme planı`, files: [file] });
           showToast('✅ Paylaşıldı!', 'success');
         } catch(e) {
-          if (e.name !== 'AbortError') {
-            // Share iptal edildi ya da başarısız, indir
-            _downloadBlob(blob, `kredizmir-${name}.png`);
-            showToast('📥 Görsel indirildi — Instagram\'dan paylaşabilirsiniz.', 'success');
-          }
+          if (e.name !== 'AbortError') { _downloadBlob(blob, `kredizmir-${name}.png`); showToast('📥 Görsel indirildi — Instagram\'a yükleyebilirsiniz.','success'); }
         }
       } else {
-        // Masaüstü: direkt indir
         _downloadBlob(blob, `kredizmir-${name}.png`);
         showToast('📥 Görsel indirildi — Instagram\'a yükleyebilirsiniz.', 'success');
       }
       showLoading(false);
     }, 'image/png');
   } catch(e) {
+    if (document.body.contains(temp)) document.body.removeChild(temp);
     showToast('⚠️ Görsel oluşturulamadı.', 'error');
     showLoading(false);
   }
@@ -1122,8 +1103,7 @@ async function shareInstagram() {
 
 function _downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
 }
 

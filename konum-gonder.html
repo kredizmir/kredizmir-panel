@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Konum Gönder — KREDİZMİR</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -200,10 +202,14 @@
       <div class="map-preview" id="mapPreview"></div>
     </div>
 
+    <div id="mapContainer" style="display:none;height:220px;border-radius:12px;overflow:hidden;margin-bottom:14px;border:1px solid #1e3a56;"></div>
+
     <div id="musteriKartMevcut" style="display:none;">
       <div class="card">
         <label>Müşteri Adı (opsiyonel)</label>
         <input type="text" id="musteriAdMevcut" placeholder="Ahmet Yılmaz">
+        <label>Müşteri Telefonu (WhatsApp)</label>
+        <input type="tel" id="musteriTelMevcut" placeholder="05XX XXX XX XX">
         <label>Ek Not (opsiyonel)</label>
         <input type="text" id="notMevcut" placeholder="Ofisimize bekliyoruz...">
       </div>
@@ -232,7 +238,8 @@
     <div class="card">
       <label>Müşteri Adı (opsiyonel)</label>
       <input type="text" id="musteriAdOfis" placeholder="Ahmet Yılmaz">
-
+      <label>Müşteri Telefonu (WhatsApp)</label>
+      <input type="tel" id="musteriTelOfis" placeholder="05XX XXX XX XX">
       <label>Ek Not</label>
       <input type="text" id="notOfis" placeholder="Sizi bekliyoruz...">
     </div>
@@ -242,6 +249,13 @@
 
   <script>
     let mevcutLat = null, mevcutLng = null;
+
+    function formatWaTel(raw) {
+      let t = raw.replace(/\D/g, '');
+      if (t.startsWith('0')) t = '90' + t.slice(1);
+      else if (t.startsWith('5')) t = '90' + t;
+      return t;
+    }
 
     function setTab(tab) {
       document.querySelectorAll('.tab-btn').forEach((b, i) => {
@@ -285,6 +299,19 @@
           document.getElementById('musteriKartMevcut').style.display = 'block';
           btn.textContent = '🔄 Konumu Yenile';
           btn.disabled = false;
+
+          // Harita göster
+          const mapEl = document.getElementById('mapContainer');
+          mapEl.style.display = 'block';
+          if (window._map) { window._map.remove(); window._map = null; }
+          window._map = L.map('mapContainer').setView([mevcutLat, mevcutLng], 15);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+          }).addTo(window._map);
+          L.marker([mevcutLat, mevcutLng])
+            .addTo(window._map)
+            .bindPopup('📍 Mevcut Konumunuz')
+            .openPopup();
         },
         (err) => {
           let msg = 'Konum alınamadı. ';
@@ -307,7 +334,8 @@
 
     function wpGonderMevcut() {
       if (!mevcutLat || !mevcutLng) return;
-      const ad = document.getElementById('musteriAdMevcut').value.trim();
+      const ad  = document.getElementById('musteriAdMevcut').value.trim();
+      const tel = document.getElementById('musteriTelMevcut').value.trim();
       const not = document.getElementById('notMevcut').value.trim();
       const mapsUrl = `https://maps.google.com/?q=${mevcutLat},${mevcutLng}`;
 
@@ -320,16 +348,20 @@
         + `\n━━━━━━━━━━━━━━━━━━\n`
         + `_KREDİZMİR Finansal Çözümler_`;
 
-      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+      const waUrl = tel
+        ? `https://wa.me/${formatWaTel(tel)}?text=${encodeURIComponent(mesaj)}`
+        : `https://wa.me/?text=${encodeURIComponent(mesaj)}`;
+      window.open(waUrl, '_blank');
     }
 
     function wpGonderOfis() {
-      const ofisAdi = document.getElementById('ofisAdi').value.trim() || 'KREDİZMİR Finansal Çözümler';
-      const adres = document.getElementById('ofisAdres').value.trim();
-      const harita = document.getElementById('ofisHarita').value.trim();
-      const tel = document.getElementById('ofisTel').value.trim();
-      const ad = document.getElementById('musteriAdOfis').value.trim();
-      const not = document.getElementById('notOfis').value.trim();
+      const ofisAdi  = document.getElementById('ofisAdi').value.trim() || 'KREDİZMİR Finansal Çözümler';
+      const adres    = document.getElementById('ofisAdres').value.trim();
+      const harita   = document.getElementById('ofisHarita').value.trim();
+      const ofisTel  = document.getElementById('ofisTel').value.trim();
+      const ad       = document.getElementById('musteriAdOfis').value.trim();
+      const musteriTel = document.getElementById('musteriTelOfis').value.trim();
+      const not      = document.getElementById('notOfis').value.trim();
 
       if (!adres && !harita) {
         alert('Lütfen en azından ofis adresini veya harita linkini girin.');
@@ -337,10 +369,10 @@
       }
 
       const musteriSatir = ad ? `Sayın *${ad}*,\n\n` : '';
-      const haritaSatir = harita ? `\n🗺️ Harita: ${harita}` : '';
-      const telSatir = tel ? `\n📞 Tel: ${tel}` : '';
-      const notSatir = not ? `\n📝 ${not}` : '';
-      const adresSatir = adres ? `\n📍 Adres: ${adres}` : '';
+      const haritaSatir  = harita   ? `\n🗺️ Harita: ${harita}` : '';
+      const telSatir     = ofisTel  ? `\n📞 Tel: ${ofisTel}` : '';
+      const notSatir     = not      ? `\n📝 ${not}` : '';
+      const adresSatir   = adres    ? `\n📍 Adres: ${adres}` : '';
 
       const mesaj = `${musteriSatir}*KREDİZMİR — Ofis Adresimiz*\n`
         + `━━━━━━━━━━━━━━━━━━\n`
@@ -352,7 +384,10 @@
         + `\n━━━━━━━━━━━━━━━━━━\n`
         + `_Sizi ofisimizde bekliyoruz!_`;
 
-      window.open('https://wa.me/?text=' + encodeURIComponent(mesaj), '_blank');
+      const waUrl = musteriTel
+        ? `https://wa.me/${formatWaTel(musteriTel)}?text=${encodeURIComponent(mesaj)}`
+        : `https://wa.me/?text=${encodeURIComponent(mesaj)}`;
+      window.open(waUrl, '_blank');
     }
   </script>
 </body>

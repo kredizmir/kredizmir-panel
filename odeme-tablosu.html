@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KREDİZMİR — Ödeme Tablosu Oluşturucu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -439,6 +439,66 @@ body::before{
 .banka-tutar-chip{flex:1;min-width:0;padding:8px 2px;border:1px solid var(--border);border-radius:var(--radius-xs);background:transparent;color:var(--text-3);font-family:'DM Mono',monospace;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;text-align:center;white-space:nowrap;}
 .banka-tutar-chip:hover{border-color:var(--border2);color:var(--text-2);}
 .banka-tutar-chip.active{border-color:rgba(33,150,243,.5);color:var(--blue-300);background:rgba(21,101,192,.13);}
+/* ─── TAB NAVİGASYON ────────────────────── */
+.tab-nav{display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;}
+.tab-btn{padding:7px 18px;border:none;border-radius:7px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--text-3);background:transparent;cursor:pointer;transition:all .18s;letter-spacing:.3px;white-space:nowrap;}
+.tab-btn:hover{color:var(--text-2);}
+.tab-btn.active{background:rgba(21,101,192,.2);color:var(--text-1);border:1px solid rgba(33,150,243,.3);}
+/* ─── INSTAGRAM SAYFASI ──────────────────── */
+.instagram-page{grid-column:1/-1;min-height:calc(100vh - 68px);--ig-red:#D62828;--ig-dark:#0D0D0D;--ig-mid:#555;--ig-border:rgba(0,0,0,.10);--ig-shadow:0 24px 80px rgba(0,0,0,.14);}
+.instagram-page .ig-app{width:min(1260px,100%);margin:0 auto;padding:20px 16px 48px;display:grid;grid-template-columns:380px 1fr;gap:20px;background:#ECEAE6;min-height:calc(100vh - 68px);}
+.instagram-page .ig-panel{background:#fff;border-radius:24px;box-shadow:var(--ig-shadow);padding:20px;position:sticky;top:14px;align-self:start;overflow-y:auto;max-height:calc(100vh - 96px);}
+.instagram-page .ig-brand{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;margin-bottom:14px;border-bottom:3px solid var(--ig-dark);}
+.instagram-page .ig-brand-name{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;color:var(--ig-dark);line-height:1;}
+.instagram-page .ig-brand-name span{color:var(--ig-red);}
+.instagram-page .ig-brand-sub{font-size:11px;color:var(--ig-mid);margin-top:2px;font-weight:500;}
+.instagram-page .ig-pill{background:var(--ig-dark);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;}
+.instagram-page .ig-section{border:1px solid var(--ig-border);border-radius:16px;padding:14px;margin-bottom:12px;background:#FAFAFA;}
+.instagram-page .ig-sec-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ig-red);margin-bottom:10px;}
+.instagram-page .ig-grid{display:grid;gap:10px;}
+.instagram-page .ig-grid.two{grid-template-columns:1fr 1fr;}
+.instagram-page label.fl{display:block;font-size:11px;font-weight:700;color:var(--ig-mid);margin-bottom:5px;}
+.instagram-page input:not([type=checkbox]),.instagram-page select,.instagram-page textarea{width:100%;background:#fff;border:1.5px solid #E0DBD4;color:var(--ig-dark);border-radius:10px;padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s;}
+.instagram-page input:not([type=checkbox]):focus,.instagram-page select:focus,.instagram-page textarea:focus{border-color:var(--ig-red);}
+.instagram-page textarea{min-height:80px;resize:vertical;}
+.instagram-page .ig-hint{font-size:11px;color:#999;margin-top:5px;}
+.instagram-page .upload-box{position:relative;border:2px dashed #C8C2B8;background:#F5F2EE;border-radius:14px;min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;overflow:hidden;transition:border-color .15s;}
+.instagram-page .upload-box:hover{border-color:var(--ig-red);}
+.instagram-page .upload-box input[type=file]{display:none;}
+.instagram-page .upload-inner strong{font-size:13px;font-weight:700;color:var(--ig-dark);}
+.instagram-page .upload-inner small{display:block;font-size:11px;color:#999;margin-top:3px;}
+.instagram-page .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
+.instagram-page .upload-box.has-image .thumb{display:block;}
+.instagram-page .upload-box.has-image .upload-inner{display:none;}
+.instagram-page .ig-switches{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.instagram-page .ig-sw{background:#F5F2EE;border:1px solid #E0DBD4;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;color:var(--ig-dark);display:flex;align-items:center;gap:6px;cursor:pointer;}
+.instagram-page .ig-sw input[type=checkbox]{width:auto;padding:0;accent-color:var(--ig-red);background:transparent;border:none;border-radius:0;}
+.instagram-page .ig-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.instagram-page button{border:none;border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:transform .1s,opacity .1s;}
+.instagram-page button:active{transform:scale(.97);}
+.instagram-page .ig-btn-red{background:var(--ig-red);color:#fff;}
+.instagram-page .ig-btn-dark{background:var(--ig-dark);color:#fff;}
+.instagram-page .ig-btn-out{background:#fff;color:var(--ig-dark);border:2px solid var(--ig-dark);}
+.instagram-page .ig-btn-wide{width:100%;margin-top:10px;}
+.instagram-page .ig-footer-note{margin-top:12px;font-size:11px;color:#999;line-height:1.6;}
+.instagram-page .ig-preview-panel{background:#fff;border-radius:24px;box-shadow:var(--ig-shadow);padding:20px;}
+.instagram-page .ig-preview-head{margin-bottom:16px;border-bottom:3px solid var(--ig-dark);padding-bottom:12px;display:flex;justify-content:space-between;align-items:flex-end;}
+.instagram-page .ig-preview-head h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--ig-dark);}
+.instagram-page .ig-preview-head p{font-size:12px;color:var(--ig-mid);}
+.instagram-page .ig-slides{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.instagram-page .ig-slide-card{background:#F5F2EE;border-radius:18px;padding:12px;}
+.instagram-page .ig-slide-card h3{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ig-mid);margin-bottom:10px;}
+.instagram-page .ig-slide-card canvas{width:100%;aspect-ratio:4/5;border-radius:12px;display:block;background:#E8E3DC;}
+.instagram-page .ig-dl-btn{margin-top:10px;width:100%;font-size:13px;padding:11px;}
+.ig-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:20px;}
+.ig-modal.open{display:flex;}
+.ig-modal .ig-modal-img{max-width:min(400px,88vw);max-height:70vh;border-radius:14px;display:block;box-shadow:0 32px 100px rgba(0,0,0,.6);}
+.ig-modal .ig-modal-hint{color:rgba(255,255,255,.75);font-size:13px;font-weight:500;text-align:center;line-height:1.6;}
+.ig-modal .ig-modal-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.ig-modal .ig-modal-actions button{padding:12px 22px;font-size:14px;border-radius:12px;}
+.ig-modal .ig-btn-white{background:#fff;color:#0D0D0D;}
+.ig-modal .ig-btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);}
+@media(max-width:960px){.instagram-page .ig-app{grid-template-columns:1fr;}.instagram-page .ig-panel{position:static;max-height:none;}.instagram-page .ig-slides{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -461,12 +521,16 @@ body::before{
       <div class="logo-sub">ÖDEME TABLOSU OLUŞTURUCU</div>
     </div>
   </div>
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-odeme" onclick="setTab('odeme')">Ödeme Tablosu</button>
+    <button class="tab-btn" id="tab-instagram" onclick="setTab('instagram')">📸 Instagram Araçları</button>
+  </div>
   <div class="topbar-right">
     <div class="topbar-badge">v4.0 Premium</div>
   </div>
 </header>
 
-<aside class="left-panel">
+<aside class="left-panel" id="page-odeme">
 
   <div class="panel-section">
     <div class="section-label">İşlem Türü</div>
@@ -574,7 +638,7 @@ body::before{
 
 </aside>
 
-<main class="right-panel">
+<main class="right-panel" id="page-odeme-right">
   <div class="summary-grid animate-in">
     <div class="sum-card"><div class="sum-card-label">Aylık Taksit</div><div class="sum-card-value accent" id="s-taksit">—</div><div class="sum-card-sub">₺ / ay</div></div>
     <div class="sum-card"><div class="sum-card-label">Finansman Tutarı</div><div class="sum-card-value" id="s-tutar">—</div><div class="sum-card-sub">₺</div></div>
@@ -601,6 +665,141 @@ body::before{
     </div>
   </div>
 </main>
+
+<!-- INSTAGRAM ARAÇLARI SAYFASI -->
+<div class="instagram-page" id="page-instagram" style="display:none;">
+  <!-- Modal -->
+  <div class="ig-modal" id="igModal">
+    <img class="ig-modal-img" id="igDlImg" src="" alt="">
+    <div class="ig-modal-hint">
+      📱 <strong>Mobil:</strong> Görsele basılı tut → Kaydet<br>
+      💻 <strong>Masaüstü:</strong> "Yeni Sekmede Aç" → sağ tık → farklı kaydet
+    </div>
+    <div class="ig-modal-actions">
+      <button class="ig-btn-white" id="igDlOpenTab">Yeni Sekmede Aç ↗</button>
+      <button class="ig-btn-ghost" id="igDlClose">Kapat ✕</button>
+    </div>
+  </div>
+
+  <div class="ig-app">
+    <!-- SOL PANEL -->
+    <div class="ig-panel">
+      <div class="ig-brand">
+        <div>
+          <div class="ig-brand-name">KREDİ<span>ZMİR</span></div>
+          <div class="ig-brand-sub">3 Slide Carousel Otomasyon</div>
+        </div>
+        <div class="ig-pill">1080×1350</div>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Araç Görselleri</div>
+        <div class="ig-grid">
+          <label class="upload-box">
+            <img class="thumb" id="igThumb1" alt="">
+            <div class="upload-inner"><strong>1. Görsel</strong><small>Kapak / ön açı</small></div>
+            <input id="igImg1" type="file" accept="image/*">
+          </label>
+          <label class="upload-box">
+            <img class="thumb" id="igThumb2" alt="">
+            <div class="upload-inner"><strong>2. Görsel</strong><small>Yan / arka / iç</small></div>
+            <input id="igImg2" type="file" accept="image/*">
+          </label>
+          <label class="upload-box">
+            <img class="thumb" id="igThumb3" alt="">
+            <div class="upload-inner"><strong>3. Görsel</strong><small>CTA için en temiz kare</small></div>
+            <input id="igImg3" type="file" accept="image/*">
+          </label>
+        </div>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Araç Bilgileri</div>
+        <div class="ig-grid">
+          <div><label class="fl">Marka / Model / Paket</label><input id="igModel" value="FIAT EGEA 1.4 FIRE"></div>
+          <div class="ig-grid two">
+            <div><label class="fl">Yıl</label><input id="igYil" value="2020"></div>
+            <div><label class="fl">Kilometre</label><input id="igKm" value="120.000 KM"></div>
+          </div>
+          <div class="ig-grid two">
+            <div><label class="fl">Yakıt</label>
+              <select id="igYakit"><option>Benzin</option><option>Dizel</option><option>LPG</option><option>Hibrit</option><option>Elektrik</option><option>Benzin & LPG</option></select>
+            </div>
+            <div><label class="fl">Vites</label>
+              <select id="igVites"><option>Manuel</option><option>Otomatik</option><option>Yarı Otomatik</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Fiyat</div>
+        <div class="ig-grid two">
+          <div><label class="fl">Peşin Fiyat (₺)</label><input id="igPesin" inputmode="numeric" value="750000"></div>
+          <div><label class="fl">Peşinat (₺)</label><input id="igPesinat" inputmode="numeric" placeholder="%30 otomatik"></div>
+        </div>
+        <div style="margin-top:10px"><label class="fl">Başlayan Taksit (₺)</label><input id="igTaksit" inputmode="numeric" value="18950"></div>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Ekspertiz & Detay</div>
+        <div class="ig-grid two">
+          <div><label class="fl">Değişen</label><input id="igDegisen" value="Yok"></div>
+          <div><label class="fl">Boya</label><input id="igBoya" value="Sağ Çamurluk"></div>
+        </div>
+        <div style="margin-top:10px"><label class="fl">Tramer</label><input id="igTramer" value="5.200 TL"></div>
+        <div style="margin-top:10px"><label class="fl">Kısa övgü</label>
+          <textarea id="igOvgu">Temiz duruşu, aile kullanımına uygun yapısı ve ekonomik işletme maliyetiyle dikkat çeken bir araç.</textarea>
+        </div>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Görsel Ayarlar</div>
+        <div class="ig-switches">
+          <label class="ig-sw"><input id="igFrameToggle" type="checkbox" checked> Çerçeve</label>
+          <label class="ig-sw"><input id="igLogoToggle" type="checkbox" checked> Logo</label>
+          <label class="ig-sw"><input id="igBandToggle" type="checkbox" checked> Alt bant</label>
+          <label class="ig-sw"><input id="igCtaToggle" type="checkbox" checked> CTA butonu</label>
+        </div>
+      </div>
+
+      <div class="ig-btn-row">
+        <button class="ig-btn-red" id="igRenderBtn">3 SLIDE OLUŞTUR</button>
+        <button class="ig-btn-out" id="igFillBtn">ÖRNEK VERİ</button>
+      </div>
+      <button class="ig-btn-dark ig-btn-wide" id="igAllBtn">TÜM SLIDE'LARI SIRALI GÖRÜNTÜLE</button>
+      <div class="ig-footer-note">
+        "Önizle & İndir" butonuna tıkla → görsel büyür → <strong>mobilde basılı tut kaydet</strong>, masaüstünde "Yeni Sekmede Aç" ile kaydet.
+      </div>
+    </div>
+
+    <!-- SAĞ PANEL -->
+    <div class="ig-preview-panel">
+      <div class="ig-preview-head">
+        <div><h2>Carousel Önizleme</h2></div>
+        <p>Slide 1 kapak · Slide 2 detay · Slide 3 CTA</p>
+      </div>
+      <div class="ig-slides">
+        <div class="ig-slide-card">
+          <h3>Slide 1 — Kapak</h3>
+          <canvas id="igC1" width="1080" height="1350"></canvas>
+          <button class="ig-btn-red ig-dl-btn" data-canvas="igC1">Önizle & İndir</button>
+        </div>
+        <div class="ig-slide-card">
+          <h3>Slide 2 — Detay</h3>
+          <canvas id="igC2" width="1080" height="1350"></canvas>
+          <button class="ig-btn-red ig-dl-btn" data-canvas="igC2">Önizle & İndir</button>
+        </div>
+        <div class="ig-slide-card">
+          <h3>Slide 3 — CTA</h3>
+          <canvas id="igC3" width="1080" height="1350"></canvas>
+          <button class="ig-btn-red ig-dl-btn" data-canvas="igC3">Önizle & İndir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <!-- PDF PANEL -->
@@ -1350,6 +1549,295 @@ function openMail() {
 async function sayfayiPaylas() {
   await savePDF();
 }
+
+/* ── SEKME GEÇİŞİ ──────────────────────────────────────────── */
+
+function setTab(tab){
+  const isOdeme=tab==='odeme';
+  document.getElementById('page-odeme').style.display=isOdeme?'':'none';
+  document.getElementById('page-odeme-right').style.display=isOdeme?'':'none';
+  document.getElementById('page-instagram').style.display=isOdeme?'none':'';
+  document.getElementById('tab-odeme').classList.toggle('active',isOdeme);
+  document.getElementById('tab-instagram').classList.toggle('active',!isOdeme);
+}
+
+/* ── INSTAGRAM CAROUSEL ─────────────────────────────────────── */
+
+(function(){
+  const G=id=>document.getElementById(id);
+  const imgs=[null,null,null];
+
+  function bindUpload(inputId,thumbId,idx){
+    const input=G(inputId),thumb=G(thumbId);
+    input.addEventListener('change',e=>{
+      const file=e.target.files?.[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const img=new Image();
+        img.onload=()=>{ imgs[idx]=img; thumb.src=reader.result; input.closest('.upload-box').classList.add('has-image'); igRenderAll(); };
+        img.src=reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  bindUpload('igImg1','igThumb1',0);
+  bindUpload('igImg2','igThumb2',1);
+  bindUpload('igImg3','igThumb3',2);
+
+  ['igModel','igYil','igKm','igPesin','igPesinat','igTaksit','igDegisen','igBoya','igTramer','igOvgu',
+   'igYakit','igVites','igFrameToggle','igLogoToggle','igBandToggle','igCtaToggle'].forEach(id=>{
+    G(id).addEventListener('input',igRenderAll);
+    G(id).addEventListener('change',igRenderAll);
+  });
+
+  const fmtTL=v=>(Number(String(v).replace(/[^\d]/g,''))||0).toLocaleString('tr-TR')+' ₺';
+  const num=v=>Number(String(v).replace(/[^\d]/g,''))||0;
+  const downPay=()=>{ const c=num(G('igPesinat').value); return c>0?c:Math.round(num(G('igPesin').value)*.30); };
+
+  function rr(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+  }
+  function drawImg(ctx,img,x,y,w,h,r){
+    ctx.save();
+    if(r){rr(ctx,x,y,w,h,r);ctx.clip();}
+    if(img){
+      const s=Math.max(w/img.width,h/img.height);
+      const nw=img.width*s,nh=img.height*s;
+      ctx.drawImage(img,x+(w-nw)/2,y+(h-nh)/2,nw,nh);
+    } else {
+      ctx.fillStyle='#DDD8D0';ctx.fillRect(x,y,w,h);
+      ctx.fillStyle='rgba(0,0,0,.3)';ctx.textAlign='center';
+      ctx.font='bold 36px "DM Sans",sans-serif';
+      ctx.fillText('FOTOĞRAF',x+w/2,y+h/2+12);
+    }
+    ctx.restore();
+  }
+  function wrap(ctx,text,x,y,mw,lh,maxL=3){
+    const words=String(text||'').split(' ');let line='',lines=[];
+    for(let n=0;n<words.length;n++){
+      const tl=line+words[n]+' ';
+      if(ctx.measureText(tl).width>mw&&n>0){lines.push(line.trim());line=words[n]+' ';}
+      else{line=tl;}
+    }
+    if(line)lines.push(line.trim());
+    lines.slice(0,maxL).forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
+  }
+
+  function slide1(){
+    const cv=G('igC1'),ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,1080,1350);
+    ctx.fillStyle='#F2EDE4';ctx.fillRect(0,0,1080,1350);
+    ctx.fillStyle='#D62828';ctx.fillRect(0,0,1080,72);
+    ctx.fillStyle='#fff';ctx.textAlign='center';
+    ctx.font='700 28px "DM Sans",sans-serif';
+    ctx.fillText('TAKSİTLE ARAÇ SAHİBİ OL',540,48);
+    drawImg(ctx,imgs[0],0,72,1080,660,0);
+    const g1=ctx.createLinearGradient(0,500,0,732);
+    g1.addColorStop(0,'rgba(0,0,0,0)');g1.addColorStop(1,'rgba(5,5,5,.75)');
+    ctx.fillStyle=g1;ctx.fillRect(0,500,1080,232);
+    ctx.fillStyle='#fff';ctx.textAlign='left';
+    ctx.font='900 80px "Bebas Neue",sans-serif';
+    ctx.fillText((G('igModel').value||'').slice(0,22).toUpperCase(),54,668);
+    ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='600 28px "DM Sans",sans-serif';
+    ctx.fillText(`${G('igYil').value}  ·  ${G('igKm').value}`,54,712);
+    ctx.fillStyle='#fff';ctx.fillRect(0,732,1080,618);
+    ctx.fillStyle='#D62828';ctx.fillRect(54,754,180,7);
+    ctx.fillStyle='#0D0D0D';ctx.textAlign='left';
+    ctx.font='500 24px "DM Sans",sans-serif';
+    ctx.fillText('BAŞLAYAN TAKSİT',54,826);
+    ctx.fillStyle='#D62828';
+    ctx.font='900 104px "Bebas Neue",sans-serif';
+    ctx.fillText(fmtTL(G('igTaksit').value),54,938);
+    const boxes=[
+      ['PEŞİNAT',fmtTL(downPay()),true],
+      ['PEŞİN FİYAT',fmtTL(G('igPesin').value),false],
+      ['VITES / YAKIT',`${G('igVites').value} · ${G('igYakit').value}`,false],
+    ];
+    boxes.forEach(([label,val,accent],i)=>{
+      const x=54+i*332,y=970,w=314,h=118;
+      ctx.fillStyle=accent?'#D62828':'#0D0D0D';
+      rr(ctx,x,y,w,h,16);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';
+      ctx.font='600 19px "DM Sans",sans-serif';
+      ctx.fillText(label,x+w/2,y+34);
+      ctx.font='900 38px "Bebas Neue",sans-serif';
+      ctx.fillText(val.length>14?val.slice(0,14):val,x+w/2,y+84);
+    });
+    ctx.fillStyle='#0D0D0D';ctx.fillRect(0,1138,1080,2);
+    ctx.fillStyle='#0D0D0D';ctx.textAlign='left';
+    ctx.font='900 54px "Bebas Neue",sans-serif';
+    ctx.fillText('KREDİZMİR',54,1224);
+    ctx.fillStyle='#D62828';ctx.font='600 24px "DM Sans",sans-serif';
+    ctx.fillText('ARAÇ FİNANSMAN DANIŞMANLIĞI — İZMİR',54,1262);
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.font='500 20px "DM Sans",sans-serif';
+    ctx.fillText('Ücretsiz ön değerlendirme · Hızlı kredi süreçleri',54,1300);
+    if(G('igFrameToggle').checked){ctx.strokeStyle='#D62828';ctx.lineWidth=8;ctx.strokeRect(14,14,1052,1322);}
+    if(G('igLogoToggle').checked){
+      ctx.save();
+      ctx.fillStyle='#D62828';ctx.beginPath();ctx.arc(960,830,76,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';
+      ctx.font='900 32px "Bebas Neue",sans-serif';ctx.fillText('KREDİZMİR',960,820);
+      ctx.font='500 17px "DM Sans",sans-serif';ctx.fillText('İZMİR',960,846);
+      ctx.restore();
+    }
+  }
+
+  function slide2(){
+    const cv=G('igC2'),ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,1080,1350);
+    ctx.fillStyle='#0D0D0D';ctx.fillRect(0,0,510,1350);
+    ctx.fillStyle='#F2EDE4';ctx.fillRect(510,0,570,1350);
+    ctx.fillStyle='#D62828';ctx.fillRect(0,0,8,1350);
+    ctx.fillStyle='#D62828';ctx.fillRect(510,0,6,1350);
+    drawImg(ctx,imgs[1],24,80,462,420,18);
+    drawImg(ctx,imgs[2]||imgs[1],24,518,462,300,16);
+    ctx.fillStyle='#fff';ctx.textAlign='left';
+    ctx.font='900 56px "Bebas Neue",sans-serif';
+    const mWords=(G('igModel').value||'ARAÇ').toUpperCase().split(' ');
+    let ml='',mls=[];
+    mWords.forEach(w=>{
+      ctx.font='900 56px "Bebas Neue",sans-serif';
+      const t=ml+w+' ';
+      if(ctx.measureText(t).width>450&&ml){mls.push(ml.trim());ml=w+' ';}else{ml=t;}
+    });
+    if(ml)mls.push(ml.trim());
+    mls.slice(0,2).forEach((l,i)=>ctx.fillText(l,24,856+i*62));
+    ctx.fillStyle='#D62828';ctx.font='700 26px "DM Sans",sans-serif';
+    ctx.fillText(G('igYil').value,24,960);
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='500 20px "DM Sans",sans-serif';
+    ctx.fillText('KREDİZMİR',24,1000);
+    const specs=[
+      ['KM',G('igKm').value],
+      ['YAKIT',G('igYakit').value],
+      ['VİTES',G('igVites').value],
+      ['DEĞİŞEN',G('igDegisen').value],
+      ['BOYA',G('igBoya').value],
+      ['TRAMER',G('igTramer').value],
+    ];
+    ctx.textAlign='left';
+    let sy=80;
+    specs.forEach(([k,v])=>{
+      ctx.fillStyle='#999';ctx.font='600 19px "DM Sans",sans-serif';
+      ctx.fillText(k,532,sy+28);
+      ctx.fillStyle='#0D0D0D';ctx.font='900 42px "Bebas Neue",sans-serif';
+      ctx.fillText(v||'—',532,sy+72);
+      ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(532,sy+90);ctx.lineTo(1050,sy+90);ctx.stroke();
+      sy+=118;
+    });
+    const badges=[['✓ EKSPERTİZ TAMAM','#D62828','#fff'],['✓ KREDİYE UYGUN','#1B6B3A','#fff']];
+    badges.forEach(([txt,bg,col],i)=>{
+      ctx.fillStyle=bg;rr(ctx,532,1095+i*70,460,54,12);ctx.fill();
+      ctx.fillStyle=col;ctx.textAlign='center';
+      ctx.font='700 23px "DM Sans",sans-serif';
+      ctx.fillText(txt,532+230,1129+i*70);
+    });
+    if(G('igBandToggle').checked){
+      ctx.fillStyle='rgba(13,13,13,.9)';ctx.fillRect(0,1282,1080,68);
+      ctx.fillStyle='#fff';ctx.textAlign='center';
+      ctx.font='600 26px "DM Sans",sans-serif';
+      ctx.fillText(`${G('igYil').value}  ·  ${G('igYakit').value}  ·  ${G('igVites').value}  ·  ${G('igKm').value}`,540,1323);
+    }
+    if(G('igFrameToggle').checked){ctx.strokeStyle='#D62828';ctx.lineWidth=8;ctx.strokeRect(14,14,1052,1322);}
+  }
+
+  function slide3(){
+    const cv=G('igC3'),ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,1080,1350);
+    drawImg(ctx,imgs[2]||imgs[0],0,0,1080,720,0);
+    const oT=ctx.createLinearGradient(0,0,0,180);
+    oT.addColorStop(0,'rgba(0,0,0,.8)');oT.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=oT;ctx.fillRect(0,0,1080,180);
+    const oB=ctx.createLinearGradient(0,480,0,720);
+    oB.addColorStop(0,'rgba(0,0,0,0)');oB.addColorStop(1,'rgba(0,0,0,.82)');
+    ctx.fillStyle=oB;ctx.fillRect(0,480,1080,240);
+    ctx.fillStyle='#fff';ctx.textAlign='left';
+    ctx.font='900 58px "Bebas Neue",sans-serif';
+    ctx.fillText('KREDİZMİR',54,78);
+    ctx.fillStyle='#D62828';ctx.font='600 22px "DM Sans",sans-serif';
+    ctx.fillText('TAKSİTLE ARABA SAHİBİ · İZMİR',54,110);
+    ctx.fillStyle='#fff';ctx.textAlign='left';
+    ctx.font='900 72px "Bebas Neue",sans-serif';
+    ctx.fillText((G('igModel').value||'').slice(0,20).toUpperCase(),54,658);
+    ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 28px "DM Sans",sans-serif';
+    ctx.fillText(`${G('igYil').value}  ·  ${G('igKm').value}`,54,698);
+    ctx.fillStyle='#fff';ctx.fillRect(0,720,1080,630);
+    ctx.fillStyle='#D62828';ctx.fillRect(54,742,6,160);
+    ctx.fillStyle='#0D0D0D';ctx.textAlign='left';
+    ctx.font='700 30px "DM Sans",sans-serif';
+    ctx.fillText('BU ARAÇ SİZE UYGUN OLABİLİR',78,792);
+    ctx.fillStyle='#666';ctx.font='400 24px "DM Sans",sans-serif';
+    wrap(ctx,G('igOvgu').value,78,832,930,38,2);
+    ctx.fillStyle='#0D0D0D';rr(ctx,78,890,468,90,14);ctx.fill();
+    ctx.fillStyle='#fff';ctx.textAlign='center';
+    ctx.font='500 21px "DM Sans",sans-serif';ctx.fillText('BAŞLAYAN TAKSİT',78+234,928);
+    ctx.fillStyle='#D62828';ctx.font='900 48px "Bebas Neue",sans-serif';
+    ctx.fillText(fmtTL(G('igTaksit').value),78+234,968);
+    const buls=['36 aya kadar vade seçeneği','Puan etkilemeden ön değerlendirme','Hızlı banka süreci · Ücretsiz danışmanlık'];
+    let by=1012;
+    buls.forEach(t=>{
+      ctx.fillStyle='#D62828';ctx.textAlign='left';
+      ctx.font='900 26px "Bebas Neue",sans-serif';ctx.fillText('—',78,by);
+      ctx.fillStyle='#0D0D0D';ctx.font='500 25px "DM Sans",sans-serif';ctx.fillText(t,112,by);
+      by+=50;
+    });
+    if(G('igCtaToggle').checked){
+      ctx.fillStyle='#D62828';rr(ctx,54,1176,972,112,20);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';
+      ctx.font='900 64px "Bebas Neue",sans-serif';
+      ctx.fillText("DM'DEN BİLGİ AL — ÜCRETSİZ",540,1252);
+    }
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.textAlign='center';
+    ctx.font='500 20px "DM Sans",sans-serif';
+    ctx.fillText('instagram.com/kredizmir  ·  Gaziemir, İzmir',540,1326);
+    if(G('igFrameToggle').checked){ctx.strokeStyle='#D62828';ctx.lineWidth=8;ctx.strokeRect(14,14,1052,1322);}
+  }
+
+  function igRenderAll(){slide1();slide2();slide3();}
+
+  const modal=G('igModal'),dlImg=G('igDlImg');
+  let curUrl='';
+  let allQueue=[],allIdx=0;
+
+  function openModal(canvasId){
+    curUrl=G(canvasId).toDataURL('image/png');
+    dlImg.src=curUrl;
+    modal.classList.add('open');
+  }
+  G('igDlOpenTab').onclick=()=>{
+    const w=window.open('','_blank');
+    if(w) w.document.write(`<html><body style="margin:0;background:#000"><img src="${curUrl}" style="max-width:100%;display:block;margin:0 auto"></body></html>`);
+    allIdx++;
+    if(allQueue.length&&allIdx<allQueue.length){
+      setTimeout(()=>openModal(allQueue[allIdx]),400);
+    }
+  };
+  G('igDlClose').onclick=()=>modal.classList.remove('open');
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open');});
+
+  document.querySelectorAll('.ig-dl-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>openModal(btn.dataset.canvas));
+  });
+
+  G('igAllBtn').addEventListener('click',()=>{
+    allQueue=['igC1','igC2','igC3'];allIdx=0;
+    openModal(allQueue[allIdx]);
+  });
+
+  G('igRenderBtn').addEventListener('click',igRenderAll);
+  G('igFillBtn').addEventListener('click',()=>{
+    G('igModel').value='FIAT EGEA 1.4 FIRE';G('igYil').value='2020';G('igKm').value='120.000 KM';
+    G('igYakit').value='Benzin';G('igVites').value='Manuel';G('igPesin').value='750000';
+    G('igPesinat').value='210000';G('igTaksit').value='18950';G('igDegisen').value='Yok';
+    G('igBoya').value='Sağ Çamurluk';G('igTramer').value='5.200 TL';
+    G('igOvgu').value='Temiz duruşu, aile kullanımına uygun yapısı ve ekonomik işletme maliyetiyle dikkat çeken bir araç.';
+    igRenderAll();
+  });
+
+  igRenderAll();
+})();
 
 </script>
 </body>

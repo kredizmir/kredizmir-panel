@@ -58,19 +58,18 @@ body::before{
 .logo-name span{color:var(--accent);}
 .logo-sub{font-size:10px;color:var(--text-3);font-family:'DM Mono',monospace;letter-spacing:.6px;margin-top:1px;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-badge{background:linear-gradient(90deg,var(--blue-700),var(--accent2));padding:5px 14px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:1px;color:#fff;text-transform:uppercase;}
+.topbar-badge{border:1px solid var(--border2);padding:5px 14px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--text-3);text-transform:uppercase;}
 .left-panel{
   background:rgba(6,12,24,.92);border-right:1px solid var(--border);
   padding:24px 20px;overflow-y:auto;
   max-height:calc(100vh - 76px);position:sticky;top:76px;
 }
-.panel-section{margin-bottom:22px;}
+.panel-section{margin-bottom:10px;border:1px solid var(--border2);border-radius:var(--radius-md);padding:16px;background:rgba(255,255,255,.018);}
 .section-label{
-  font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;
-  text-transform:uppercase;color:var(--accent);margin-bottom:11px;
-  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-3);margin-bottom:12px;
+  padding-bottom:9px;border-bottom:1px solid var(--border);
 }
-.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
 .type-toggle{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:1px;}
 .type-btn{
   padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -80,9 +79,8 @@ body::before{
 }
 .type-btn:hover{border-color:var(--blue-400);color:var(--text-1);}
 .type-btn.active{
-  background:linear-gradient(135deg,var(--blue-700),var(--blue-500));
-  border-color:var(--blue-400);color:#fff;
-  box-shadow:0 4px 16px rgba(21,101,192,.38);
+  background:rgba(21,101,192,.16);
+  border-color:rgba(33,150,243,.5);color:var(--text-1);
 }
 .rate-selector{margin-top:10px;}
 .rate-selector-label{font-size:11px;color:var(--text-2);font-weight:500;margin-bottom:7px;letter-spacing:.3px;}
@@ -95,9 +93,8 @@ body::before{
 }
 .rate-btn:hover{border-color:var(--blue-400);color:var(--text-2);}
 .rate-btn.active{
-  background:rgba(21,101,192,.22);border-color:var(--blue-400);
-  color:var(--accent);font-weight:700;
-  box-shadow:inset 0 0 0 1px rgba(0,200,240,.2);
+  border-color:rgba(0,200,240,.5);
+  color:var(--accent);background:rgba(0,200,240,.07);
 }
 .gelgel-badge{
   display:inline-block;font-size:8px;font-weight:800;letter-spacing:.8px;
@@ -119,10 +116,9 @@ body::before{
 .btn-ig-sub{font-size:9px;display:block;opacity:.85;letter-spacing:.6px;line-height:1;font-weight:700;}
 .rate-fixed-note{font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.3px;}
 .cok-yakinda-box{
-  display:flex;align-items:center;gap:11px;
-  background:linear-gradient(135deg,rgba(125,212,248,.07),rgba(232,160,32,.06));
-  border:1px dashed rgba(125,212,248,.3);
-  border-radius:var(--radius-sm);padding:12px 14px;margin-top:4px;
+  display:flex;align-items:center;gap:10px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:11px 13px;margin-top:4px;
 }
 .cok-yakinda-icon{font-size:18px;flex-shrink:0;}
 .cok-yakinda-box div{display:flex;flex-direction:column;gap:2px;}
@@ -130,10 +126,9 @@ body::before{
 .cok-yakinda-box span{font-size:10.5px;color:var(--text-3);}
 .tarih-uyari-kutu{
   display:flex;align-items:flex-start;gap:8px;
-  background:linear-gradient(135deg,rgba(232,69,69,.10),rgba(232,69,69,.06));
-  border:1px solid rgba(232,69,69,.35);border-left:3px solid #E84545;
+  border:1px solid rgba(232,69,69,.25);border-left:3px solid #E84545;
   border-radius:var(--radius-xs);padding:10px 12px;margin-top:8px;
-  font-family:'Syne',sans-serif;font-size:10.5px;font-weight:700;
+  font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
   color:#FF9090;letter-spacing:.3px;line-height:1.5;
 }
 .tarih-uyari-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
@@ -146,17 +141,17 @@ body::before{
 }
 .hizmet-btn:hover{border-color:var(--gold);color:var(--text-1);}
 .hizmet-btn.active{
-  background:rgba(232,160,32,.18);border-color:var(--gold);border-width:2px;
-  color:var(--gold-light);font-weight:800;box-shadow:0 0 12px rgba(232,160,32,.2);
+  border-color:rgba(232,160,32,.55);
+  color:var(--gold-light);background:rgba(232,160,32,.1);
 }
 .dosya-field{
-  background:rgba(232,160,32,.04);border:1px solid rgba(232,160,32,.15);
-  border-radius:var(--radius-sm);padding:14px;margin-top:4px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px;margin-top:4px;
 }
 .tutar-hint{font-size:10.5px;color:rgba(125,212,248,.65);line-height:1.55;margin-top:6px;}
 .zorunlu-field{
-  background:rgba(232,69,69,.04);border:1px solid rgba(232,69,69,.2);
-  border-radius:var(--radius-sm);padding:14px;margin-top:4px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px;margin-top:4px;
 }
 .zorunlu-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px;}
 .zorunlu-btn{
@@ -167,17 +162,17 @@ body::before{
 }
 .zorunlu-btn:hover{border-color:var(--danger);color:var(--text-2);}
 .zorunlu-btn.active{
-  background:rgba(232,69,69,.15);border-color:var(--danger);border-width:2px;
-  color:#FF9090;font-weight:800;box-shadow:0 0 10px rgba(232,69,69,.2);
+  border-color:rgba(232,69,69,.45);
+  color:#FF9090;background:rgba(232,69,69,.09);
 }
 .pdf-zorunlu-box{background:#FFF5F5;border:1px solid #F8C0C0;border-left:4px solid #E84545;border-radius:8px;padding:14px 18px;margin-bottom:16px;}
 .pdf-zorunlu-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C0392B;margin-bottom:10px;}
 .pdf-zorunlu-items{display:flex;flex-wrap:wrap;gap:8px;}
 .pdf-zorunlu-badge{background:#FDECEA;border:1px solid #F5B7B1;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;color:#C0392B;}
 .banka-limit-note{
-  display:none;background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.22);
-  border-radius:var(--radius-xs);padding:7px 11px;margin-top:6px;
-  font-size:10.5px;color:#FFD580;line-height:1.5;
+  display:none;border:1px solid rgba(232,160,32,.25);
+  border-radius:var(--radius-xs);padding:6px 10px;margin-top:6px;
+  font-size:10px;color:#FFD580;line-height:1.5;
 }
 .banka-limit-note.show{display:block;}
 .field{margin-bottom:12px;}
@@ -208,12 +203,11 @@ body::before{
   box-shadow:0 4px 18px rgba(0,140,185,.35);
 }
 .btn-generate:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,140,185,.55);}
-.btn-clear{padding:14px 18px;background:rgba(232,69,69,.08);border:1px solid rgba(232,69,69,.2);border-radius:var(--radius-sm);color:var(--danger);font-family:'Syne',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:all .2s;}
-.btn-clear:hover{background:rgba(232,69,69,.16);}
+.btn-clear{padding:13px 16px;background:transparent;border:1px solid rgba(232,69,69,.22);border-radius:var(--radius-sm);color:var(--danger);font-family:'Syne',sans-serif;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;}
+.btn-clear:hover{background:rgba(232,69,69,.08);}
 .right-panel{padding:26px 30px;overflow-y:auto;max-height:calc(100vh - 76px);}
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:22px;}
-.sum-card{background:var(--card-bg2);border:1px solid var(--border);border-radius:var(--radius-md);padding:17px 18px;position:relative;overflow:hidden;}
-.sum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue-600),var(--accent));}
+.sum-card{background:rgba(255,255,255,.02);border:1px solid var(--border2);border-radius:var(--radius-md);padding:16px 17px;}
 .sum-card-label{font-size:10px;color:var(--text-3);font-weight:500;letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px;}
 .sum-card-value{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text-1);}
 .sum-card-value.accent{color:var(--accent);}
@@ -229,10 +223,10 @@ body::before{
 .empty-icon{font-size:50px;opacity:.18;}
 .empty-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:var(--text-2);}
 .empty-sub{font-size:13px;color:var(--text-3);max-width:300px;line-height:1.65;}
-.pdf-preview-frame{background:rgba(10,18,32,.45);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;}
+.pdf-preview-frame{border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;}
 .pdf-preview-label{font-size:10px;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
 .pdf-preview-label::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);}
-.pdf-preview-note{font-size:11px;font-weight:700;color:#E1306C;letter-spacing:.5px;margin-bottom:14px;padding:7px 12px;background:rgba(225,48,108,.08);border-left:3px solid #E1306C;border-radius:0 6px 6px 0;}
+.pdf-preview-note{font-size:11px;font-weight:700;color:#E1306C;letter-spacing:.5px;margin-bottom:14px;padding:7px 12px;border:1px solid rgba(225,48,108,.18);border-left:3px solid #E1306C;border-radius:0 6px 6px 0;}
 /* PDF DOCUMENT */
 #pdf-document{background:#FAFBFF;color:#18213A;font-family:'DM Sans',sans-serif;padding:0;max-width:800px;margin:0 auto;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;}
 .pdf-hero{background:linear-gradient(135deg,#0D2B6E 0%,#1565C0 55%,#0277BD 100%);padding:32px 40px 28px;display:flex;justify-content:space-between;align-items:flex-end;position:relative;overflow:hidden;}
@@ -427,17 +421,24 @@ body::before{
 .btn-wp-contact{flex-shrink:0;width:38px;height:38px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#1aad4e,#128c3a);border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s;box-shadow:0 3px 10px rgba(18,140,58,.35);}
 .btn-wp-contact:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(18,140,58,.55);}
 /* ŞABLONLAR */
-.sablon-area{margin-top:14px;padding:13px 14px;background:rgba(21,101,192,.06);border:1px solid rgba(21,101,192,.18);border-radius:var(--radius-sm);}
+.sablon-area{margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-md);}
 .sablon-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
 .sablon-label{font-size:11px;font-weight:700;color:var(--text-2);letter-spacing:.5px;text-transform:uppercase;}
 .btn-sablon-kaydet{font-size:11px;font-weight:700;font-family:'Syne',sans-serif;color:#7DD4F8;background:rgba(125,212,248,.1);border:1px solid rgba(125,212,248,.25);border-radius:99px;padding:3px 11px;cursor:pointer;transition:all .18s;}
 .btn-sablon-kaydet:hover{background:rgba(125,212,248,.2);}
 .sablon-chips{display:flex;flex-wrap:wrap;gap:7px;}
 .sablon-empty-hint{font-size:11px;color:var(--text-3);font-style:italic;}
-.sablon-chip{display:flex;align-items:center;gap:5px;background:rgba(21,101,192,.12);border:1px solid rgba(21,101,192,.28);border-radius:99px;padding:4px 10px 4px 12px;cursor:pointer;transition:all .18s;font-size:12px;color:var(--text-2);font-weight:600;}
-.sablon-chip:hover{background:rgba(21,101,192,.22);border-color:rgba(21,101,192,.5);}
+.sablon-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:99px;padding:4px 10px 4px 12px;cursor:pointer;transition:all .18s;font-size:12px;color:var(--text-2);font-weight:600;}
+.sablon-chip:hover{border-color:rgba(100,181,246,.4);}
 .sablon-chip-del{width:16px;height:16px;border-radius:50%;background:rgba(232,69,69,.18);border:none;color:var(--danger);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0;transition:background .15s;}
-.sablon-chip-del:hover{background:rgba(232,69,69,.38);}
+.sablon-chip-del:hover{background:rgba(232,69,69,.28);}
+/* BANKA TUTAR HIZ SEÇENEKLER */
+.banka-tutar-box{margin-top:10px;}
+.banka-tutar-label{font-size:10px;color:var(--text-3);font-weight:500;margin-bottom:6px;letter-spacing:.3px;}
+.banka-tutar-chips{display:flex;gap:5px;flex-wrap:wrap;}
+.banka-tutar-chip{flex:1;min-width:0;padding:8px 2px;border:1px solid var(--border);border-radius:var(--radius-xs);background:transparent;color:var(--text-3);font-family:'DM Mono',monospace;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;text-align:center;white-space:nowrap;}
+.banka-tutar-chip:hover{border-color:var(--border2);color:var(--text-2);}
+.banka-tutar-chip.active{border-color:rgba(33,150,243,.5);color:var(--blue-300);background:rgba(21,101,192,.13);}
 </style>
 </head>
 <body>
@@ -516,7 +517,17 @@ body::before{
       <label>💰 Finansman Tutarı (₺)</label>
       <input type="number" id="f-tutar" placeholder="örn. 400000" min="0"/>
       <div class="tutar-hint">💡 Müşterinin eline geçecek tutarı seçiniz.<br/>Dosya masrafını alttan ekleyiniz.</div>
-      <div class="banka-limit-note" id="banka-limit-note">🏦 Banka Kredisi maks. tutar: <strong>400.000 ₺</strong></div>
+      <div class="banka-limit-note" id="banka-limit-note">🏦 Banka Kredisi maks. tutar: <strong>350.000 ₺</strong></div>
+      <div class="banka-tutar-box" id="banka-tutar-box" style="display:none;">
+        <div class="banka-tutar-label">Hızlı Tutar Seç</div>
+        <div class="banka-tutar-chips">
+          <button class="banka-tutar-chip" data-amount="100000" onclick="selectBankaTutar(100000)">100.000</button>
+          <button class="banka-tutar-chip" data-amount="200000" onclick="selectBankaTutar(200000)">200.000</button>
+          <button class="banka-tutar-chip" data-amount="250000" onclick="selectBankaTutar(250000)">250.000</button>
+          <button class="banka-tutar-chip" data-amount="300000" onclick="selectBankaTutar(300000)">300.000</button>
+          <button class="banka-tutar-chip" data-amount="350000" onclick="selectBankaTutar(350000)">350.000</button>
+        </div>
+      </div>
     </div>
     <div class="field pesinat-field">
       <label>Peşinat Tutarı (₺) <span class="optional-tag">Opsiyonel</span></label>
@@ -604,7 +615,7 @@ body::before{
 </div>
 
 <script>
-const BANKA_MAX = 400000;
+const BANKA_MAX = 350000;
 const VERGI_SABIT = 30;
 let selectedRate = 4.0;
 let logoDataURL = ""; // Logo buraya base64 ekleyin veya sol üstten yükleyin
@@ -628,7 +639,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
   updateRateDisplay();
   loadSablonlar();
   ['f-musteri','f-tutar','f-pesinat'].forEach(id=>{
-    document.getElementById(id).addEventListener('input', autoCalc);
+    document.getElementById(id).addEventListener('input', ()=>{
+      if(id==='f-tutar') document.querySelectorAll('.banka-tutar-chip').forEach(b=>b.classList.remove('active'));
+      autoCalc();
+    });
   });
   if('contacts' in navigator && 'ContactsManager' in window){
     document.getElementById('btn-wp-contact').style.display='flex';
@@ -679,6 +693,7 @@ function setType(type){
   document.getElementById('btn-djs').classList.toggle('active', type==='djs');
   document.getElementById('btn-banka').classList.toggle('active', type==='banka');
   document.getElementById('banka-limit-note').classList.toggle('show', type==='banka');
+  document.getElementById('banka-tutar-box').style.display = type==='banka' ? '' : 'none';
   document.getElementById('rate-btns-djs').style.display   = type==='djs'?'flex':'none';
   document.getElementById('rate-btns-banka').style.display = type==='banka'?'flex':'none';
   document.getElementById('rate-label').textContent = type==='djs'
@@ -694,9 +709,19 @@ function setType(type){
   autoCalc();
 }
 
+function selectBankaTutar(amount){
+  document.getElementById('f-tutar').value = amount;
+  document.querySelectorAll('.banka-tutar-chip').forEach(btn=>{
+    const v = parseInt(btn.dataset.amount);
+    btn.classList.toggle('active', v===amount);
+  });
+  autoCalc();
+}
+
 function clearForm(){
   ['f-musteri','f-telefon','f-email','f-tutar','f-pesinat'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-tarih').value=new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.banka-tutar-chip').forEach(b=>b.classList.remove('active'));
   setType('djs'); selectHizmet(0);
   document.getElementById('musteri-empty').style.display='';
   document.getElementById('musteri-content').style.display='none';

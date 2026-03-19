@@ -864,7 +864,9 @@ async function renderCustomerPDF(state){
     </div>
     <div class="pdf-body">
       <div class="pdf-watermark">
-        <div class="pdf-watermark-text">KREDİ<span>ZMİR</span></div>
+        ${logoDataURL
+          ? `<img src="${logoDataURL}" style="width:100%;height:100%;object-fit:contain;filter:grayscale(1);"/>`
+          : `<div class="pdf-watermark-text">KREDİ<span>ZMİR</span></div>`}
       </div>
       <div class="pdf-payment-hero">
         <div>

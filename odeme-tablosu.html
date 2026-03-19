@@ -421,6 +421,23 @@ body::before{
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .animate-in{animation:fadeUp .32s ease forwards;}
+/* MÜŞTERİ SATIRI (isim + kişi seçici butonu) */
+.musteri-row{display:flex;gap:7px;align-items:center;}
+.musteri-row input{flex:1;min-width:0;}
+.btn-wp-contact{flex-shrink:0;width:38px;height:38px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#1aad4e,#128c3a);border:none;color:#fff;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s;box-shadow:0 3px 10px rgba(18,140,58,.35);}
+.btn-wp-contact:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(18,140,58,.55);}
+/* ŞABLONLAR */
+.sablon-area{margin-top:14px;padding:13px 14px;background:rgba(21,101,192,.06);border:1px solid rgba(21,101,192,.18);border-radius:var(--radius-sm);}
+.sablon-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.sablon-label{font-size:11px;font-weight:700;color:var(--text-2);letter-spacing:.5px;text-transform:uppercase;}
+.btn-sablon-kaydet{font-size:11px;font-weight:700;font-family:'Syne',sans-serif;color:#7DD4F8;background:rgba(125,212,248,.1);border:1px solid rgba(125,212,248,.25);border-radius:99px;padding:3px 11px;cursor:pointer;transition:all .18s;}
+.btn-sablon-kaydet:hover{background:rgba(125,212,248,.2);}
+.sablon-chips{display:flex;flex-wrap:wrap;gap:7px;}
+.sablon-empty-hint{font-size:11px;color:var(--text-3);font-style:italic;}
+.sablon-chip{display:flex;align-items:center;gap:5px;background:rgba(21,101,192,.12);border:1px solid rgba(21,101,192,.28);border-radius:99px;padding:4px 10px 4px 12px;cursor:pointer;transition:all .18s;font-size:12px;color:var(--text-2);font-weight:600;}
+.sablon-chip:hover{background:rgba(21,101,192,.22);border-color:rgba(21,101,192,.5);}
+.sablon-chip-del{width:16px;height:16px;border-radius:50%;background:rgba(232,69,69,.18);border:none;color:var(--danger);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0;transition:background .15s;}
+.sablon-chip-del:hover{background:rgba(232,69,69,.38);}
 </style>
 </head>
 <body>
@@ -476,7 +493,7 @@ body::before{
 
   <div class="panel-section">
     <div class="section-label">Müşteri Bilgileri</div>
-    <div class="field"><label>Müşteri Adı Soyadı <span style="color:#E84545;font-size:13px;">*</span></label><input type="text" id="f-musteri" placeholder="Ad Soyad" required/></div>
+    <div class="field"><label>Müşteri Adı Soyadı <span style="color:#E84545;font-size:13px;">*</span></label><div class="musteri-row"><input type="text" id="f-musteri" placeholder="Ad Soyad" required/><button class="btn-wp-contact" id="btn-wp-contact" onclick="pickContact()" title="Kişi defterinden seç" style="display:none;">+</button></div></div>
     <div class="field"><label>Telefon</label><input type="tel" id="f-telefon" placeholder="05XX XXX XX XX"/></div>
     <div class="field">
       <label>E-posta <span class="optional-tag">Opsiyonel</span></label>
@@ -532,9 +549,16 @@ body::before{
     </div>
   </div>
 
-  <div class="cta-area">
-    <button class="btn-generate" onclick="generateTable()">📊 Tablo Oluştur</button>
-    <button class="btn-clear" onclick="clearForm()">✕</button>
+  <div class="sablon-area">
+    <div class="sablon-header">
+      <span class="sablon-label">⭐ Şablonlar</span>
+      <button class="btn-sablon-kaydet" onclick="saveSablon()">+ Kaydet</button>
+    </div>
+    <div class="sablon-chips" id="sablon-chips"><span class="sablon-empty-hint">Henüz şablon yok</span></div>
+  </div>
+
+  <div class="cta-area" style="grid-template-columns:1fr;">
+    <button class="btn-clear" onclick="clearForm()" style="padding:14px;">✕ Temizle</button>
   </div>
 
 </aside>
@@ -549,7 +573,7 @@ body::before{
   <div id="musteri-empty" class="empty-state animate-in">
     <div class="empty-icon">📄</div>
     <div class="empty-title">PDF Önizlemesi Hazır Değil</div>
-    <div class="empty-sub">Bilgileri girin ve "Tablo Oluştur" butonuna basın.</div>
+    <div class="empty-sub">Müşteri adını ve finansman tutarını girin — tablo otomatik oluşur.</div>
   </div>
   <div id="musteri-content" style="display:none;" class="animate-in">
     <div class="action-bar">
@@ -594,11 +618,21 @@ let appState = {
   tableData:[], summary:null, cokluSonuclar:null
 };
 
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+const autoCalc = debounce(()=>generateTable(true), 500);
+
 document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('f-tarih').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-faiz').value  = selectedRate;
   selectHizmet(0);
   updateRateDisplay();
+  loadSablonlar();
+  ['f-musteri','f-tutar','f-pesinat'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', autoCalc);
+  });
+  if('contacts' in navigator && 'ContactsManager' in window){
+    document.getElementById('btn-wp-contact').style.display='flex';
+  }
 });
 
 function selectHizmet(amount){
@@ -608,6 +642,7 @@ function selectHizmet(amount){
       : parseInt(btn.textContent.replace(/\./g,'').replace('₺','').replace(/\s/g,''));
     btn.classList.toggle('active', v===amount);
   });
+  autoCalc();
 }
 
 function uploadLogo(e){
@@ -632,6 +667,7 @@ function selectRate(rate){
     const br=parseFloat(btn.textContent.replace(',','.'));
     btn.classList.toggle('active', Math.abs(br-rate)<0.01);
   });
+  autoCalc();
 }
 
 function updateRateDisplay(){
@@ -655,6 +691,7 @@ function setType(type){
   document.querySelectorAll(`#${cont} .rate-btn`).forEach(btn=>{
     btn.classList.toggle('active', Math.abs(parseFloat(btn.textContent.replace(',','.'))-def)<0.01);
   });
+  autoCalc();
 }
 
 function clearForm(){
@@ -689,7 +726,7 @@ function calcAmortization(tutar, faizOrani, vergiOrani, vade){
   return {rows,taksit};
 }
 
-async function generateTable(){
+async function generateTable(silent=false){
   const raw = document.getElementById('f-tutar').value.toString().trim().replace(/\./g,'').replace(',','.');
   const tutarGirilen = parseFloat(raw);
   const pesinRaw = document.getElementById('f-pesinat').value.toString().trim().replace(/\./g,'').replace(',','.');
@@ -700,8 +737,8 @@ async function generateTable(){
   const vade   = 36;
 
   const musteriVal = document.getElementById('f-musteri').value.trim();
-  if(!musteriVal){showToast('⚠️ Müşteri adı soyadı zorunludur.','error');document.getElementById('f-musteri').focus();return;}
-  if(!tutarGirilen||isNaN(tutarGirilen)||tutarGirilen<=0){showToast('⚠️ Geçerli bir finansman tutarı girin.','error');return;}
+  if(!musteriVal){ if(!silent){showToast('⚠️ Müşteri adı soyadı zorunludur.','error');document.getElementById('f-musteri').focus();} return; }
+  if(!tutarGirilen||isNaN(tutarGirilen)||tutarGirilen<=0){ if(!silent){showToast('⚠️ Geçerli bir finansman tutarı girin.','error');} return; }
   if(appState.type==='banka'&&tutarGirilen>BANKA_MAX){showToast(`⚠️ Banka Kredisi maks. ${formatTL(BANKA_MAX)} ₺`,'error');return;}
 
   const tutarHesap = tutarGirilen + hizmet;
@@ -729,7 +766,7 @@ async function generateTable(){
   document.getElementById('s-tur').textContent=appState.type==='djs'?'DJS':'Banka';
 
   await renderCustomerPDF(appState);
-  showToast('✅ Ödeme tablosu oluşturuldu!','success');
+  if(!silent) showToast('✅ Ödeme tablosu oluşturuldu!','success');
 }
 
 function generateQRDataURL(link){
@@ -926,6 +963,75 @@ function showVergiYakinda(){
 function toggleZorunlu(key){
   zorunluState[key] = !zorunluState[key];
   document.getElementById('btn-'+key).classList.toggle('active', zorunluState[key]);
+  autoCalc();
+}
+
+/* ── ŞABLONLAR ───────────────────────────────────────────── */
+
+function saveSablon(){
+  const name = prompt('Şablon adı (örn: DJS %4.00):','');
+  if(!name || !name.trim()) return;
+  const sablonlar = JSON.parse(localStorage.getItem('kz_sablonlar')||'[]');
+  if(sablonlar.length>=5){ showToast('⚠️ En fazla 5 şablon kaydedebilirsiniz.','error'); return; }
+  sablonlar.push({
+    name: name.trim().slice(0,24),
+    type: appState.type,
+    faiz: selectedRate,
+    hizmet: parseFloat(document.getElementById('f-hizmet').value)||0,
+    zorunlu: { ...zorunluState }
+  });
+  localStorage.setItem('kz_sablonlar', JSON.stringify(sablonlar));
+  loadSablonlar();
+  showToast('✅ Şablon kaydedildi!','success');
+}
+
+function loadSablonlar(){
+  const sablonlar = JSON.parse(localStorage.getItem('kz_sablonlar')||'[]');
+  const el = document.getElementById('sablon-chips');
+  if(!sablonlar.length){
+    el.innerHTML='<span class="sablon-empty-hint">Henüz şablon yok</span>';
+    return;
+  }
+  el.innerHTML = sablonlar.map((s,i)=>`
+    <div class="sablon-chip" onclick="applySablon(${i})">
+      ${s.name}
+      <button class="sablon-chip-del" onclick="event.stopPropagation();deleteSablon(${i})" title="Sil">×</button>
+    </div>`).join('');
+}
+
+function applySablon(idx){
+  const sablonlar = JSON.parse(localStorage.getItem('kz_sablonlar')||'[]');
+  const s = sablonlar[idx]; if(!s) return;
+  setType(s.type);
+  selectRate(s.faiz);
+  selectHizmet(s.hizmet);
+  ['eksper','sigorta','kasko'].forEach(k=>{
+    zorunluState[k]=s.zorunlu[k]||false;
+    document.getElementById('btn-'+k).classList.toggle('active', zorunluState[k]);
+  });
+  showToast(`✅ "${s.name}" şablonu uygulandı.`,'success');
+  autoCalc();
+}
+
+function deleteSablon(idx){
+  const sablonlar = JSON.parse(localStorage.getItem('kz_sablonlar')||'[]');
+  sablonlar.splice(idx,1);
+  localStorage.setItem('kz_sablonlar', JSON.stringify(sablonlar));
+  loadSablonlar();
+}
+
+/* ── KİŞİ SEÇİCİ ─────────────────────────────────────────── */
+
+async function pickContact(){
+  try {
+    const contacts = await navigator.contacts.select(['name','tel'], {multiple:false});
+    if(!contacts.length) return;
+    const c = contacts[0];
+    document.getElementById('f-musteri').value = (c.name && c.name[0]) || '';
+    if(c.tel && c.tel.length)
+      document.getElementById('f-telefon').value = c.tel[0].replace(/\s/g,'');
+    autoCalc();
+  } catch(e){ showToast('Kişi seçimi iptal edildi.','error'); }
 }
 
 /* ── BUILD A4 HTML ────────────────────────────────────────── */

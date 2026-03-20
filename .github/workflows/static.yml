@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["claude/create-document-panel-Z5a6e"]
+    branches: ["claude/create-document-panel-Z5a6e", "claude/address-field-5I1qz"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

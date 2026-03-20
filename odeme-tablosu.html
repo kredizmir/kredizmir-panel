@@ -1611,27 +1611,25 @@ function setTab(tab){
   G('igSahibindenBtn').addEventListener('click',function(){
     const text=G('igSahibindenPaste').value.trim();
     if(!text)return;
-    // KM: "Kilometre\t175.000" (Sahibinden tab format, no km suffix) veya "175.000 km"
-    const kmMatch=text.match(/kilometre\s*[\t:]\s*(\d[\d.,]+)/i)||text.match(/(\d[\d.,]+)\s*km/i);
-    // Yakıt: "Yakıt Tipi\tDizel" veya "Yakıt: Dizel"
-    const yakitMatch=text.match(/yak[iı]t\s+tipi?\s*[\t:]\s*(Dizel|Benzin|LPG|Elektrik|Hibrit|Benzin\s*&\s*LPG)/i)
-                  ||text.match(/yak[iı]t\s*[\t:]\s*(Dizel|Benzin|LPG|Elektrik|Hibrit)/i)
-                  ||text.match(/\b(Dizel|Benzin|Hibrit|Elektrik)\b/);
-    // Vites: "Vites Tipi\tManuel" veya "Vites: Otomatik"
-    const vitesMatch=text.match(/vites\s+tipi?\s*[\t:]\s*(Otomatik|Manuel|Yar[iı]\s*Otomatik)/i)
-                  ||text.match(/vites\s*[\t:]\s*(Otomatik|Manuel|Yar[iı]\s*Otomatik)/i)
+    // KM: "Kilometre 175.000" veya "Kilometre\t175.000" veya "175.000 km"
+    const kmMatch=text.match(/kilometre\s+(\d[\d.,]+)/i)||text.match(/(\d[\d.,]+)\s*km/i);
+    // Yakıt: "Yakıt Tipi Dizel" / tab / newline arası — veya kelime olarak
+    const yakitMatch=text.match(/yak[iı]t\s+tipi?\s+(Dizel|Benzin|LPG|Elektrik|Hibrit|Benzin\s*&\s*LPG)/i)
+                  ||text.match(/\b(Dizel|Benzin|Hibrit|Elektrik|LPG)\b/);
+    // Vites: "Vites Tipi Manuel" / tab / newline arası — veya kelime olarak
+    const vitesMatch=text.match(/vites\s+tipi?\s+(Otomatik|Manuel|Yar[iı]\s*Otomatik)/i)
                   ||text.match(/\b(Otomatik|Manuel)\b/);
     // Fiyat: "749.000 TL" veya "749.000₺"
-    const fiyatMatch=text.match(/(\d[\d.]+)\s*(?:tl|₺)/i)||text.match(/fiyat[:\t\s]+([\d.,]+)/i);
-    // Yıl: "Yıl\t2019" veya başlık satırından
-    const yilLineMatch=text.match(/^y[iı]l\s*[\t:]\s*(\d{4})/im);
-    // Marka/Seri/Model fields
-    const markaM=text.match(/^marka\s*[\t:]\s*(.+)/im);
-    const seriM=text.match(/^seri\s*[\t:]\s*(.+)/im);
-    const modelM=text.match(/^model\s*[\t:]\s*(.+)/im);
+    const fiyatMatch=text.match(/(\d[\d.]+)\s*(?:tl|₺)/i)||text.match(/fiyat\s+([\d.,]+)/i);
+    // Yıl: "Yıl 2019" veya başlık satırından
+    const yilLineMatch=text.match(/\by[iı]l\s+(\d{4})\b/i);
+    // Model: Marka/Seri/Model satırları VEYA başlık
+    const markaM=text.match(/\bmarka\s+([\w\s]+?)(?:\n|seri\b)/i);
+    const seriM=text.match(/\bseri\s+([\w\s]+?)(?:\n|model\b)/i);
+    const modelM=text.match(/\bmodel\s+([\w\s.\/\-]+?)(?:\n|y[iı]l\b)/i);
     const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
     let modelVal=null,yilVal=yilLineMatch?yilLineMatch[1]:null;
-    if(markaM){
+    if(markaM&&markaM[1].trim().length>1){
       modelVal=[markaM[1].trim(),seriM?seriM[1].trim():'',modelM?modelM[1].trim():''].filter(Boolean).join(' ');
     } else {
       for(const line of lines){

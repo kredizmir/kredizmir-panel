@@ -1559,6 +1559,7 @@ function setTab(tab){
   document.getElementById('page-instagram').style.display=isOdeme?'none':'';
   document.getElementById('tab-odeme').classList.toggle('active',isOdeme);
   document.getElementById('tab-instagram').classList.toggle('active',!isOdeme);
+  if(!isOdeme && window._igRenderAll) window._igRenderAll();
 }
 
 /* ── INSTAGRAM CAROUSEL ─────────────────────────────────────── */
@@ -1796,6 +1797,7 @@ function setTab(tab){
   }
 
   function igRenderAll(){slide1();slide2();slide3();}
+  window._igRenderAll = igRenderAll;
 
   const modal=G('igModal'),dlImg=G('igDlImg');
   let curUrl='';
@@ -1836,7 +1838,12 @@ function setTab(tab){
     igRenderAll();
   });
 
-  igRenderAll();
+  // Fontların yüklenmesini bekle, sonra render et
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=>igRenderAll());
+  } else {
+    setTimeout(igRenderAll, 800);
+  }
 })();
 
 </script>

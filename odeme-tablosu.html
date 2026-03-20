@@ -711,6 +711,17 @@ body::before{
             <input id="igImg3" type="file" accept="image/*">
           </label>
         </div>
+        <label class="upload-box" style="margin-top:8px;">
+          <img class="thumb" id="igThumbEx" alt="">
+          <div class="upload-inner"><strong>Ekspertiz Fotoğrafı</strong><small>Slide 2 sol alt köşe overlay</small></div>
+          <input id="igImgEx" type="file" accept="image/*">
+        </label>
+      </div>
+
+      <div class="ig-section">
+        <div class="ig-sec-title">Sahibinden'den Aktar</div>
+        <textarea id="igSahibindenPaste" placeholder="Sahibinden ilanını kopyalayıp buraya yapıştırın, ardından butona basın..." style="min-height:90px;"></textarea>
+        <button class="ig-btn-dark" id="igSahibindenBtn" style="width:100%;margin-top:8px;">⚡ Otomatik Doldur</button>
       </div>
 
       <div class="ig-section">
@@ -1567,6 +1578,7 @@ function setTab(tab){
 (function(){
   const G=id=>document.getElementById(id);
   const imgs=[null,null,null];
+  let ekspertizImg=null;
 
   function bindUpload(inputId,thumbId,idx){
     const input=G(inputId),thumb=G(thumbId);
@@ -1584,6 +1596,39 @@ function setTab(tab){
   bindUpload('igImg1','igThumb1',0);
   bindUpload('igImg2','igThumb2',1);
   bindUpload('igImg3','igThumb3',2);
+
+  G('igImgEx').addEventListener('change',e=>{
+    const file=e.target.files?.[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{ ekspertizImg=img; G('igThumbEx').src=reader.result; G('igImgEx').closest('.upload-box').classList.add('has-image'); igRenderAll(); };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  G('igSahibindenBtn').addEventListener('click',function(){
+    const text=G('igSahibindenPaste').value.trim();
+    if(!text)return;
+    const kmMatch=text.match(/(\d[\d.,]+)\s*km/i)||text.match(/kilometre[:\s]+(\d[\d.,]+)/i);
+    const yakitMatch=text.match(/yakıt\s*tipi?\s*[:\s]*\s*(Dizel|Benzin|LPG|Elektrik|Hibrit|Benzin & LPG)/i)||text.match(/\b(Dizel|Benzin|LPG|Elektrik|Hibrit)\b/i);
+    const vitesMatch=text.match(/vites\s*[:\s]*\s*(Otomatik|Manuel|Yarı Otomatik)/i)||text.match(/\b(Otomatik|Manuel|Yarı Otomatik)\b/i);
+    const fiyatMatch=text.match(/(\d[\d.]+)\s*(?:tl|₺)/i)||text.match(/fiyat[:\s]+([\d.,]+)/i);
+    const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+    let modelVal=null,yilVal=null;
+    for(const line of lines){
+      const yilM=line.match(/\b((19|20)\d{2})\b/);
+      if(yilM&&line.length<100){modelVal=line.replace(/\s+/g,' ').trim();yilVal=yilM[1];break;}
+    }
+    if(kmMatch){const raw=kmMatch[1].replace(/\./g,'').replace(',','.');G('igKm').value=parseInt(raw).toLocaleString('tr-TR')+' KM';}
+    if(yakitMatch){const val=yakitMatch[1];const sel=G('igYakit');for(const opt of sel.options){if(opt.text.toLowerCase().includes(val.toLowerCase())){sel.value=opt.value;break;}}}
+    if(vitesMatch){const val=vitesMatch[1];const sel=G('igVites');for(const opt of sel.options){if(opt.text.toLowerCase().includes(val.toLowerCase())){sel.value=opt.value;break;}}}
+    if(fiyatMatch)G('igPesin').value=fiyatMatch[1].replace(/\./g,'');
+    if(modelVal)G('igModel').value=modelVal.toUpperCase();
+    if(yilVal)G('igYil').value=yilVal;
+    igRenderAll();
+  });
 
   ['igModel','igYil','igKm','igPesin','igPesinat','igTaksit','igDegisen','igBoya','igTramer','igOvgu',
    'igYakit','igVites','igFrameToggle','igLogoToggle','igBandToggle','igCtaToggle'].forEach(id=>{
@@ -1694,6 +1739,7 @@ function setTab(tab){
     ctx.fillStyle='#D62828';ctx.fillRect(510,0,6,1350);
     drawImg(ctx,imgs[1],24,80,462,420,18);
     drawImg(ctx,imgs[2]||imgs[1],24,518,462,300,16);
+    if(ekspertizImg){const eW=148,eH=Math.round(eW*ekspertizImg.height/ekspertizImg.width);drawImg(ctx,ekspertizImg,24+462-eW-8,518+300-eH-8,eW,eH,10);}
     ctx.fillStyle='#fff';ctx.textAlign='left';
     ctx.font='900 56px "Bebas Neue",sans-serif';
     const mWords=(G('igModel').value||'ARAÇ').toUpperCase().split(' ');

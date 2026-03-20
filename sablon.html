@@ -268,6 +268,40 @@ html, body {
 .upload-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(245,197,24,0.05); }
 .upload-btn.has-file { border-color: #2a6a2a; color: #6add6a; background: rgba(106,221,106,0.05); border-style: solid; }
 
+/* ─── SAHİBİNDEN PASTE ALANI ─────────────────────────────── */
+.paste-block { display: flex; flex-direction: column; gap: 7px; }
+.paste-block textarea {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: 7px;
+  padding: 9px 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+  transition: border-color .2s;
+}
+.paste-block textarea:focus { outline: none; border-color: var(--input-focus); }
+.paste-block textarea::placeholder { color: var(--text-dim); }
+.parse-btn {
+  width: 100%;
+  background: rgba(245,197,24,0.1);
+  border: 1.5px solid rgba(245,197,24,0.35);
+  color: var(--accent);
+  padding: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all .2s;
+}
+.parse-btn:hover { background: rgba(245,197,24,0.18); border-color: var(--accent); }
+
 /* ─── EXPORT BUTTONS ─────────────────────────────────────── */
 #panel-footer {
   padding: 12px 14px;
@@ -420,6 +454,17 @@ html, body {
 
     <div id="panel-scroll">
 
+      <!-- SAHİBİNDEN OTOMATIK DOLDURMA -->
+      <div class="section">
+        <div class="section-title">Sahibinden'den Aktar</div>
+        <div class="section-body">
+          <div class="paste-block">
+            <textarea id="sahibindenPaste" placeholder="Sahibinden ilanını kopyalayıp buraya yapıştırın, ardından butona basın..."></textarea>
+            <button class="parse-btn" onclick="parseSahibinden()">⚡ Otomatik Doldur</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ARAÇ BİLGİLERİ -->
       <div class="section">
         <div class="section-title">Araç Bilgileri</div>
@@ -483,6 +528,10 @@ html, body {
             <span>🔵</span><span>Logo Yükle</span>
           </button>
           <input type="file" id="logoFile" accept="image/*" style="display:none">
+          <button class="upload-btn" id="ekspertizBtn" onclick="document.getElementById('ekspertizFile').click()">
+            <span>🔍</span><span>Ekspertiz Fotoğrafı Yükle</span>
+          </button>
+          <input type="file" id="ekspertizFile" accept="image/*" style="display:none">
         </div>
       </div>
 
@@ -591,14 +640,15 @@ html, body {
    STATE
 ══════════════════════════════════════════════════════ */
 const S = {
-  carImg:   null,
-  logoImg:  null,
-  theme:    'blue',
-  logoPos:  'topright',
-  modelPos: 'bottom',
-  showBar:  true,
-  showFrame: true,
-  priceOffset: 0,
+  carImg:       null,
+  logoImg:      null,
+  ekspertizImg: null,
+  theme:        'blue',
+  logoPos:      'topright',
+  modelPos:     'bottom',
+  showBar:      true,
+  showFrame:    true,
+  priceOffset:  0,
 };
 
 /* ══════════════════════════════════════════════════════
@@ -909,6 +959,18 @@ function drawPhotoFrame(T) {
   // Model text overlay (bottom of inner image)
   drawModelText(T, iX, iY, iW, iH, cR);
 
+  // Ekspertiz görseli — sol alt köşe
+  if (S.ekspertizImg) {
+    const eW = 200;
+    const eH = Math.round(eW * S.ekspertizImg.height / S.ekspertizImg.width);
+    const eX = iX + 10;
+    const eY = iY + iH - eH - 10;
+    ctx.save();
+    ctx.globalAlpha = 0.92;
+    ctx.drawImage(S.ekspertizImg, eX, eY, eW, eH);
+    ctx.restore();
+  }
+
   return { fX, fY, fW, fH };
 }
 
@@ -981,6 +1043,67 @@ function drawPrices(T) {
   const sz2 = fitFont(ctx, pesin, maxW, 102, fontFn);
   ctx.font  = fontFn(sz2);
   shadowText(ctx, pesin, W / 2, 1016 + offset, T.priceYellow, { color: T.shadowColor, blur: 20, oy: 5 });
+}
+
+/* ══════════════════════════════════════════════════════
+   SAHİBİNDEN PARSE
+══════════════════════════════════════════════════════ */
+function parseSahibinden() {
+  const text = document.getElementById('sahibindenPaste').value.trim();
+  if (!text) return;
+
+  // KM
+  const kmMatch = text.match(/(\d[\d.,]+)\s*km/i)
+               || text.match(/kilometre[:\s]+(\d[\d.,]+)/i);
+
+  // Yakıt
+  const yakitMatch = text.match(/yakıt\s*tipi?\s*[:\s]\s*(Dizel|Benzin|LPG|Elektrik|Hibrit|Benzin \& LPG|Benzin & LPG)/i)
+                  || text.match(/\b(Dizel|Benzin|LPG|Elektrik|Hibrit)\b/i);
+
+  // Vites
+  const vitesMatch = text.match(/vites\s*[:\s]\s*(Otomatik|Manuel|Yarı Otomatik)/i)
+                  || text.match(/\b(Otomatik|Manuel|Yarı Otomatik)\b/i);
+
+  // Fiyat — "775.000 TL", "775.000₺"
+  const fiyatMatch = text.match(/(\d[\d.]+)\s*(?:tl|₺)/i)
+                  || text.match(/fiyat[:\s]+([\d.,]+)/i);
+
+  // Model — ilk satırda yıl geçen ifade
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+  let modelVal = null;
+  for (const line of lines) {
+    if (/\b(19|20)\d{2}\b/.test(line) && line.length < 100) {
+      modelVal = line.replace(/\s+/g, ' ').trim();
+      break;
+    }
+  }
+
+  if (kmMatch) {
+    const raw = kmMatch[1].replace(/\./g, '').replace(',', '.');
+    document.getElementById('km').value = parseInt(raw).toLocaleString('tr-TR') + ' KM';
+  }
+  if (yakitMatch) {
+    const val = yakitMatch[1];
+    const sel = document.getElementById('yakit');
+    for (const opt of sel.options) {
+      if (opt.text.toLowerCase().includes(val.toLowerCase())) { sel.value = opt.value; break; }
+    }
+  }
+  if (vitesMatch) {
+    const val = vitesMatch[1];
+    const sel = document.getElementById('vites');
+    for (const opt of sel.options) {
+      if (opt.text.toLowerCase().includes(val.toLowerCase())) { sel.value = opt.value; break; }
+    }
+  }
+  if (fiyatMatch) {
+    document.getElementById('pesin').value = fiyatMatch[1].replace(/\./g, '');
+  }
+  if (modelVal) {
+    document.getElementById('model').value = modelVal.toUpperCase();
+  }
+
+  draw();
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1125,6 +1248,15 @@ function setupEvents() {
       S.logoImg = img;
       $('logoBtn').classList.add('has-file');
       $('logoBtn').querySelector('span:last-child').textContent = '✓ Logo Yüklendi';
+      draw();
+    });
+  });
+
+  $('ekspertizFile').addEventListener('change', e => {
+    loadImageFile(e.target.files[0], img => {
+      S.ekspertizImg = img;
+      $('ekspertizBtn').classList.add('has-file');
+      $('ekspertizBtn').querySelector('span:last-child').textContent = '✓ Ekspertiz Yüklendi';
       draw();
     });
   });

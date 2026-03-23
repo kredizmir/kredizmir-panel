@@ -37,6 +37,10 @@
     #lb-inner { max-width:340px; width:100%; max-height:90vh; overflow-y:auto; border-radius:12px; }
     #lb-inner svg { width:100%; display:block; border-radius:12px; }
     #lb-close { position:fixed; top:14px; right:14px; background:rgba(255,255,255,0.2); border:none; color:#fff; font-size:20px; width:38px; height:38px; border-radius:50%; cursor:pointer; z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .adres-field { background:#1a2d45; border-radius:12px; padding:12px 16px; margin-bottom:16px; border:1px solid #1e3a56; }
+    .adres-field label { font-size:11px; color:#8aaccc; display:block; margin-bottom:6px; font-weight:600; letter-spacing:0.3px; }
+    .adres-field input { width:100%; background:#0d1b2a; border:1px solid #2a4a6a; color:#e8f0fe; font-size:14px; padding:9px 12px; border-radius:8px; outline:none; font-family:inherit; }
+    .adres-field input:focus { border-color:#4db8ff; }
   </style>
 </head>
 <body>
@@ -44,6 +48,11 @@
 <div class="topbar">
   <a href="index.html" class="back-btn">&#8249;</a>
   <h2>&#128203; Evrak Rehberi</h2>
+</div>
+
+<div class="adres-field">
+  <label for="ikametgahAdres">&#128205; &#304;kametgah Adresi</label>
+  <input id="ikametgahAdres" type="text" placeholder="&#304;l / &#304;l&#231;e Mahallesi" value="&#304;zmir / Bornova Mahallesi">
 </div>
 
 <div id="cards"></div>
@@ -368,7 +377,7 @@ const evraklar=[
         {t:'space',h:10},
         {t:'blueinfo',text:'Adresiniz sistemde kay&#305;tl&#305;d&#305;r.'},
         {t:'space',h:6},
-        {t:'blueinfo',text:'&#304;zmir / Bornova Mahallesi'},
+        {t:'blueinfo',text:document.getElementById('ikametgahAdres').value||'&#304;zmir / Bornova Mahallesi'},
         {t:'space',h:12},
         {t:'btn',text:'Belge Al (Barkodlu PDF)'}
       ]
@@ -490,6 +499,28 @@ evraklar.forEach(e=>{
     </div>`;
   container.appendChild(card);
 });
+
+/* ── ikametgah adres canli guncelle ── */
+(function(){
+  const adresInput=document.getElementById('ikametgahAdres');
+  const ikametgahWrap=container.children[1].querySelector('.screenshot-wrap');
+  adresInput.addEventListener('input',function(){
+    const adres=this.value||'İzmir / Bornova Mahallesi';
+    const svg=makeSvg({
+      institution:'Nüfus ve Vatandaşlık İşleri', service:'İkametgah Belgesi',
+      items:[
+        {t:'space',h:10},
+        {t:'blueinfo',text:'Adresiniz sistemde kayıtlıdır.'},
+        {t:'space',h:6},
+        {t:'blueinfo',text:adres},
+        {t:'space',h:12},
+        {t:'btn',text:'Belge Al (Barkodlu PDF)'}
+      ]
+    });
+    ikametgahWrap.innerHTML=svg;
+    ikametgahWrap.setAttribute('data-svg',encodeURIComponent(svg));
+  });
+})();
 
 function openLb(wrap){
   document.getElementById('lb-inner').innerHTML=decodeURIComponent(wrap.getAttribute('data-svg'));

@@ -996,7 +996,7 @@ async function generateTable(silent=false){
   appState.vade=36;
 
   document.getElementById('s-taksit').textContent=formatTL(sonuclar[3].taksit)+' – '+formatTL(sonuclar[0].taksit);
-  document.getElementById('s-tutar').textContent=formatTL(tutarGirilen)+(hizmet>0?' + ekstra':'');
+  document.getElementById('s-tutar').textContent=formatTL(tutarGirilen);
   document.getElementById('s-vade').textContent='12/18/24/36';
   document.getElementById('s-tur').textContent=appState.type==='djs'?'DJS':'Banka';
 
@@ -1033,10 +1033,10 @@ async function renderCustomerPDF(state){
     ? `<img src="${logoDataURL}" class="pdf-logo-img-pdf"/>`
     : `<div class="pdf-brand-text">KREDİ<span>ZMİR</span></div>`;
 
-  const pesHtml = state.pesinat>0 ? `
+  const pesHtml = (state.pesinat+state.hizmet)>0 ? `
     <div class="pdf-pesinat-note">
       <div class="pdf-pesinat-label">💳 Peşinat Tutarı</div>
-      <div class="pdf-pesinat-value">${formatTL(state.pesinat)} ₺</div>
+      <div class="pdf-pesinat-value">${formatTL(state.pesinat+state.hizmet)} ₺</div>
     </div>` : '';
 
   const bankaUyariHtml = state.type==='banka' ? `
@@ -1107,7 +1107,7 @@ async function renderCustomerPDF(state){
         <div>
           <div class="pdf-ph-tag">FİNANSMAN TUTARI</div>
           <div class="pdf-ph-amount"><span>₺</span>${formatTL(state.tutar)}</div>
-          <div class="pdf-ph-sub">${state.hizmet>0 ? '(+ ekstra dahil hesaplandı)' : ''}</div>
+          <div class="pdf-ph-sub"></div>
         </div>
         <div class="pdf-ph-right">
           <div class="pdf-ph-date-label">VADE SEÇENEKLERİ</div>
@@ -1124,10 +1124,10 @@ async function renderCustomerPDF(state){
           <div class="pdf-detail-cell-label">İşlem Türü</div>
           <div class="pdf-detail-cell-val">${modeLabel}</div>
         </div>
-        ${state.pesinat>0 ? `
+        ${(state.pesinat+state.hizmet)>0 ? `
         <div class="pdf-detail-cell">
           <div class="pdf-detail-cell-label">Peşinat</div>
-          <div class="pdf-detail-cell-val">₺${formatTL(state.pesinat)}</div>
+          <div class="pdf-detail-cell-val">₺${formatTL(state.pesinat+state.hizmet)}</div>
         </div>` : `
         <div class="pdf-detail-cell">
           <div class="pdf-detail-cell-label">Teklif Tarihi</div>
@@ -1295,10 +1295,10 @@ function buildA4HTML(state) {
       </div>`;
   }).join('') : '';
 
-  const pesinatSatir = state.pesinat>0 ? `
+  const pesinatSatir = (state.pesinat+state.hizmet)>0 ? `
     <div class="pesinat">
       <div class="pesinat-lbl">💳 Peşinat Tutarı</div>
-      <div class="pesinat-val">₺${formatTL(state.pesinat)}</div>
+      <div class="pesinat-val">₺${formatTL(state.pesinat+state.hizmet)}</div>
     </div>` : '';
 
   const bankaUyariSatir = state.type==='banka' ? `
@@ -1328,7 +1328,7 @@ function buildA4HTML(state) {
     <div class="tek-box">
       <div class="tek-lbl">Finansman Tutarı</div>
       <div class="tek-tutar">₺${formatTL(state.tutar)}</div>
-      <div class="tek-sub">${state.hizmet>0 ? '(+ ekstra dahil hesaplandı)' : ''}</div>
+      <div class="tek-sub"></div>
     </div>
     ${pesinatSatir}
     <div class="sec-title">Vadeye Göre Taksit Seçenekleri</div>
@@ -1337,7 +1337,7 @@ function buildA4HTML(state) {
     <div class="sec-title">Teklif Bilgileri</div>
     <table class="detay-tablo">
       <tr><td class="dt-lbl">İşlem Türü</td><td class="dt-val">${modeLabel}</td></tr>
-      ${state.pesinat>0 ? `<tr><td class="dt-lbl">Peşinat</td><td class="dt-val">₺${formatTL(state.pesinat)}</td></tr>` : ''}
+      ${(state.pesinat+state.hizmet)>0 ? `<tr><td class="dt-lbl">Peşinat</td><td class="dt-val">₺${formatTL(state.pesinat+state.hizmet)}</td></tr>` : ''}
       <tr><td class="dt-lbl" colspan="2" style="color:#E1306C;font-weight:700;padding-top:8px;">⏳ Bu teklif 7 gün için geçerlidir.</td></tr>
     </table>
     ${bankaUyariSatir}
@@ -1492,8 +1492,8 @@ function openWhatsApp() {
   }
 
   const musteriSatir = musteri  ? `Sayın *${musteri}*,\n\n` : '';
-  const pesinSatir   = pesinat>0 ? `💳 Peşinat: ₺${formatTL(pesinat)}\n`                   : '';
-  const hizmetSatir  = hizmet>0  ? `📁 Dosya Bedeli: ₺${formatTL(hizmet)} *(hesaplamaya dahil)*\n` : '';
+  const pesinSatir   = (pesinat+hizmet)>0 ? `💳 Peşinat: ₺${formatTL(pesinat+hizmet)}\n` : '';
+  const hizmetSatir  = '';
 
   const mesaj =
     `${musteriSatir}*KREDİZMİR — Ödeme Teklifi* 📊\n`
@@ -1541,8 +1541,7 @@ function openMail() {
     + `Teklif No  : ${teklifNo}\n`
     + `İşlem Türü : ${modeLabel}\n`
     + `Finansman  : ${formatTL(tutar)} TL\n`
-    + (pesinat>0 ? `Peşinat    : ${formatTL(pesinat)} TL\n` : '')
-    + (hizmet>0  ? `Dosya Bed. : ${formatTL(hizmet)} TL (hesaplamaya dahil)\n` : '')
+    + ((pesinat+hizmet)>0 ? `Peşinat    : ${formatTL(pesinat+hizmet)} TL\n` : '')
     + `Aylık Faiz : %${faiz.toFixed(2).replace('.',',')} + %${vergi} BSMV\n\n`
     + `Taksit Seçenekleri:\n`
     + taksitSatirlar

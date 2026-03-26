@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KREDİZMİR – Kredi Ön Başvurusu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:      #070f1d;
+  --navy-mid:  #0d1c35;
+  --navy-card: rgba(13,28,53,0.82);
+  --gold:      #c9a84c;
+  --gold-lt:   #e8c97a;
+  --gold-pale: #f5e8c0;
+  --white:     #ffffff;
+  --muted:     #6e88b0;
+  --muted-lt:  #9fb3d0;
+  --border:    rgba(201,168,76,0.20);
+  --border-lt: rgba(201,168,76,0.10);
+  --inp-bg:    rgba(255,255,255,0.035);
+  --error:     #d95555;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 16px 80px;
+  position: relative; overflow-x: hidden;
+}
+
+.bg-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% -8%,  rgba(201,168,76,.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55%  38% at 92% 88%,  rgba(201,168,76,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 42%  32% at  4% 62%,  rgba(201,168,76,.05) 0%, transparent 50%);
+}
+.bg-lines {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    -48deg, transparent, transparent 58px,
+    rgba(201,168,76,.016) 58px, rgba(201,168,76,.016) 59px
+  );
+}
+
+.wrap { width: 100%; max-width: 590px; position: relative; z-index: 1; }
+
+/* HEADER */
+.hdr { text-align: center; padding: 52px 0 34px; animation: fadeDown .7s ease both; }
+.logo-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 6px; }
+.emblem {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(138deg, var(--gold) 0%, var(--gold-lt) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--navy);
+  box-shadow: 0 6px 26px rgba(201,168,76,.40), 0 0 0 1px rgba(201,168,76,.3);
+}
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 31px; font-weight: 700; letter-spacing: 3.5px;
+  background: linear-gradient(130deg, var(--gold-lt) 0%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.tagline { font-size: 10px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 26px; }
+.divider { width: 52px; height: 1.5px; margin: 0 auto 20px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.welcome-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 500; letter-spacing: 2px;
+  color: var(--gold-pale); opacity: .75; text-transform: uppercase; margin-bottom: 10px;
+}
+.hdr-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; font-weight: 600; line-height: 1.18; margin-bottom: 10px;
+}
+.trust-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(37,211,102,.08); border: 1px solid rgba(37,211,102,.22);
+  border-radius: 999px; padding: 7px 16px; margin-bottom: 12px;
+  font-size: 13px; color: #6ee8a0; font-weight: 500;
+}
+.trust-badge::before {
+  content: '✓'; width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(37,211,102,.2); display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.hdr-sub { font-size: 13.5px; color: var(--muted-lt); line-height: 1.75; font-style: italic; font-weight: 300; }
+.time-note {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+  background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.18);
+  border-radius: 10px; padding: 9px 16px;
+  font-size: 12.5px; color: var(--gold-pale); line-height: 1.5;
+}
+
+/* KART */
+.card {
+  background: var(--navy-card); border: 1px solid var(--border); border-radius: 24px;
+  padding: 38px 32px 32px; backdrop-filter: blur(28px);
+  box-shadow: 0 28px 80px rgba(0,0,0,.50), inset 0 1px 0 rgba(201,168,76,.16);
+  animation: fadeUp .7s .1s ease both;
+}
+
+/* ADIM */
+.steps { display: flex; align-items: center; margin-bottom: 36px; }
+.step  { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1.5px solid rgba(201,168,76,.28); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--muted); transition: all .38s;
+  font-family: 'Cormorant Garamond', serif;
+}
+.dot.active { border-color: var(--gold); color: var(--gold-lt); background: rgba(201,168,76,.12); box-shadow: 0 0 0 5px rgba(201,168,76,.09); }
+.dot.done   { border-color: var(--gold); background: linear-gradient(135deg,var(--gold),var(--gold-lt)); color: var(--navy); font-size: 0; box-shadow: 0 3px 12px rgba(201,168,76,.35); }
+.dot.done::after { content: '✓'; font-size: 14px; font-family: sans-serif; }
+.slabel { font-size: 9.5px; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; white-space: nowrap; font-weight: 500; }
+.step.active .slabel { color: var(--gold-lt); }
+.sline { flex: 1; height: 1px; background: var(--border); margin: 0 8px 22px; }
+
+/* FORM */
+.panel { display: none; }
+.panel.active { display: block; }
+.ptitle {
+  font-size: 10.5px; letter-spacing: 2.5px; color: var(--gold);
+  text-transform: uppercase; font-weight: 600; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.ptitle::after { content:''; flex:1; height:1px; background: linear-gradient(90deg, rgba(201,168,76,.3), transparent); }
+
+.field { margin-bottom: 18px; }
+.field label {
+  display: flex; align-items: baseline; gap: 5px;
+  font-size: 10.5px; letter-spacing: 1.8px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px; font-weight: 500;
+}
+.req { color: var(--gold); font-size: 13px; line-height: 1; }
+.opt { font-size: 9px; letter-spacing: .4px; color: var(--muted); opacity:.6; text-transform:lowercase; font-style:italic; }
+
+input, select {
+  width: 100%; background: var(--inp-bg); border: 1px solid var(--border);
+  border-radius: 11px; padding: 13px 16px;
+  font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--white);
+  outline: none; transition: border-color .28s, box-shadow .28s, background .28s;
+  -webkit-appearance: none; appearance: none;
+}
+input::placeholder { color: rgba(110,136,176,.42); font-size: 14px; }
+input:focus, select:focus { border-color: rgba(201,168,76,.6); background: rgba(201,168,76,.04); box-shadow: 0 0 0 3px rgba(201,168,76,.09); }
+input.err, select.err { border-color: var(--error); box-shadow: 0 0 0 3px rgba(217,85,85,.1); }
+
+.sel-wrap { position: relative; }
+.sel-wrap::after { content: '▾'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+select { padding-right: 36px; cursor: pointer; }
+select option { background: var(--navy-mid); color: var(--white); }
+
+.gender-row { display: flex; gap: 10px; }
+.gender-btn {
+  flex: 1; padding: 13px 10px; border: 1px solid var(--border); border-radius: 11px;
+  background: var(--inp-bg); color: var(--muted-lt);
+  font-size: 13.5px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  cursor: pointer; text-align: center; transition: all .25s; letter-spacing: .5px;
+}
+.gender-btn.sel { border-color: rgba(201,168,76,.6); background: rgba(201,168,76,.1); color: var(--gold-lt); font-weight: 600; }
+
+/* Başvuru tipi */
+.basvuru-tipi { display: flex; flex-direction: column; gap: 10px; }
+.tip-btn {
+  width: 100%; padding: 16px 18px; border: 1.5px solid var(--border); border-radius: 13px;
+  background: var(--inp-bg); color: var(--white);
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  text-align: left; transition: all .28s;
+  display: flex; align-items: center; gap: 14px;
+}
+.tip-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.2); display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all .28s; }
+.tip-text { flex: 1; text-align: left; }
+.tip-name { font-size: 14.5px; font-weight: 600; color: var(--white); margin-bottom: 2px; display: block; }
+.tip-desc { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+.tip-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; transition: all .25s; }
+.tip-btn.sel { border-color: var(--gold); background: rgba(201,168,76,.07); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+.tip-btn.sel .tip-icon { background: rgba(201,168,76,.2); }
+.tip-btn.sel .tip-name { color: var(--gold-lt); }
+.tip-btn.sel .tip-check { border-color: var(--gold); background: var(--gold); color: var(--navy); }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+
+/* BUTONLAR */
+.brow { display: flex; gap: 10px; margin-top: 28px; }
+.btn-back {
+  flex: 0 0 auto; padding: 14px 20px; border: 1px solid var(--border); border-radius: 11px;
+  background: transparent; color: var(--muted);
+  font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all .28s;
+}
+.btn-back:hover { border-color: var(--gold); color: var(--gold-lt); }
+.btn-next, .btn-send {
+  flex: 1; padding: 15px 20px; border: none; border-radius: 11px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%);
+  color: var(--navy); font-size: 14.5px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; letter-spacing: .5px;
+  transition: all .28s; box-shadow: 0 6px 22px rgba(201,168,76,.30);
+}
+.btn-next:hover, .btn-send:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(201,168,76,.44); }
+.btn-send:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* Yükleniyor */
+.spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(8,17,29,.3); border-top-color: var(--navy);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ÖZET */
+.sum-grid { display: grid; gap: 7px; }
+.sum-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 15px; background: rgba(255,255,255,.035);
+  border: 1px solid var(--border-lt); border-radius: 9px;
+}
+.sum-lbl { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+.sum-val { font-size: 13.5px; font-weight: 600; text-align: right; max-width: 62%; word-break: break-word; }
+.sum-note {
+  margin-top: 15px; padding: 14px 16px;
+  background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.18);
+  border-radius: 11px; font-size: 13px; color: var(--gold-pale); line-height: 1.7; text-align: center;
+}
+
+/* BAŞARI */
+.success { display: none; text-align: center; padding: 18px 0; animation: fadeUp .5s ease both; }
+.s-icon {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; margin: 0 auto 22px;
+  box-shadow: 0 8px 34px rgba(201,168,76,.44);
+  animation: pop .5s .12s cubic-bezier(.175,.885,.32,1.275) both;
+}
+.s-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; margin-bottom: 10px; }
+.s-sub { font-size: 14px; color: var(--muted-lt); line-height: 1.8; margin-bottom: 6px; font-weight: 400; }
+.s-warn { font-size: 13px; color: #f0a060; margin-bottom: 26px; font-weight: 500; }
+
+/* Çift gönderim durumu */
+.dual-send {
+  display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 4px;
+}
+.send-status {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; max-width: 320px;
+  padding: 11px 16px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+}
+.send-status.mail  { background: rgba(201,168,76,.08);  border: 1px solid rgba(201,168,76,.2);  color: var(--gold-pale); }
+.send-status.wa    { background: rgba(37,211,102,.08);   border: 1px solid rgba(37,211,102,.22); color: #6ee8a0; }
+.send-status .ico  { font-size: 18px; }
+
+.btn-wa {
+  display: inline-flex; align-items: center; gap: 11px;
+  padding: 16px 30px; border-radius: 12px;
+  background: #25d366; color: #fff;
+  font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  text-decoration: none; transition: all .28s;
+  box-shadow: 0 6px 22px rgba(37,211,102,.35); margin-top: 8px;
+}
+.btn-wa:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,.5); }
+.btn-wa svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+
+/* ALT */
+.bottom-notes { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; animation: fadeUp .7s .22s ease both; }
+.note-box {
+  background: rgba(255,255,255,.022); border: 1px solid rgba(201,168,76,.09);
+  border-radius: 12px; padding: 13px 18px;
+  font-size: 12.5px; color: var(--muted); line-height: 1.7; text-align: center;
+}
+.note-box strong { color: var(--muted-lt); font-weight: 500; }
+
+.kvk-box { margin-top: 10px; background: rgba(255,255,255,.018); border: 1px solid rgba(201,168,76,.08); border-radius: 14px; padding: 18px 20px; animation: fadeUp .7s .3s ease both; }
+.kvk-title { font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.kvk-title::before { content: '🔒'; font-size: 12px; }
+.kvk-text { font-size: 11.5px; color: rgba(110,136,176,.75); line-height: 1.75; }
+.kvk-text a { color: rgba(201,168,76,.65); text-decoration: underline; text-underline-offset: 2px; }
+
+.footer { text-align: center; margin-top: 18px; font-size: 10.5px; color: rgba(110,136,176,.45); line-height: 1.8; animation: fadeUp .7s .35s ease both; }
+.footer strong { color: rgba(201,168,76,.6); }
+
+/* Hata mesajı */
+.form-error { margin-top: 12px; padding: 12px 16px; background: rgba(217,85,85,.1); border: 1px solid rgba(217,85,85,.3); border-radius: 10px; font-size: 13px; color: #f08080; text-align: center; display: none; }
+
+@keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeUp   { from { opacity:0; transform:translateY(15px);  } to { opacity:1; transform:translateY(0); } }
+@keyframes pop      { from { transform:scale(0); opacity:0; }         to { transform:scale(1); opacity:1; } }
+
+@media (max-width:500px) {
+  .card { padding:26px 18px 24px; }
+  .hdr-title { font-size:30px; }
+  .row2 { grid-template-columns:1fr; }
+  .brand { font-size:27px; }
+  .dual-send { align-items: stretch; }
+  .send-status { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-lines"></div>
+
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo-row">
+      <div class="emblem">K</div>
+      <div class="brand">KREDİZMİR</div>
+    </div>
+    <div class="tagline">Taksitle Araba Sahibi</div>
+    <div class="divider"></div>
+    <div class="welcome-text">KREDİZMİR Ailesine Hoş Geldiniz</div>
+    <div class="hdr-title">Kredi Ön Başvurusu</div>
+    <div class="trust-badge">Ön inceleme yapılır, puan/limit etkilenmez.</div>
+    <div class="hdr-sub">Bilgilerinizi eksiksiz doldurun,<br>danışmanımız en kısa sürede sizi arasın.</div>
+    <div class="time-note">
+      <span>⏱</span>
+      Başvurunuz iletildikten sonra <strong>&nbsp;30 dakika içinde&nbsp;</strong> sonuçlar sizinle paylaşılacaktır.
+    </div>
+  </div>
+
+  <div class="card" id="mainCard">
+
+    <div class="steps" id="stepsBar">
+      <div class="step active" id="st1"><div class="dot active" id="d1">1</div><div class="slabel">Kimlik</div></div>
+      <div class="sline"></div>
+      <div class="step" id="st2"><div class="dot" id="d2">2</div><div class="slabel">İş & Araç</div></div>
+      <div class="sline"></div>
+      <div class="step" id="st3"><div class="dot" id="d3">3</div><div class="slabel">Özet</div></div>
+    </div>
+
+    <!-- PANEL 1 -->
+    <div class="panel active" id="p1">
+      <div class="ptitle">Kişisel Bilgiler</div>
+
+      <div class="field">
+        <label>Ad Soyad <span class="req">*</span></label>
+        <input id="adSoyad" type="text" placeholder="Ahmet Yılmaz" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label>Cinsiyet <span class="opt">(opsiyonel)</span></label>
+        <div class="gender-row">
+          <button type="button" class="gender-btn" onclick="setGender('Erkek',this)">Erkek</button>
+          <button type="button" class="gender-btn" onclick="setGender('Kadın',this)">Kadın</button>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>TC Kimlik No <span class="req">*</span></label>
+          <input id="tcKimlik" type="text" placeholder="XXXXXXXXXXX" maxlength="11" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Kimlik Seri No <span class="req">*</span></label>
+          <input id="kimlikSeri" type="text" placeholder="A1B234567">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Doğum Tarihi <span class="req">*</span></label>
+        <input id="dogumTarihi" type="date">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>İl <span class="opt">(opsiyonel)</span></label>
+          <input id="il" type="text" placeholder="İzmir">
+        </div>
+        <div class="field">
+          <label>İlçe <span class="opt">(opsiyonel)</span></label>
+          <input id="ilce" type="text" placeholder="Gaziemir">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Telefon No <span class="req">*</span></label>
+        <input id="telefon" type="tel" placeholder="05XX XXX XX XX" maxlength="11" inputmode="numeric">
+      </div>
+
+      <div class="brow">
+        <button type="button" class="btn-next" onclick="goTo(2)">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2 -->
+    <div class="panel" id="p2">
+      <div class="ptitle">İş & Araç Bilgileri</div>
+
+      <div class="field">
+        <label>Başvuru Tipi <span class="req">*</span></label>
+        <div class="basvuru-tipi">
+          <button type="button" class="tip-btn" onclick="setTip('Bireysel Başvuru',this)">
+            <div class="tip-icon">👤</div>
+            <div class="tip-text">
+              <span class="tip-name">Bireysel Başvuru</span>
+              <span class="tip-desc">SGK'lı çalışan, memur, emekli veya serbest meslek</span>
+            </div>
+            <div class="tip-check">✓</div>
+          </button>
+          <button type="button" class="tip-btn" onclick="setTip('Vergi Levhalı Başvuru',this)">
+            <div class="tip-icon">🧾</div>
+            <div class="tip-text">
+              <span class="tip-name">Vergi Levhalı Başvuru</span>
+              <span class="tip-desc">Esnaf, tüccar veya vergi kaydı olan işletme sahibi</span>
+            </div>
+            <div class="tip-check">✓</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Çalışma Durumu <span class="req">*</span></label>
+        <div class="sel-wrap">
+          <select id="calisma">
+            <option value="">Seçiniz…</option>
+            <option>SGK'lı Çalışan</option>
+            <option>Özel Sektör</option>
+            <option>Esnaf</option>
+            <option>Tüccar</option>
+            <option>Memur</option>
+            <option>Emekli</option>
+            <option>Serbest Meslek</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Meslek <span class="req">*</span></label>
+          <input id="meslek" type="text" placeholder="Muhasebeci, Mühendis…">
+        </div>
+        <div class="field">
+          <label>İş Yeri Adı <span class="opt">(opsiyonel)</span></label>
+          <input id="isYeri" type="text" placeholder="ABC Ltd.">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>İlan Numarası / Ruhsat <span class="opt">(opsiyonel)</span></label>
+        <input id="ilanNo" type="text" placeholder="Sahibinden ilan no veya ruhsat no">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>İstenen Kredi Miktarı <span class="opt">(opsiyonel)</span></label>
+          <input id="krediMiktar" type="text" placeholder="500.000" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Peşinat <span class="opt">(opsiyonel)</span></label>
+          <input id="pesinat" type="text" placeholder="150.000" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="brow">
+        <button type="button" class="btn-back" onclick="goTo(1)">← Geri</button>
+        <button type="button" class="btn-next" onclick="goTo(3)">Özete Git →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 3: ÖZET -->
+    <div class="panel" id="p3">
+      <div class="ptitle">Başvuru Özeti</div>
+      <div class="sum-grid" id="sumGrid"></div>
+      <div class="sum-note">
+        Bilgileri kontrol edin. <strong>Gönder</strong>'e basınca hem e-posta hem WhatsApp'a iletilecek.
+      </div>
+      <div class="form-error" id="formError">Bir hata oluştu. Lütfen tekrar deneyin.</div>
+      <div class="brow">
+        <button type="button" class="btn-back" onclick="goTo(2)">← Geri</button>
+        <button type="button" class="btn-send" id="btnSend" onclick="submitForm()">✓ Gönder</button>
+      </div>
+    </div>
+
+    <!-- BAŞARI -->
+    <div class="success" id="successScreen">
+      <div class="s-icon">✉</div>
+      <div class="s-title">Mesajınız Hazırlandı!</div>
+      <div class="s-sub">E-posta danışmanımıza ulaştı.<br>Şimdi WhatsApp'ta göndererek başvurunuzu tamamlayın.</div>
+      <div class="s-warn">⚠ Aşağıdaki butona basmadan başvurunuz tamamlanmaz.</div>
+
+      <div class="dual-send">
+        <div class="send-status mail"><span class="ico">✉</span> E-posta gönderildi — Kredizmir35@icloud.com</div>
+        <div class="send-status wa"><span class="ico">💬</span> WhatsApp mesajı hazır — göndermek için tıklayın</div>
+      </div>
+
+      <a id="waLink" class="btn-wa" href="#" target="_blank">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        WhatsApp'ta Gönder
+      </a>
+    </div>
+
+  </div><!-- /card -->
+
+  <div class="bottom-notes" id="bottomNotes">
+    <div class="note-box">Başvuruyu eksiksiz doldurmaya özen gösterdiğiniz için <strong>teşekkür ederiz.</strong></div>
+    <div class="note-box">🔐 Girdiğiniz bilgiler yalnızca başvuru süreciniz için kullanılmakta ve işlem tamamlandıktan sonra <strong>otomatik olarak silinmektedir.</strong></div>
+  </div>
+
+  <div class="kvk-box" id="kvkBox">
+    <div class="kvk-title">Kişisel Verilerin Korunması (KVKK)</div>
+    <div class="kvk-text">
+      Bu form aracılığıyla iletilen kişisel verileriniz (ad, soyad, TC kimlik no, iletişim bilgileri ve finansal bilgiler),
+      <strong style="color:var(--muted-lt)">6698 sayılı Kişisel Verilerin Korunması Kanunu</strong> kapsamında,
+      yalnızca kredi ön başvurusu sürecinin yürütülmesi amacıyla işlenmekte ve üçüncü kişilerle paylaşılmamaktadır.<br><br>
+      Verileriniz, başvuru süreci tamamlandıktan sonra mevzuata uygun süre içinde silinmekte veya anonim hâle getirilmektedir.
+      KVKK'nın 11. maddesi kapsamındaki haklarınızı kullanmak için
+      <a href="mailto:Kredizmir35@icloud.com">Kredizmir35@icloud.com</a> adresine yazabilirsiniz.<br><br>
+      Formu göndererek kişisel verilerinizin yukarıda belirtilen amaç ve kapsamda işlenmesine <strong style="color:var(--muted-lt)">açık rıza</strong> vermiş sayılırsınız.
+    </div>
+  </div>
+
+  <div class="footer">© 2025 <strong>KREDİZMİR</strong> · Gaziemir, İzmir · Taksitle Araba Sahibi</div>
+
+</div>
+
+<script>
+const FORMSPREE = 'https://formspree.io/f/xbdpjavp';
+const WA_NUM    = '905307258789';
+
+const $ = id => document.getElementById(id);
+const v  = id => ($(id)?.value ?? '').trim();
+
+let curStep    = 1;
+let gender     = '';
+let basvuruTip = '';
+
+function numFmt(str) {
+  const n = parseInt((str||'').replace(/\D/g,''));
+  return isNaN(n) ? '' : '₺\u202f' + n.toLocaleString('tr-TR');
+}
+function dateFmt(iso) {
+  if (!iso) return '';
+  const [y,m,g] = iso.split('-');
+  return `${g}.${m}.${y}`;
+}
+
+function setGender(val, btn) {
+  gender = val;
+  document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function setTip(val, btn) {
+  basvuruTip = val;
+  document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function markErr(id) {
+  const el = $(id); if (!el) return;
+  el.classList.add('err');
+  el.addEventListener('input',  () => el.classList.remove('err'), { once: true });
+  el.addEventListener('change', () => el.classList.remove('err'), { once: true });
+}
+
+function validate(s) {
+  let ok = true;
+  if (s === 1) {
+    if (v('adSoyad').length < 3)                         { markErr('adSoyad');     ok = false; }
+    if (!/^[1-9][0-9]{10}$/.test(v('tcKimlik')))          { markErr('tcKimlik');    ok = false; }
+    if (v('kimlikSeri').length < 3)                      { markErr('kimlikSeri');  ok = false; }
+    if (!v('dogumTarihi'))                                 { markErr('dogumTarihi'); ok = false; }
+    if (!/^0[5][0-9]{9}$/.test(v('telefon')))             { markErr('telefon');     ok = false; }
+  }
+  if (s === 2) {
+    if (!basvuruTip) {
+      document.querySelectorAll('.tip-btn').forEach(b => {
+        b.style.borderColor = 'var(--error)';
+        setTimeout(() => b.style.borderColor = '', 1800);
+      });
+      ok = false;
+    }
+    if (!v('calisma')) { markErr('calisma'); ok = false; }
+    if (v('meslek').length < 2) { markErr('meslek'); ok = false; }
+  }
+  return ok;
+}
+
+function goTo(next) {
+  if (next > curStep && !validate(curStep)) return;
+  curStep = next;
+  [1,2,3].forEach(i => {
+    $('p'+i).classList.toggle('active', i === curStep);
+    const dot = $('d'+i), st = $('st'+i);
+    if      (i < curStep) { dot.className = 'dot done';   dot.textContent = ''; }
+    else if (i === curStep){ dot.className = 'dot active'; dot.textContent = i; }
+    else                  { dot.className = 'dot';         dot.textContent = i; }
+    st.classList.toggle('active', i === curStep);
+  });
+  if (curStep === 3) buildSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const FIELDS = [
+  { lbl:'Ad Soyad',        fn:()=> v('adSoyad') },
+  { lbl:'Cinsiyet',        fn:()=> gender },
+  { lbl:'TC Kimlik',       fn:()=> { const t=v('tcKimlik'); return t?t.slice(0,3)+'****'+t.slice(-4):''; } },
+  { lbl:'Kimlik Seri No',  fn:()=> v('kimlikSeri') },
+  { lbl:'Doğum Tarihi',    fn:()=> dateFmt(v('dogumTarihi')) },
+  { lbl:'İl / İlçe',      fn:()=> [v('il'),v('ilce')].filter(Boolean).join(' / ') },
+  { lbl:'Telefon',         fn:()=> v('telefon') },
+  { lbl:'Başvuru Tipi',   fn:()=> basvuruTip },
+  { lbl:'Çalışma',        fn:()=> v('calisma') },
+  { lbl:'Meslek',          fn:()=> v('meslek') },
+  { lbl:'İş Yeri',        fn:()=> v('isYeri') },
+  { lbl:'İlan / Ruhsat',  fn:()=> v('ilanNo') },
+  { lbl:'Kredi Miktarı',  fn:()=> numFmt(v('krediMiktar')) },
+  { lbl:'Peşinat',        fn:()=> numFmt(v('pesinat')) },
+];
+
+function buildSummary() {
+  $('sumGrid').innerHTML = FIELDS.map(f => {
+    const val = f.fn(); if (!val) return '';
+    return `<div class="sum-row"><span class="sum-lbl">${f.lbl}</span><span class="sum-val">${val}</span></div>`;
+  }).join('');
+}
+
+/* WhatsApp mesaj metni */
+function buildWAText() {
+  return [
+    `🚗 *KREDİZMİR – Kredi Ön Başvurusu*`, ``,
+    `*Ad Soyad:* ${v('adSoyad')}`,
+    gender              ? `*Cinsiyet:* ${gender}` : '',
+    `*TC Kimlik:* ${v('tcKimlik')}`,
+    `*Kimlik Seri No:* ${v('kimlikSeri')}`,
+    `*Doğum Tarihi:* ${dateFmt(v('dogumTarihi'))}`,
+    (v('il')||v('ilce'))? `*İkametgah:* ${[v('il'),v('ilce')].filter(Boolean).join(' / ')}` : '',
+    `*Telefon:* ${v('telefon')}`, ``,
+    `*Başvuru Tipi:* ${basvuruTip}`,
+    `*Çalışma Durumu:* ${v('calisma')}`,
+    `*Meslek:* ${v('meslek')}`,
+    v('isYeri')         ? `*İş Yeri:* ${v('isYeri')}`                    : '',
+    v('ilanNo')         ? `*İlan / Ruhsat:* ${v('ilanNo')}`               : '',
+    v('krediMiktar')    ? `*İstenen Miktar:* ${numFmt(v('krediMiktar'))}` : '',
+    v('pesinat')        ? `*Peşinat:* ${numFmt(v('pesinat'))}`            : '', ``,
+    `📅 ${new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}`,
+  ].filter(l => l !== '').join('\n');
+}
+
+/* Formspree payload */
+function buildPayload() {
+  return {
+    'Ad Soyad':         v('adSoyad'),
+    'Cinsiyet':         gender || '—',
+    'TC Kimlik No':     v('tcKimlik'),
+    'Kimlik Seri No':   v('kimlikSeri'),
+    'Doğum Tarihi':     dateFmt(v('dogumTarihi')),
+    'İl':               v('il')  || '—',
+    'İlçe':             v('ilce') || '—',
+    'Telefon':          v('telefon'),
+    'Başvuru Tipi':     basvuruTip,
+    'Çalışma Durumu':   v('calisma'),
+    'Meslek':           v('meslek'),
+    'İş Yeri':          v('isYeri')      || '—',
+    'İlan / Ruhsat':    v('ilanNo')      || '—',
+    'Kredi Miktarı':    numFmt(v('krediMiktar')) || '—',
+    'Peşinat':          numFmt(v('pesinat'))     || '—',
+    '_subject':         `KREDİZMİR Ön Başvuru – ${v('adSoyad')}`,
+  };
+}
+
+async function submitForm() {
+  const btn = $('btnSend');
+  const errBox = $('formError');
+
+  // Yükleniyor
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Gönderiliyor…';
+  errBox.style.display = 'none';
+
+  try {
+    const res = await fetch(FORMSPREE, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body:    JSON.stringify(buildPayload()),
+    });
+
+    if (!res.ok) throw new Error('Formspree hatası');
+
+    // Başarı — ekranı değiştir
+    const waUrl = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(buildWAText())}`;
+    $('waLink').href = waUrl;
+
+    [1,2,3].forEach(i => $('p'+i).classList.remove('active'));
+    $('stepsBar').style.display      = 'none';
+    $('successScreen').style.display = 'block';
+    $('bottomNotes').style.display   = 'none';
+    $('kvkBox').style.display        = 'none';
+
+    setTimeout(() => window.open(waUrl, '_blank'), 600);
+
+  } catch (e) {
+    btn.disabled = false;
+    btn.innerHTML = '✓ Gönder';
+    errBox.style.display = 'block';
+  }
+}
+
+/* Maskeler */
+['telefon','tcKimlik'].forEach(id => {
+  $(id)?.addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g,''); });
+});
+['krediMiktar','pesinat'].forEach(id => {
+  $(id)?.addEventListener('input', e => {
+    const raw = e.target.value.replace(/\D/g,'');
+    e.target.value = raw ? parseInt(raw).toLocaleString('tr-TR') : '';
+  });
+});
+</script>
+</body>
+</html>

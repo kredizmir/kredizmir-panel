@@ -409,6 +409,7 @@ input[type=text]:focus {
 
 .tema-navy { background: linear-gradient(135deg, #0B1E3D 50%, #C9A84C 50%); }
 .tema-dark { background: linear-gradient(135deg, #0B2A4A 60%, #D9A62E 60%); }
+.tema-bank { background: linear-gradient(135deg, #1B3A5C 55%, #B0BEC5 55%); }
 
 .tema-isim {
   font-size: 11px;
@@ -645,14 +646,6 @@ input[type=text]:focus {
 
 <div class="card">
 
-  <!-- İsim Soyisim -->
-  <div class="field">
-    <label>Müşteri Adı Soyadı <span style="font-weight:400;letter-spacing:0;text-transform:none;color:#8a9bbf;">(İsteğe bağlı)</span></label>
-    <div class="wrap">
-      <input type="text" id="musteriAdi" placeholder="İsim Soyisim" inputmode="text" autocomplete="off" style="padding-left:14px;">
-    </div>
-  </div>
-
   <!-- Araç fotoğrafı -->
   <div class="field">
     <label>Araç Fotoğrafı (İsteğe Bağlı)</label>
@@ -683,7 +676,6 @@ input[type=text]:focus {
     <input type="hidden" id="ekstraMasraf" value="0">
     <div class="ekstra-chip-grid">
       <button type="button" class="ekstra-chip aktif-chip" onclick="ekstraChipSec(this, 0)">Yok</button>
-      <button type="button" class="ekstra-chip" onclick="ekstraChipSec(this, 2000)">₺2.000</button>
       <button type="button" class="ekstra-chip" onclick="ekstraChipSec(this, 20000)">₺20.000</button>
       <button type="button" class="ekstra-chip" onclick="ekstraChipSec(this, 40000)">₺40.000</button>
       <button type="button" class="ekstra-chip" onclick="ekstraChipSec(this, 50000)">₺50.000</button>
@@ -745,7 +737,7 @@ input[type=text]:focus {
   <!-- Renk Teması -->
   <div class="field">
     <label>Tablo Renk Teması</label>
-    <div class="tema-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="tema-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <label class="tema-kart aktif-tema" id="temaKart1" for="temaSec1">
         <input type="radio" name="aktifTema" id="temaSec1" value="navy" checked>
         <span class="tema-onizleme tema-navy"></span>
@@ -755,6 +747,11 @@ input[type=text]:focus {
         <input type="radio" name="aktifTema" id="temaSec2" value="dark">
         <span class="tema-onizleme tema-dark"></span>
         <span class="tema-isim">Canlı</span>
+      </label>
+      <label class="tema-kart" id="temaKart3" for="temaSec3">
+        <input type="radio" name="aktifTema" id="temaSec3" value="bank">
+        <span class="tema-onizleme tema-bank"></span>
+        <span class="tema-isim">Banka</span>
       </label>
     </div>
   </div>
@@ -901,6 +898,7 @@ function guncelleTemKartlari(){
   var tema = document.querySelector('input[name="aktifTema"]:checked').value;
   document.getElementById('temaKart1').classList.toggle('aktif-tema', tema === 'navy');
   document.getElementById('temaKart2').classList.toggle('aktif-tema', tema === 'dark');
+  document.getElementById('temaKart3').classList.toggle('aktif-tema', tema === 'bank');
 }
 
 function guncelleOzet(){
@@ -1001,7 +999,11 @@ function hesapla(){
     GOLD='#D9A62E'; GOLDI='#F0C84A';
     WHITE='#FFFFFF'; RALT='#E8F2F8';
     BRD='#A8C9DD';   MID='#18354D';  BG='#F3F9FD';
-    /* Canlı temaya özel ekstra renkler */
+  } else if(tema === 'bank'){
+    NAVY='#1B3A5C'; NAVY2='#243F5E'; NAVYLI='#2E5A8A';
+    GOLD='#8FA8BF'; GOLDI='#CFD8DC';
+    WHITE='#FFFFFF'; RALT='#F5F7FA';
+    BRD='#D0D9E3';   MID='#455A64';  BG='#F8FAFB';
   } else {
     NAVY='#0B1E3D'; NAVY2='#122850'; NAVYLI='#1A3566';
     GOLD='#C9A84C'; GOLDI='#E8C97A';
@@ -1072,7 +1074,7 @@ function hesapla(){
   ctx.font         = '700 18px "Dancing Script", cursive';
   ctx.textAlign    = 'right';
   ctx.textBaseline = 'middle';
-  ctx.fillText('Rotanız mutluluk olsun...', DW - 20, by0 + BH * 0.76);
+  ctx.fillText('Bu teklif 7 gün için geçerlidir.', DW - 20, by0 + BH * 0.76);
   ctx.restore();
 
 
@@ -1182,8 +1184,17 @@ function hesapla(){
     rzGrad.addColorStop(1,   '#0B2A4A');
     ctx.fillStyle = rzGrad;
     ctx.fillRect(0, rzy, DW, ROZET_H);
-    // Üst & alt ince gold çizgi
     ctx.fillStyle = '#D9A62E';
+    ctx.fillRect(0, rzy, DW, 1);
+    ctx.fillRect(0, rzy + ROZET_H - 1, DW, 1);
+  } else if(tema === 'bank'){
+    var rzGradB = ctx.createLinearGradient(0, rzy, DW, rzy);
+    rzGradB.addColorStop(0,   '#1B3A5C');
+    rzGradB.addColorStop(0.5, '#243F5E');
+    rzGradB.addColorStop(1,   '#1B3A5C');
+    ctx.fillStyle = rzGradB;
+    ctx.fillRect(0, rzy, DW, ROZET_H);
+    ctx.fillStyle = '#8FA8BF';
     ctx.fillRect(0, rzy, DW, 1);
     ctx.fillRect(0, rzy + ROZET_H - 1, DW, 1);
   } else {
@@ -1193,56 +1204,17 @@ function hesapla(){
     ctx.fillRect(0, rzy + ROZET_H - 2, DW, 2);
   }
 
-  var ROZETLER = [
-    '✦ Hızlı Ön İnceleme',
-    '✦ Esnek Peşinat Seçenekleri',
-    '✦ 3 Aya Kadar Erteleme',
-    '✦ Erken Ödeme Şansı',
-    '✦ Ara Ödeme İmkânı'
-  ];
-
-  var toplamRozetW = 0;
-  ctx.font = 'bold 11px Arial,sans-serif';
-  var rozetPad = 16, rozetH = 24, rozetGap = 8;
-  var rozetGenislikler = ROZETLER.map(function(r){
-    return ctx.measureText(r).width + rozetPad * 2;
-  });
-  rozetGenislikler.forEach(function(w){ toplamRozetW += w + rozetGap; });
-  toplamRozetW -= rozetGap;
-
-  var rozetStartX = (DW - toplamRozetW) / 2;
-  var rozetY = rzy + (ROZET_H - rozetH) / 2;
+  // ── ROZET ŞERİDİ — tek satır akıcı metin ──
+  var rozetMetin = 'Hızlı Ön İnceleme  ·  Esnek Peşinat Seçenekleri  ·  3 Aya Kadar Erteleme  ·  Erken Ödeme Şansı  ·  Ara Ödeme İmkânı';
   var rozetMY = rzy + ROZET_H / 2;
-
-  ROZETLER.forEach(function(r, ri){
-    var rw = rozetGenislikler[ri];
-    var rx = rozetStartX;
-    for(var k = 0; k < ri; k++) rx += rozetGenislikler[k] + rozetGap;
-
-    // Rozet arka plan
-    ctx.fillStyle   = tema === 'dark' ? 'rgba(31,143,255,0.12)' : 'rgba(201,168,76,0.18)';
-    ctx.strokeStyle = tema === 'dark' ? '#1F8FFF' : GOLD;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(rx + 4, rozetY);
-    ctx.lineTo(rx + rw - 4, rozetY);
-    ctx.quadraticCurveTo(rx + rw, rozetY, rx + rw, rozetY + 4);
-    ctx.lineTo(rx + rw, rozetY + rozetH - 4);
-    ctx.quadraticCurveTo(rx + rw, rozetY + rozetH, rx + rw - 4, rozetY + rozetH);
-    ctx.lineTo(rx + 4, rozetY + rozetH);
-    ctx.quadraticCurveTo(rx, rozetY + rozetH, rx, rozetY + rozetH - 4);
-    ctx.lineTo(rx, rozetY + 4);
-    ctx.quadraticCurveTo(rx, rozetY, rx + 4, rozetY);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle    = tema === 'dark' ? '#6FD3FF' : GOLDI;
-    ctx.font         = 'bold 11px Arial,sans-serif';
-    ctx.textAlign    = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(r, rx + rw / 2, rozetMY);
-  });
+  var rozetRenk = (tema === 'dark') ? '#A8D8FF' : (tema === 'bank') ? '#CFD8DC' : GOLDI;
+  ctx.fillStyle    = rozetRenk;
+  ctx.font         = '500 11.5px Arial,sans-serif';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '0.5px';
+  ctx.fillText(rozetMetin, DW / 2, rozetMY);
+  ctx.letterSpacing = '0px';
 
   // ── THEAD ──
   var thy = by0 + BH + ROZET_H;

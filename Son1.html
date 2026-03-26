@@ -935,7 +935,7 @@ function guncelleOzet(){
   document.getElementById('hesapOzeti').innerHTML =
     'Aktif seçenek: <strong>' + secimAdlari[secim] + '</strong><br>' +
     'Ekstra masraf: <strong>' + tl(okuEkstraMasraf()) + '</strong><br>' +
-    'Hesaplama: <strong>Kalan tutar + ekstra masraf</strong>';
+    'Hesaplama: <strong>Ekstra masraf peşinata eklenir</strong>';
 }
 
 // ── FOTOĞRAF ──────────────────────────────────────────────
@@ -1270,8 +1270,8 @@ function hesapla(){
   var ry0 = thy + THH;
 
   ORANLAR.forEach(function(oran, ri){
-    var pesinat   = fiyat * oran;
-    var kredi     = (fiyat - pesinat) + ekstraMasraf;
+    var pesinat   = fiyat * oran + ekstraMasraf;
+    var kredi     = fiyat - fiyat * oran;
     var pct       = Math.round(oran * 100) + '%';
     var ry        = ry0 + ri * RH;
     var my        = ry + RH / 2;

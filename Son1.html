@@ -842,7 +842,7 @@ function formatPercentInput(el){
 }
 
 function okuFiyat()       { return parseMoneyInput(document.getElementById('fiyat').value); }
-function okuMusteriAdi()  { return (document.getElementById('musteriAdi').value || '').trim(); }
+function okuMusteriAdi()  { var el = document.getElementById('musteriAdi'); return el ? (el.value || '').trim() : ''; }
 function okuEkstraMasraf(){ return parseMoneyInput(document.getElementById('ekstraMasraf').value); }
 
 function aktifFaizYuzde(){

@@ -161,9 +161,15 @@
     #pinBox {
       background: #132236; border: 1px solid #1e3a5f;
       border-radius: 16px; padding: 36px 32px;
-      display: flex; flex-direction: column; align-items: center; gap: 18px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
       min-width: 280px;
     }
+    #kullanici {
+      width: 100%; padding: 12px 16px; font-size: 15px;
+      text-align: center; background: #0d1b2a; border: 1px solid #1e3a5f;
+      border-radius: 10px; color: #fff; outline: none; font-family: inherit;
+    }
+    #kullanici::placeholder { color: #3a5570; }
     #pinInput {
       width: 100%; padding: 14px 16px; font-size: 24px; letter-spacing: 10px;
       text-align: center; background: #0d1b2a; border: 1px solid #1e3a5f;
@@ -174,6 +180,31 @@
       0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)}
     }
     #pinHata { color: #e05555; font-size: 13px; min-height: 18px; }
+    .icon-gold { background: linear-gradient(135deg, #b8860b, #8b6914); }
+    #yonetimOverlay {
+      display:none; position:fixed; inset:0; z-index:9998;
+      background:rgba(13,27,42,0.95); align-items:center; justify-content:center;
+    }
+    #yonetimOverlay.goster { display:flex; }
+    #yonetimBox {
+      background:#132236; border:1px solid #1e3a5f; border-radius:16px;
+      padding:28px 24px; min-width:280px; max-width:340px; width:90%;
+    }
+    .yon-baslik { font-size:14px; font-weight:700; color:#4db8ff; letter-spacing:1px; margin-bottom:16px; text-align:center; }
+    .yon-kullanici {
+      display:flex; justify-content:space-between; align-items:center;
+      background:#0d1b2a; border-radius:10px; padding:12px 14px; margin-bottom:8px;
+    }
+    .yon-ad { font-weight:700; color:#fff; font-size:14px; }
+    .yon-rol { font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; }
+    .rol-yonetici { background:#1a4a7a; color:#4db8ff; }
+    .rol-ekip { background:#1a3a2a; color:#2ecc71; }
+    .yon-pin { font-size:12px; color:#8aaccc; margin-top:2px; }
+    .yon-kapat {
+      width:100%; padding:10px; margin-top:16px; background:#1a6fa3;
+      border:none; border-radius:10px; color:#fff; font-weight:700;
+      font-size:14px; cursor:pointer; font-family:inherit;
+    }
   </style>
 </head>
 <body>
@@ -181,10 +212,20 @@
 <div id="pinOverlay">
   <div id="pinBox">
     <div style="font-size:13px;letter-spacing:3px;color:#4db8ff;text-transform:uppercase;font-weight:600;">KREDİZMİR Panel</div>
-    <div style="font-size:12px;color:#7a9cc0;">Erişim için PIN girin</div>
+    <div style="font-size:12px;color:#7a9cc0;">Kullanıcı adı ve PIN ile giriş yapın</div>
+    <input id="kullanici" type="text" placeholder="Kullanıcı adınız" autocomplete="off"
+           onkeydown="if(event.key==='Enter')document.getElementById('pinInput').focus()">
     <input id="pinInput" type="password" inputmode="numeric" maxlength="4"
            placeholder="••••" autocomplete="off" oninput="pinKontrol(this)">
     <div id="pinHata"></div>
+  </div>
+</div>
+
+<div id="yonetimOverlay">
+  <div id="yonetimBox">
+    <div class="yon-baslik">👥 KULLANICI YÖNETİMİ</div>
+    <div id="yonetimListe"></div>
+    <button class="yon-kapat" onclick="document.getElementById('yonetimOverlay').classList.remove('goster')">Kapat</button>
   </div>
 </div>
 
@@ -196,7 +237,7 @@
         <p>FİNANSAL ÇÖZÜMLER</p>
       </div>
     </div>
-    <div class="badge">v4.0 Premium</div>
+    <div class="badge" id="kullaniciBadge">v4.0 Premium</div>
   </div>
 
   <div class="hero">
@@ -255,36 +296,79 @@
       </div>
       <div class="card-arrow">›</div>
     </a>
+
+    <div class="card" id="yonetimKart" style="display:none;cursor:pointer;" onclick="yonetimAc()">
+      <div class="card-icon icon-gold">⚙️</div>
+      <div class="card-body">
+        <h3>Kullanıcı Yönetimi</h3>
+        <p>Panel üyelerini ve erişim bilgilerini görüntüle.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
   </div>
 
   <div class="footer">KREDİZMİR &copy; 2024 — Tüm hakları saklıdır</div>
 
 <script>
-var PANEL_PIN = '1313';
+var KULLANICILAR = {
+  'yonetici': { pin: '1313', rol: 'yonetici', ad: 'Yönetici' },
+  'hakan':    { pin: '2525', rol: 'ekip',     ad: 'Hakan'    }
+};
+
 (function(){
-  if(sessionStorage.getItem('panelGiris')==='1'){
+  var giris = sessionStorage.getItem('panelGiris');
+  if(giris){
+    var k = JSON.parse(giris);
     document.getElementById('pinOverlay').classList.add('hidden');
+    panelAyarla(k);
   }
 })();
-// Geri tuşuyla dönünce her zaman PIN sor
+
 window.addEventListener('pageshow', function(e){
   if(e.persisted){
     sessionStorage.removeItem('panelGiris');
     document.getElementById('pinOverlay').classList.remove('hidden');
+    document.getElementById('kullanici').value = '';
     document.getElementById('pinInput').value = '';
     document.getElementById('pinHata').textContent = '';
   }
 });
+
 function pinKontrol(inp){
-  if(inp.value.length < PANEL_PIN.length) return;
-  if(inp.value === PANEL_PIN){
-    sessionStorage.setItem('panelGiris','1');
+  if(inp.value.length < 4) return;
+  var ad = document.getElementById('kullanici').value.trim().toLowerCase();
+  var k = KULLANICILAR[ad];
+  if(k && inp.value === k.pin){
+    sessionStorage.setItem('panelGiris', JSON.stringify({kullanici: ad, ad: k.ad, rol: k.rol}));
     document.getElementById('pinOverlay').classList.add('hidden');
+    panelAyarla(k);
   } else {
     inp.classList.add('shake');
-    document.getElementById('pinHata').textContent = 'Hatalı PIN';
-    setTimeout(function(){ inp.classList.remove('shake'); inp.value=''; document.getElementById('pinHata').textContent=''; }, 600);
+    document.getElementById('pinHata').textContent = 'Hatalı kullanıcı adı veya PIN';
+    setTimeout(function(){ inp.classList.remove('shake'); inp.value=''; document.getElementById('pinHata').textContent=''; }, 700);
   }
+}
+
+function panelAyarla(k){
+  document.getElementById('kullaniciBadge').textContent = k.ad + (k.rol==='yonetici' ? ' 👑' : ' 👤');
+  if(k.rol === 'yonetici'){
+    document.getElementById('yonetimKart').style.display = 'flex';
+  }
+}
+
+function yonetimAc(){
+  var html = '';
+  Object.keys(KULLANICILAR).forEach(function(key){
+    var u = KULLANICILAR[key];
+    html += '<div class="yon-kullanici">' +
+      '<div><div class="yon-ad">' + u.ad + '</div>' +
+      '<div class="yon-pin">Kullanıcı: ' + key + ' | PIN: ' + u.pin + '</div></div>' +
+      '<span class="yon-rol ' + (u.rol==='yonetici'?'rol-yonetici':'rol-ekip') + '">' +
+      (u.rol==='yonetici'?'Yönetici':'Ekip') + '</span>' +
+      '</div>';
+  });
+  document.getElementById('yonetimListe').innerHTML = html;
+  document.getElementById('yonetimOverlay').classList.add('goster');
 }
 
 var FORM_URL = 'https://bit.ly/kredizmir-basvuru';

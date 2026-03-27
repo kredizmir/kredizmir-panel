@@ -317,11 +317,17 @@ var KULLANICILAR = {
 
 (function(){
   var giris = sessionStorage.getItem('panelGiris');
-  if(giris){
-    var k = JSON.parse(giris);
-    document.getElementById('pinOverlay').classList.add('hidden');
-    panelAyarla(k);
+  if(giris && giris !== '1'){
+    try {
+      var k = JSON.parse(giris);
+      if(k && k.kullanici && k.rol){
+        document.getElementById('pinOverlay').classList.add('hidden');
+        panelAyarla(k);
+        return;
+      }
+    } catch(e){}
   }
+  sessionStorage.removeItem('panelGiris');
 })();
 
 window.addEventListener('pageshow', function(e){

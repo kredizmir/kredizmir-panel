@@ -135,15 +135,58 @@
       font-size: 20px;
       flex-shrink: 0;
     }
+    .share-row { display:flex; gap:8px; margin-top:12px; }
+    .share-btn {
+      flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+      padding:9px 8px; border:none; border-radius:10px; font-size:12px; font-weight:700;
+      cursor:pointer; font-family:inherit; letter-spacing:.3px; transition:opacity .2s;
+    }
+    .share-btn:active { opacity:.75; }
+    .btn-copy { background:#1e3a56; color:#4db8ff; }
+    .btn-wp   { background:#1a4a2e; color:#2ecc71; }
+    .btn-copy.copied { color:#2ecc71; background:#1a3a2a; }
     .footer {
       text-align: center;
       margin-top: 32px;
       font-size: 11px;
       color: #3a5570;
     }
+    #pinOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0d1b2a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+    }
+    #pinOverlay.hidden { display: none; }
+    #pinBox {
+      background: #132236; border: 1px solid #1e3a5f;
+      border-radius: 16px; padding: 36px 32px;
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
+      min-width: 280px;
+    }
+    #pinInput {
+      width: 100%; padding: 14px 16px; font-size: 24px; letter-spacing: 10px;
+      text-align: center; background: #0d1b2a; border: 1px solid #1e3a5f;
+      border-radius: 10px; color: #fff; outline: none;
+    }
+    #pinInput.shake { animation: pinShake .35s ease; border-color: #e05555; }
+    @keyframes pinShake {
+      0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)}
+    }
+    #pinHata { color: #e05555; font-size: 13px; min-height: 18px; }
   </style>
 </head>
 <body>
+
+<div id="pinOverlay">
+  <div id="pinBox">
+    <div style="font-size:13px;letter-spacing:3px;color:#4db8ff;text-transform:uppercase;font-weight:600;">KREDİZMİR Panel</div>
+    <div style="font-size:12px;color:#7a9cc0;">Erişim için PIN girin</div>
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="4"
+           placeholder="••••" autocomplete="off" oninput="pinKontrol(this)">
+    <div id="pinHata"></div>
+  </div>
+</div>
 
   <div class="header">
     <div class="logo-area">
@@ -162,24 +205,6 @@
   </div>
 
   <div class="cards">
-    <a href="odeme-tablosu.html" class="card">
-      <div class="card-icon icon-blue">📊</div>
-      <div class="card-body">
-        <h3>Ödeme Tablosu <span class="card-badge">PDF</span></h3>
-        <p>Müşteri için DJS veya banka kredisi ödeme planı oluştur. 12-36 ay karşılaştırmalı tablo ve PDF indir.</p>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
-
-    <a href="sozlesme.html" class="card">
-      <div class="card-icon icon-green">📋</div>
-      <div class="card-body">
-        <h3>İstenen Belgeler</h3>
-        <p>Kredi türüne göre müşteriden istenen bilgi ve belgeler.</p>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
-
     <a href="konum-gonder.html" class="card">
       <div class="card-icon icon-orange">📍</div>
       <div class="card-body">
@@ -197,9 +222,78 @@
       </div>
       <div class="card-arrow">›</div>
     </a>
+
+    <a href="galeri-odeme-tablosu.html" class="card">
+      <div class="card-icon icon-blue">🏪</div>
+      <div class="card-body">
+        <h3>Galeriler için Ödeme Tablosu</h3>
+        <p>Galeri adını ve araç fiyatını gir, taksitli satış tablosunu oluştur.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+
+    <div class="card" style="flex-direction:column;align-items:stretch;cursor:default;">
+      <div style="display:flex;align-items:center;gap:16px;" onclick="window.location='on-basvuru.html'" style="cursor:pointer;">
+        <div class="card-icon icon-green">📝</div>
+        <div class="card-body">
+          <h3>Başvuru Formu</h3>
+          <p>Müşteri için hızlı kredi ön başvurusu formu oluştur.</p>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="share-row">
+        <button class="share-btn btn-copy" id="btnKopyala" onclick="formuKopyala(this)">&#128203; Linki Kopyala</button>
+        <button class="share-btn btn-wp" onclick="formuWp()">⚠ MUTLAKA MÜŞTERİYE BURDAN YOLLAMANIZ GEREK</button>
+      </div>
+    </div>
+
+    <a href="Son1.html" class="card">
+      <div class="card-icon icon-blue">📊</div>
+      <div class="card-body">
+        <h3>Ödeme Tablosu (Yeni)</h3>
+        <p>Kredi, DJS ve banka seçenekleriyle detaylı ödeme planı oluştur.</p>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
   </div>
 
   <div class="footer">KREDİZMİR &copy; 2024 — Tüm hakları saklıdır</div>
 
+<script>
+var PANEL_PIN = '1313';
+(function(){
+  if(sessionStorage.getItem('panelGiris')==='1'){
+    document.getElementById('pinOverlay').classList.add('hidden');
+  }
+})();
+// Geri tuşuyla dönünce her zaman PIN sor
+window.addEventListener('pageshow', function(e){
+  if(e.persisted){
+    sessionStorage.removeItem('panelGiris');
+    document.getElementById('pinOverlay').classList.remove('hidden');
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinHata').textContent = '';
+  }
+});
+function pinKontrol(inp){
+  if(inp.value.length < PANEL_PIN.length) return;
+  if(inp.value === PANEL_PIN){
+    sessionStorage.setItem('panelGiris','1');
+    document.getElementById('pinOverlay').classList.add('hidden');
+  } else {
+    inp.classList.add('shake');
+    document.getElementById('pinHata').textContent = 'Hatalı PIN';
+    setTimeout(function(){ inp.classList.remove('shake'); inp.value=''; document.getElementById('pinHata').textContent=''; }, 600);
+  }
+}
+
+var FORM_URL = 'https://bit.ly/kredizmir-basvuru';
+function formuKopyala(btn){
+  var copy = function(){ btn.innerHTML='&#10003; Kopyalandı'; btn.classList.add('copied'); setTimeout(function(){ btn.innerHTML='&#128203; Linki Kopyala'; btn.classList.remove('copied'); }, 2000); };
+  if(navigator.clipboard){ navigator.clipboard.writeText(FORM_URL).then(copy).catch(function(){ fb(); copy(); }); } else { fb(); copy(); }
+}
+function fb(){ var t=document.createElement('textarea'); t.value=FORM_URL; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
+function formuWp(){ window.open('https://wa.me/?text='+encodeURIComponent('Kredi ön başvuru formunu doldurmak için linke tıklayın:\n'+FORM_URL),'_blank'); }
+</script>
 </body>
 </html>

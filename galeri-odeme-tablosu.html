@@ -201,13 +201,6 @@ input[type=text]:focus { border-color:var(--navyli); background:#fff; }
       <button class="btn-hesap" onclick="hesapla()">Hesapla</button>
     </div>
   </div>
-  <div class="field">
-    <label>Masraflar (TL) <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:#8899aa;">opsiyonel — peşinata eklenir</span></label>
-    <div class="wrap">
-      <span class="sym">₺</span>
-      <input type="text" id="masraflar" value="" placeholder="0" inputmode="numeric" autocomplete="off">
-    </div>
-  </div>
 </div>
 
 <div id="sonuc">
@@ -245,10 +238,6 @@ document.getElementById('fiyat').addEventListener('input', function(){
   var r = this.value.replace(/\D/g,'');
   this.value = r ? parseInt(r,10).toLocaleString('tr-TR') : '';
 });
-document.getElementById('masraflar').addEventListener('input', function(){
-  var r = this.value.replace(/\D/g,'');
-  this.value = r ? parseInt(r,10).toLocaleString('tr-TR') : '';
-});
 document.getElementById('fiyat').addEventListener('keydown', function(e){
   if(e.key==='Enter') hesapla();
 });
@@ -264,7 +253,7 @@ function taksit(kredi, n){
 
 function hesapla(){
   var fiyat    = oku();
-  var masraflar = parseFloat((document.getElementById('masraflar').value||'').replace(/\./g,'').replace(',','.')) || 0;
+  var masraflar = 0;
   var galeri   = document.getElementById('galeri').value.trim() || 'GALERİ';
 
   if(isNaN(fiyat)||fiyat<=0){ alert('Geçerli bir fiyat girin.'); return; }
@@ -423,10 +412,10 @@ function karsilamaGec(){
 
 window.addEventListener('load', function(){
   var params = new URLSearchParams(window.location.search);
-  if(params.get('k') === '1'){
-    document.getElementById('karsilama').classList.add('goster');
-  } else {
+  if(params.get('skip') === '1'){
     hesapla();
+  } else {
+    document.getElementById('karsilama').classList.add('goster');
   }
 });
 

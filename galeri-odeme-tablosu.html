@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KREDİZMİR – Ödeme Tablosu</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #0B1E3D;
+  --navy2:   #122850;
+  --navyli:  #1A3566;
+  --gold:    #C9A84C;
+  --goldli:  #E8C97A;
+  --white:   #FFFFFF;
+  --bg:      #EEF2F8;
+  --mid:     #3A4F72;
+  --border:  #C8D3E8;
+  --rowalt:  #EDF1F9;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 14px 60px;
+}
+/* GERİ BUTONU */
+.topbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; width:100%; max-width:500px; }
+.back-btn { background:#1a2d45; border:none; color:#4db8ff; font-size:22px; width:40px; height:40px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; text-decoration:none; flex-shrink:0; }
+/* LOGO */
+.logo-bar { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.logo-box {
+  background: var(--navy); color: var(--gold);
+  font-size: 20px; font-weight: 900; letter-spacing: 2px;
+  padding: 7px 15px; border-radius: 4px; text-transform: uppercase;
+}
+.logo-tag { font-size:11px; font-weight:700; color:var(--mid); letter-spacing:1.5px; text-transform:uppercase; }
+
+/* KART */
+.card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 20px 22px; width:100%; max-width:500px;
+  box-shadow: 0 4px 16px rgba(11,30,61,0.08); margin-bottom:20px;
+}
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display:block; font-size:11px; font-weight:700; letter-spacing:1.4px;
+  text-transform:uppercase; color:var(--mid); margin-bottom:6px;
+}
+.input-row { display:flex; gap:8px; }
+.wrap { position:relative; flex:1; }
+.wrap .sym {
+  position:absolute; left:11px; top:50%; transform:translateY(-50%);
+  font-size:17px; font-weight:700; color:var(--navy); pointer-events:none;
+}
+input[type=text] {
+  width:100%; height:48px; border:2px solid var(--border); border-radius:7px;
+  font-size:17px; font-weight:700; color:var(--navy);
+  padding:0 12px 0 30px; background:var(--bg); outline:none;
+  transition:border-color .2s; font-family: Arial, sans-serif;
+}
+#galeri { padding-left: 12px; }
+input[type=text]:focus { border-color:var(--navyli); background:#fff; }
+.btn-hesap {
+  height:48px; padding:0 20px; background:var(--navy); color:var(--goldli);
+  font-size:13px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase;
+  border:none; border-radius:7px; cursor:pointer; white-space:nowrap;
+  transition:background .2s; font-family: Arial, sans-serif;
+}
+.btn-hesap:hover { background:var(--navyli); }
+
+/* SONUÇ ALANI */
+#sonuc { width:100%; max-width:860px; display:none; flex-direction:column; align-items:center; gap:14px; }
+#sonuc.goster { display:flex; }
+
+#tabloImg {
+  width:100%; max-width:860px; height:auto;
+  border-radius:8px;
+  box-shadow: 0 6px 28px rgba(11,30,61,0.18);
+  display:block;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.ipucu {
+  width:100%; max-width:860px;
+  background:var(--white); border:1px solid var(--border);
+  border-radius:7px; padding:10px 16px;
+  font-size:12px; color:var(--mid); text-align:center; line-height:1.6;
+}
+
+/* PDF BUTONU */
+.btn-row { display:flex; gap:10px; justify-content:center; width:100%; max-width:860px; flex-wrap:wrap; }
+.btn-dl {
+  display:flex; align-items:center; gap:7px;
+  height:44px; padding:0 22px; border:none; border-radius:7px;
+  font-size:13px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase;
+  cursor:pointer; transition:opacity .2s; font-family: Arial, sans-serif;
+}
+.btn-dl:hover { opacity:.82; }
+.btn-pdf { background:var(--navy); color:var(--goldli); }
+
+@media print {
+  body { background:#fff; padding:0; }
+  .card, .logo-bar, .topbar, .ipucu, .btn-row { display:none !important; }
+  #sonuc { display:flex !important; }
+  #tabloImg { box-shadow:none; border-radius:0; width:100%; max-width:100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="back-btn">&#8249;</a>
+</div>
+
+<div class="logo-bar">
+  <div class="logo-box">KREDİZMİR</div>
+  <div class="logo-tag">Taksitle Araba Sahibi</div>
+</div>
+
+<div class="card">
+  <div class="field">
+    <label for="galeri">Galeri / Firma Adı</label>
+    <input type="text" id="galeri" value="TEMELLER OTOMOTİV" placeholder="Galeri adı girin...">
+  </div>
+  <div class="field">
+    <label>Araç Fiyatı (TL)</label>
+    <div class="input-row">
+      <div class="wrap">
+        <span class="sym">₺</span>
+        <input type="text" id="fiyat" value="860.000" inputmode="numeric" autocomplete="off">
+      </div>
+      <button class="btn-hesap" onclick="hesapla()">Hesapla</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>Masraflar (TL) <span style="font-size:10px;font-weight:400;letter-spacing:0;text-transform:none;color:#8899aa;">opsiyonel — peşinata eklenir</span></label>
+    <div class="wrap">
+      <span class="sym">₺</span>
+      <input type="text" id="masraflar" value="" placeholder="0" inputmode="numeric" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div id="sonuc">
+  <img id="tabloImg" src="" alt="Ödeme Tablosu">
+  <p class="ipucu">
+    📱 <strong>iPhone:</strong> Görsele <strong>uzun basın</strong> → "Fotoğrafa Kaydet" seçin<br>
+    🖥 <strong>Masaüstü:</strong> Görsele sağ tıklayın → "Resmi Farklı Kaydet"
+  </p>
+  <div class="btn-row">
+    <button class="btn-dl btn-pdf" onclick="pdfYazdir()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="12" y1="18" x2="12" y2="12"/>
+        <polyline points="9 15 12 18 15 15"/>
+      </svg>
+      PDF / Yazdır
+    </button>
+  </div>
+</div>
+
+<script>
+var FAIZ    = 0.0525;
+var ORANLAR = [0.25, 0.30, 0.35, 0.40, 0.45, 0.50];
+var VADELER = [12, 18, 24, 36];
+
+function tl(n){ return '\u20BA' + Math.round(n).toLocaleString('tr-TR'); }
+function oku(){
+  return parseFloat(
+    document.getElementById('fiyat').value.replace(/\./g,'').replace(',','.')
+  );
+}
+
+document.getElementById('fiyat').addEventListener('input', function(){
+  var r = this.value.replace(/\D/g,'');
+  this.value = r ? parseInt(r,10).toLocaleString('tr-TR') : '';
+});
+document.getElementById('masraflar').addEventListener('input', function(){
+  var r = this.value.replace(/\D/g,'');
+  this.value = r ? parseInt(r,10).toLocaleString('tr-TR') : '';
+});
+document.getElementById('fiyat').addEventListener('keydown', function(e){
+  if(e.key==='Enter') hesapla();
+});
+document.getElementById('galeri').addEventListener('keydown', function(e){
+  if(e.key==='Enter') hesapla();
+});
+
+function taksit(kredi, n){
+  if(kredi<=0) return 0;
+  var r=FAIZ, c=Math.pow(1+r,n);
+  return kredi*(r*c)/(c-1);
+}
+
+function hesapla(){
+  var fiyat    = oku();
+  var masraflar = parseFloat((document.getElementById('masraflar').value||'').replace(/\./g,'').replace(',','.')) || 0;
+  var galeri   = document.getElementById('galeri').value.trim() || 'GALERİ';
+
+  if(isNaN(fiyat)||fiyat<=0){ alert('Geçerli bir fiyat girin.'); return; }
+
+  var S    = 2;
+  var W    = 900;
+  var BH   = 90;
+  var THH  = 46;
+  var RH   = 52;
+  var AH   = 38;
+  var COLS = [210,172,173,173,172];
+  var NR   = ORANLAR.length;
+  var H    = BH + THH + RH*NR + AH;
+
+  var NAVY='#0B1E3D', NAVY2='#122850', NAVYLI='#1A3566',
+      GOLD='#C9A84C', GOLDI='#E8C97A',
+      WHITE='#FFFFFF', RALT='#EDF1F9',
+      BRD='#C8D3E8', MID='#3A4F72', BG='#EEF2F8';
+
+  var cv  = document.createElement('canvas');
+  cv.width  = W * S;
+  cv.height = H * S;
+  var ctx = cv.getContext('2d');
+  ctx.scale(S, S);
+
+  function cx(i){ var x=0; for(var k=0;k<i;k++) x+=COLS[k]; return x; }
+
+  ctx.fillStyle = NAVY;
+  ctx.fillRect(0, 0, W, BH);
+
+  ctx.fillStyle = GOLD;
+  ctx.fillRect(0, BH-4, W, 4);
+
+  ctx.fillStyle = GOLDI;
+  ctx.font = 'bold 13px Arial,sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(galeri.toUpperCase(), 18, 14);
+
+  ctx.save();
+  ctx.globalAlpha = 0.13;
+  ctx.fillStyle   = '#FFFFFF';
+  ctx.font        = 'bold 28px Arial,sans-serif';
+  ctx.textAlign   = 'right';
+  ctx.textBaseline= 'top';
+  ctx.fillText('KREDİZMİR', W - 16, 10);
+  ctx.restore();
+
+  ctx.fillStyle = GOLDI;
+  ctx.font = 'bold 16px Arial,sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(
+    tl(fiyat) + ' TL ARAÇ İÇİN TAKSİTLİ SATIŞ ÖRNEK ÖDEME TABLOSU',
+    W/2, BH*0.65
+  );
+
+  ctx.fillStyle = NAVY2;
+  ctx.fillRect(0, BH, W, THH);
+  ctx.fillStyle = GOLDI;
+  ctx.font = 'bold 13px Arial,sans-serif';
+  ctx.textBaseline = 'middle';
+  ['PEŞİNAT','12 AY','18 AY','24 AY','36 AY'].forEach(function(txt,i){
+    var my = BH + THH/2;
+    if(i===0){ ctx.textAlign='left'; ctx.fillText(txt, cx(0)+18, my); }
+    else      { ctx.textAlign='center'; ctx.fillText(txt, cx(i)+COLS[i]/2, my); }
+  });
+  ctx.strokeStyle='rgba(255,255,255,0.10)'; ctx.lineWidth=1;
+  for(var i=1;i<COLS.length;i++){
+    ctx.beginPath(); ctx.moveTo(cx(i)+.5,BH); ctx.lineTo(cx(i)+.5,BH+THH); ctx.stroke();
+  }
+
+  ORANLAR.forEach(function(oran,ri){
+    var pes_base=fiyat*oran, pes=pes_base+masraflar, krd=fiyat-pes_base, pct=Math.round(oran*100)+'%';
+    var ry=BH+THH+ri*RH;
+
+    ctx.fillStyle = ri%2===0 ? WHITE : RALT;
+    ctx.fillRect(0, ry, W, RH);
+
+    ctx.strokeStyle=BRD; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,ry+.5); ctx.lineTo(W,ry+.5); ctx.stroke();
+
+    var my = ry + RH/2;
+
+    ctx.fillStyle=NAVY; ctx.font='bold 15px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    var ps = tl(pes);
+    ctx.fillText(ps, cx(0)+18, my);
+
+    var tw  = ctx.measureText(ps).width;
+    ctx.font='bold 10px Arial,sans-serif';
+    var bw  = ctx.measureText(pct).width+10, bh=16;
+    var bx  = cx(0)+18+tw+7, by=my-bh/2;
+    ctx.fillStyle = NAVYLI;
+    ctx.beginPath();
+    ctx.moveTo(bx+3,by); ctx.lineTo(bx+bw-3,by);
+    ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+3);
+    ctx.lineTo(bx+bw,by+bh-3);
+    ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-3,by+bh);
+    ctx.lineTo(bx+3,by+bh);
+    ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-3);
+    ctx.lineTo(bx,by+3);
+    ctx.quadraticCurveTo(bx,by,bx+3,by);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle=GOLDI; ctx.textAlign='center';
+    ctx.fillText(pct, bx+bw/2, my);
+
+    ctx.fillStyle=NAVY2; ctx.font='bold 15px Arial,sans-serif';
+    ctx.textBaseline='middle';
+    VADELER.forEach(function(v,vi){
+      ctx.textAlign='center';
+      ctx.fillText(tl(taksit(krd,v)), cx(vi+1)+COLS[vi+1]/2, my);
+    });
+
+    ctx.strokeStyle=BRD; ctx.lineWidth=1;
+    for(var j=1;j<COLS.length;j++){
+      ctx.beginPath(); ctx.moveTo(cx(j)+.5,ry); ctx.lineTo(cx(j)+.5,ry+RH); ctx.stroke();
+    }
+  });
+
+  var bot = BH+THH+RH*NR;
+  ctx.strokeStyle=BRD; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,bot+.5); ctx.lineTo(W,bot+.5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(.5,BH+THH); ctx.lineTo(.5,bot); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W-.5,BH+THH); ctx.lineTo(W-.5,bot); ctx.stroke();
+
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, bot, W, AH);
+  ctx.fillStyle = MID;
+  ctx.font = '500 11px Arial,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(
+    '* Faiz oranı ve taksit tutarları kişinin durumuna göre değişkenlik gösterir.',
+    W/2, bot + AH/2
+  );
+
+  var dataUrl = cv.toDataURL('image/png');
+  var img = document.getElementById('tabloImg');
+  img.src = dataUrl;
+
+  var sonuc = document.getElementById('sonuc');
+  sonuc.classList.add('goster');
+  setTimeout(function(){
+    sonuc.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 80);
+}
+
+window.addEventListener('load', hesapla);
+
+function pdfYazdir(){
+  window.print();
+}
+</script>
+
+</body>
+</html>

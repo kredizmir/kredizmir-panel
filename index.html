@@ -205,6 +205,28 @@
       border:none; border-radius:10px; color:#fff; font-weight:700;
       font-size:14px; cursor:pointer; font-family:inherit;
     }
+    #hosgeldinOverlay {
+      position:fixed; inset:0; z-index:10000;
+      background:rgba(13,27,42,0.93);
+      display:none; align-items:center; justify-content:center;
+      flex-direction:column; gap:12px;
+      pointer-events:none;
+    }
+    #hosgeldinOverlay.goster { display:flex; }
+    .hg-mesaj {
+      font-size:clamp(24px,6vw,36px); font-weight:800;
+      color:#E8C97A; letter-spacing:1px; text-align:center;
+      padding:0 24px;
+      animation: hgPop .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .hg-alt {
+      font-size:13px; color:rgba(255,255,255,0.5);
+      letter-spacing:2px; text-transform:uppercase;
+    }
+    @keyframes hgPop {
+      from { opacity:0; transform:scale(.8); }
+      to   { opacity:1; transform:scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -219,6 +241,11 @@
            placeholder="••••" autocomplete="off" oninput="pinKontrol(this)">
     <div id="pinHata"></div>
   </div>
+</div>
+
+<div id="hosgeldinOverlay">
+  <div class="hg-mesaj" id="hosgeldinMesaj"></div>
+  <div class="hg-alt">KREDİZMİR Panel</div>
 </div>
 
 <div id="yonetimOverlay">
@@ -311,8 +338,9 @@
 
 <script>
 var KULLANICILAR = {
-  'yonetici': { pin: '1313', rol: 'yonetici', ad: 'Yönetici' },
-  'hakan':    { pin: '2525', rol: 'ekip',     ad: 'Hakan'    }
+  'yonetici': { pin: '1313', rol: 'yonetici', ad: 'Yönetici',  hosgeldin: 'Hoş Geldiniz 👑'         },
+  'hakan':    { pin: '2525', rol: 'ekip',     ad: 'Hakan',     hosgeldin: 'Hoşgeldin Sarışın 👋'     },
+  'yagmur':   { pin: '3535', rol: 'ekip',     ad: 'Yağmur',    hosgeldin: 'Hoşgeldin Güzel Kız 🌸'  }
 };
 
 (function(){
@@ -348,6 +376,7 @@ function pinKontrol(inp){
     sessionStorage.setItem('panelGiris', JSON.stringify({kullanici: ad, ad: k.ad, rol: k.rol}));
     document.getElementById('pinOverlay').classList.add('hidden');
     panelAyarla(k);
+    hosgeldinGoster(k.hosgeldin);
   } else {
     inp.classList.add('shake');
     document.getElementById('pinHata').textContent = 'Hatalı kullanıcı adı veya PIN';
@@ -360,6 +389,13 @@ function panelAyarla(k){
   if(k.rol === 'yonetici'){
     document.getElementById('yonetimKart').style.display = 'flex';
   }
+}
+
+function hosgeldinGoster(mesaj){
+  var el = document.getElementById('hosgeldinOverlay');
+  document.getElementById('hosgeldinMesaj').textContent = mesaj;
+  el.classList.add('goster');
+  setTimeout(function(){ el.classList.remove('goster'); }, 3000);
 }
 
 function yonetimAc(){

@@ -932,6 +932,13 @@ input[type=text]:focus {
     <strong>Android:</strong> Görsele <strong>uzun basın</strong> → "Resmi İndir"
   </p>
 
+  <div id="musteri-basvuru" style="display:none;width:100%;max-width:900px;text-align:center;padding:18px 16px 8px;">
+    <a href="index.html" style="display:inline-block;background:#1a6e3c;color:#fff;font-size:16px;font-weight:700;padding:14px 40px;border-radius:10px;text-decoration:none;letter-spacing:.4px;">
+      📋 Başvuru Yap
+    </a>
+    <p style="font-size:12px;color:#888;margin:10px 0 0;">Tabloyu inceledikten sonra başvuru formunu doldurun.</p>
+  </div>
+
   <div class="btn-row">
     <button class="btn-pdf" onclick="window.print()" type="button">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1714,6 +1721,13 @@ function musteruModuAktiflestir(){
     var el = document.querySelector('.' + cls);
     if(el) el.style.display = 'none';
   });
+
+  // Admin butonlarını gizle, başvuru butonunu göster
+  ['btn-row','aksiyon-row'].forEach(function(cls){
+    var el = document.querySelector('.' + cls);
+    if(el) el.style.display = 'none';
+  });
+  document.getElementById('musteri-basvuru').style.display = 'block';
 
   // Tabloyu oluştur
   hesapla();

@@ -764,6 +764,27 @@ input[type=text]:focus {
   .btn-hesap-wrapper { border-radius: 0 0 11px 11px; padding: 14px 16px 18px; }
 }
 
+.btn-basvuru {
+  display: inline-block;
+  background: #3BB8D4;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 40px;
+  border-radius: 10px;
+  text-decoration: none;
+  letter-spacing: .4px;
+  box-shadow: 0 4px 18px rgba(59,184,212,0.35);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-basvuru:hover {
+  box-shadow: 0 6px 24px rgba(59,184,212,0.55);
+  transform: translateY(-2px);
+}
+.btn-basvuru:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 10px rgba(59,184,212,0.3);
+}
 @media print {
   body { background: #fff; padding: 0; }
   .logo-bar, .card, .btn-hesap-wrapper, .gecis-bant,
@@ -776,7 +797,7 @@ input[type=text]:focus {
 </head>
 <body>
 
-<div style="padding:12px 14px 0;">
+<div id="geri-btn" style="padding:12px 14px 0;">
   <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a2d45;color:#4db8ff;font-size:22px;border-radius:10px;text-decoration:none;">&#8249;</a>
 </div>
 
@@ -933,7 +954,7 @@ input[type=text]:focus {
   </p>
 
   <div id="musteri-basvuru" style="display:none;width:100%;max-width:900px;text-align:center;padding:18px 16px 8px;">
-    <a href="https://bit.ly/kredizmir-basvuru" target="_blank" style="display:inline-block;background:#1a6e3c;color:#fff;font-size:16px;font-weight:700;padding:14px 40px;border-radius:10px;text-decoration:none;letter-spacing:.4px;">
+    <a href="https://bit.ly/kredizmir-basvuru" target="_blank" class="btn-basvuru">
       📋 Başvuru Yap
     </a>
     <p style="font-size:12px;color:#888;margin:10px 0 0;">Tabloyu inceledikten sonra başvuru formunu doldurun.</p>
@@ -967,7 +988,7 @@ input[type=text]:focus {
   </div>
   <div style="width:100%;max-width:900px;text-align:center;padding:10px 16px;">
     <p style="font-size:12px;color:var(--muted);font-style:italic;letter-spacing:.3px;line-height:1.7;">
-      "Fiyat bir kez sorulur, kalite hep hatırlanır."
+      Planınızı netleştirin, sürecinizi güvenle başlatın.
     </p>
   </div>
 </div>
@@ -1722,11 +1743,13 @@ function musteruModuAktiflestir(){
     if(el) el.style.display = 'none';
   });
 
-  // Admin butonlarını gizle, başvuru butonunu göster
-  ['btn-row','aksiyon-row'].forEach(function(cls){
+  // Admin butonlarını, ipucu yazısını ve geri tuşunu gizle; başvuru butonunu göster
+  ['btn-row','aksiyon-row','ipucu'].forEach(function(cls){
     var el = document.querySelector('.' + cls);
     if(el) el.style.display = 'none';
   });
+  var geriBtnEl = document.getElementById('geri-btn');
+  if(geriBtnEl) geriBtnEl.style.display = 'none';
   document.getElementById('musteri-basvuru').style.display = 'block';
 
   // Tabloyu oluştur

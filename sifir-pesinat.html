@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>0 Peşinat Tablosu — KREDİZMİR</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#0d1b2a;color:#e8f0fe;min-height:100vh;padding-bottom:40px;
+}
+.logo-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;}
+.logo-txt{font-size:20px;font-weight:800;color:#fff;letter-spacing:1px;}
+.logo-sub{font-size:11px;color:#4db8ff;font-weight:600;letter-spacing:.5px;margin-top:1px;}
+.badge-gold{background:linear-gradient(135deg,#b8860b,#8b6914);color:#fff;font-size:10px;font-weight:700;padding:5px 12px;border-radius:20px;letter-spacing:.5px;}
+.card{background:#1a2d45;border-radius:16px;padding:18px 16px;margin:0 14px 14px;border:1px solid #1e3a56;}
+.field-label{font-size:11px;font-weight:700;color:#8aaccc;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.fiyat-wrap{display:flex;align-items:center;gap:8px;background:#0d1b2a;border:1.5px solid #1e3a56;border-radius:10px;padding:0 14px;height:50px;}
+.fiyat-wrap:focus-within{border-color:#4db8ff;}
+.fiyat-prefix{color:#4db8ff;font-weight:700;font-size:16px;}
+.fiyat-inp{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:18px;font-weight:700;font-family:inherit;text-align:right;caret-color:#4db8ff;}
+.faiz-row{display:flex;gap:8px;margin-top:14px;}
+.faiz-label{font-size:11px;font-weight:700;color:#8aaccc;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.faiz-item{display:flex;flex:1;}
+.faiz-item input[type=radio]{display:none;}
+.faiz-kart{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#0d1b2a;border:1.5px solid #1e3a56;border-radius:10px;padding:8px 10px;cursor:pointer;transition:border-color .2s,background .2s;width:100%;}
+.faiz-item input[type=radio]:checked + .faiz-kart{border-color:#C9A84C;background:rgba(201,168,76,0.08);}
+.faiz-pct{font-size:14px;font-weight:800;color:#fff;}
+.faiz-lbl{font-size:10px;color:#8aaccc;}
+.faiz-inp-wrap{display:flex;align-items:center;gap:3px;background:rgba(0,0,0,0.2);border-radius:6px;padding:2px 6px;}
+.faiz-inp{width:34px;background:transparent;border:none;outline:none;color:#E8C97A;font-size:13px;font-weight:700;font-family:inherit;text-align:center;caret-color:#C9A84C;}
+.faiz-sym{font-size:12px;color:#C9A84C;font-weight:700;}
+.btn-hesap-wrapper{padding:14px 14px 0;}
+.btn-hesap{width:100%;padding:15px;background:linear-gradient(135deg,#b8860b,#8b6914);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:opacity .2s;}
+.btn-hesap:active{opacity:.85;}
+#sonuc{display:none;flex-direction:column;align-items:center;padding:16px 14px 0;gap:12px;}
+#sonuc.goster{display:flex;}
+.tablo-wrapper{width:100%;max-width:900px;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.35);}
+.tablo-wrapper img{width:100%;display:block;}
+.aksiyon-row{display:flex;gap:10px;width:100%;max-width:900px;}
+.btn-kopyala{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#1e3a56;color:#4db8ff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s;}
+.btn-kopyala:active{opacity:.75;}
+.btn-kopyala.copied{color:#2ecc71;background:#1a3a2a;}
+.btn-wp{flex:2;display:flex;align-items:center;justify-content:center;gap:8px;background:#1a4a2e;color:#2ecc71;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s;}
+.btn-wp:active{opacity:.75;}
+.btn-basvuru{display:inline-block;background:#3BB8D4;color:#fff;font-size:16px;font-weight:700;padding:14px 40px;border-radius:10px;text-decoration:none;letter-spacing:.4px;box-shadow:0 4px 18px rgba(59,184,212,0.35);transition:transform .15s ease,box-shadow .15s ease;}
+.btn-basvuru:hover{box-shadow:0 6px 24px rgba(59,184,212,0.55);transform:translateY(-2px);}
+.btn-basvuru:active{transform:scale(0.96);box-shadow:0 2px 10px rgba(59,184,212,0.3);}
+#musteri-basvuru{display:none;width:100%;max-width:900px;text-align:center;padding:18px 16px 8px;}
+@media print{
+  body{background:#fff;padding:0;}
+  #geri-btn,.logo-bar,.card,.btn-hesap-wrapper,.aksiyon-row{display:none!important;}
+  #sonuc{display:flex!important;margin-top:0;}
+  .tablo-wrapper{box-shadow:none;border-radius:0;}
+  #tabloImg{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="geri-btn" style="padding:12px 14px 0;">
+  <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a2d45;color:#4db8ff;font-size:22px;border-radius:10px;text-decoration:none;">&#8249;</a>
+</div>
+
+<div class="logo-bar">
+  <div>
+    <div class="logo-txt">KREDİZMİR</div>
+    <div class="logo-sub">0 Peşinat Kampanyası</div>
+  </div>
+  <div class="badge-gold">VERGİ LEVHASI</div>
+</div>
+
+<div class="card">
+  <div class="field-label">Araç Fiyatı</div>
+  <div class="fiyat-wrap">
+    <span class="fiyat-prefix">₺</span>
+    <input id="fiyat" class="fiyat-inp" type="text" inputmode="numeric" placeholder="0" autocomplete="off">
+  </div>
+
+  <div style="margin-top:14px;">
+    <div class="faiz-label">Aylık Faiz Oranı</div>
+    <div class="faiz-row">
+      <div class="faiz-item">
+        <input type="radio" name="aktifFaiz" id="faizSec1" value="1" checked>
+        <label class="faiz-kart" for="faizSec1">
+          <div><div class="faiz-pct">%<span id="faiz1Val">3.39</span></div><div class="faiz-lbl">Seçenek 1</div></div>
+          <div class="faiz-inp-wrap"><input class="faiz-inp" id="faiz1" type="text" inputmode="decimal" value="3.39" maxlength="5" onclick="event.stopPropagation()"><span class="faiz-sym">%</span></div>
+        </label>
+      </div>
+      <div class="faiz-item">
+        <input type="radio" name="aktifFaiz" id="faizSec2" value="2">
+        <label class="faiz-kart" for="faizSec2">
+          <div><div class="faiz-pct">%<span id="faiz2Val">3.79</span></div><div class="faiz-lbl">Seçenek 2</div></div>
+          <div class="faiz-inp-wrap"><input class="faiz-inp" id="faiz2" type="text" inputmode="decimal" value="3.79" maxlength="5" onclick="event.stopPropagation()"><span class="faiz-sym">%</span></div>
+        </label>
+      </div>
+      <div class="faiz-item">
+        <input type="radio" name="aktifFaiz" id="faizSec3" value="3">
+        <label class="faiz-kart" for="faizSec3">
+          <div><div class="faiz-pct">%<span id="faiz3Val">4.19</span></div><div class="faiz-lbl">Seçenek 3</div></div>
+          <div class="faiz-inp-wrap"><input class="faiz-inp" id="faiz3" type="text" inputmode="decimal" value="4.19" maxlength="5" onclick="event.stopPropagation()"><span class="faiz-sym">%</span></div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-hesap-wrapper">
+  <button class="btn-hesap" onclick="hesapla()">Tabloyu Oluştur</button>
+</div>
+
+<div id="sonuc">
+  <div class="tablo-wrapper">
+    <img id="tabloImg" src="" alt="0 Peşinat Tablosu">
+  </div>
+
+  <div id="musteri-basvuru">
+    <a href="https://bit.ly/kredizmir-basvuru" target="_blank" class="btn-basvuru">📋 Başvuru Yap</a>
+    <p style="font-size:12px;color:#888;margin:10px 0 0;">Planınızı netleştirin, sürecinizi güvenle başlatın.</p>
+  </div>
+
+  <div class="aksiyon-row">
+    <button class="btn-kopyala" onclick="linkKopyala(this)" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Link Kopyala
+    </button>
+    <button class="btn-wp" onclick="wpGonder()" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp'a Link Gönder
+    </button>
+  </div>
+</div>
+
+<script>
+function okuFiyat(){
+  return parseFloat((document.getElementById('fiyat').value||'').replace(/\./g,'').replace(',','.')) || 0;
+}
+function aktifFaizYuzde(){
+  var s = document.querySelector('input[name="aktifFaiz"]:checked').value;
+  return parseFloat((document.getElementById('faiz'+s).value||'0').replace(',','.')) || 0;
+}
+function fmt(n){ return Math.round(n).toLocaleString('tr-TR'); }
+function taksit(k,n,f){ if(k<=0)return 0; if(f<=0)return k/n; var c=Math.pow(1+f,n); return k*(f*c)/(c-1); }
+
+document.getElementById('fiyat').addEventListener('input',function(){
+  var r=this.value.replace(/\D/g,'');
+  this.value = r ? parseInt(r,10).toLocaleString('tr-TR') : '';
+});
+['faiz1','faiz2','faiz3'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',function(){
+    document.getElementById(id+'Val').textContent = this.value||'0';
+  });
+});
+
+function hesapla(){
+  var fiyat = okuFiyat();
+  if(!fiyat||fiyat<=0){ alert('Geçerli bir araç fiyatı girin.'); return; }
+  var faizY = aktifFaizYuzde();
+  var faiz  = faizY / 100;
+  var VADELER = [12,18,24,36];
+  var kredi = fiyat;
+  var taksitler = VADELER.map(function(v){ return taksit(kredi,v,faiz); });
+  var toplamlar = VADELER.map(function(v,i){ return taksitler[i]*v; });
+
+  var DW=900, SCALE=Math.max(2,window.devicePixelRatio||2);
+  var H_HDR=148, H_GOLD=44, H_PRC=60, H_TH=48, H_R1=56, H_R2=52, H_R3=52, H_BDGE=40, H_FTR=40;
+  var DH=H_HDR+H_GOLD+H_PRC+H_TH+H_R1+H_R2+H_R3+H_BDGE+H_FTR;
+  var COLS=[200,175,175,175,175];
+
+  var cv=document.createElement('canvas');
+  cv.width=DW*SCALE; cv.height=DH*SCALE;
+  var ctx=cv.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+
+  function cx(c){ var x=0; for(var i=0;i<c;i++) x+=COLS[i]; return x; }
+
+  var NAVY='#0B1E3D', NAVY2='#122850', NAVYLI='#1A3566';
+  var GOLD='#C9A84C', GOLDI='#E8C97A';
+  var WHITE='#FFFFFF', RALT='#EDF1F9', BG='#F0F4FA';
+  var MID='#3A4F72', BRD='#C8D3E8';
+
+  var y=0;
+
+  // ── HEADER
+  ctx.fillStyle=NAVY; ctx.fillRect(0,y,DW,H_HDR);
+  ctx.fillStyle=GOLD; ctx.fillRect(0,y+H_HDR-3,DW,3);
+
+  ctx.font='bold 96px Arial'; ctx.fillStyle=GOLDI;
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText('0',28,y+H_HDR*0.47);
+  var zw=ctx.measureText('0').width;
+
+  ctx.font='bold 27px Arial'; ctx.fillStyle=WHITE;
+  ctx.fillText('PEŞİNAT',28+zw+10,y+H_HDR*0.36);
+  ctx.font='500 13.5px Arial'; ctx.fillStyle=GOLD;
+  ctx.fillText('KREDİ KAMPANYASI',28+zw+10,y+H_HDR*0.61);
+
+  ctx.textAlign='right';
+  ctx.font='bold 700 28px "Dancing Script",cursive'; ctx.fillStyle=WHITE;
+  ctx.fillText('KREDİZMİR',DW-28,y+H_HDR*0.42);
+  var now=new Date();
+  var tarih=now.getDate().toString().padStart(2,'0')+'.'+(now.getMonth()+1).toString().padStart(2,'0')+'.'+now.getFullYear();
+  ctx.font='400 11px Arial'; ctx.fillStyle=GOLD;
+  ctx.fillText(tarih,DW-28,y+H_HDR*0.62);
+  y+=H_HDR;
+
+  // ── GOLD RIBBON
+  var gG=ctx.createLinearGradient(0,y,DW,y);
+  gG.addColorStop(0,'#c9a030'); gG.addColorStop(.5,'#e8c84a'); gG.addColorStop(1,'#c9a030');
+  ctx.fillStyle=gG; ctx.fillRect(0,y,DW,H_GOLD);
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='bold 13px Arial'; ctx.fillStyle=NAVY;
+  ctx.fillText('★   VERGİ LEVHASI SAHİPLERİNE ÖZEL KREDİ KAMPANYASI   ★',DW/2,y+H_GOLD/2);
+  y+=H_GOLD;
+
+  // ── ARAÇ FİYATI STRIP
+  ctx.fillStyle='#F8F9FC'; ctx.fillRect(0,y,DW,H_PRC);
+  ctx.fillStyle=BRD; ctx.fillRect(0,y,DW,.5); ctx.fillRect(0,y+H_PRC-.5,DW,.5);
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.font='bold 11px Arial'; ctx.fillStyle=MID; ctx.fillText('ARAÇ FİYATI',28,y+H_PRC/2-9);
+  ctx.font='bold 24px Arial'; ctx.fillStyle=NAVY; ctx.fillText(fmt(fiyat)+' ₺',28,y+H_PRC/2+11);
+  ctx.textAlign='right';
+  ctx.font='bold 11px Arial'; ctx.fillStyle=MID; ctx.fillText('AYLIK FAİZ',DW-28,y+H_PRC/2-9);
+  ctx.font='bold 20px Arial'; ctx.fillStyle=NAVY2;
+  ctx.fillText('% '+faizY.toFixed(2).replace('.',','),DW-28,y+H_PRC/2+11);
+  y+=H_PRC;
+
+  // ── TABLE HEADER
+  ctx.fillStyle=NAVY2; ctx.fillRect(0,y,DW,H_TH);
+  var hdrs=['VADE','12 AY','18 AY','24 AY','36 AY'];
+  for(var c=0;c<5;c++){
+    ctx.textAlign=c===0?'left':'center'; ctx.textBaseline='middle';
+    ctx.font='bold 13px Arial'; ctx.fillStyle=GOLDI;
+    ctx.fillText(hdrs[c],c===0?cx(c)+24:cx(c)+COLS[c]/2,y+H_TH/2);
+    if(c>0){ ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(cx(c),y+8,1,H_TH-16); }
+  }
+  y+=H_TH;
+
+  // ── ROW 1: AYLIK TAKSİT
+  ctx.fillStyle=WHITE; ctx.fillRect(0,y,DW,H_R1);
+  ctx.textAlign='left'; ctx.font='bold 13px Arial'; ctx.fillStyle=NAVY; ctx.textBaseline='middle';
+  ctx.fillText('Aylık Taksit',cx(0)+24,y+H_R1/2);
+  for(var c=1;c<5;c++){
+    ctx.textAlign='center'; ctx.font='bold 16px Arial'; ctx.fillStyle=NAVY;
+    ctx.fillText(fmt(taksitler[c-1])+' ₺',cx(c)+COLS[c]/2,y+H_R1/2);
+    ctx.fillStyle=BRD; ctx.fillRect(cx(c),y+10,.5,H_R1-20);
+  }
+  ctx.fillStyle=BRD; ctx.fillRect(0,y+H_R1-.5,DW,.5);
+  y+=H_R1;
+
+  // ── ROW 2: TOPLAM ÖDEME
+  ctx.fillStyle=RALT; ctx.fillRect(0,y,DW,H_R2);
+  ctx.textAlign='left'; ctx.font='bold 12px Arial'; ctx.fillStyle=MID; ctx.textBaseline='middle';
+  ctx.fillText('Toplam Ödeme',cx(0)+24,y+H_R2/2);
+  for(var c=1;c<5;c++){
+    ctx.textAlign='center'; ctx.font='600 14px Arial'; ctx.fillStyle=NAVY2;
+    ctx.fillText(fmt(toplamlar[c-1])+' ₺',cx(c)+COLS[c]/2,y+H_R2/2);
+    ctx.fillStyle=BRD; ctx.fillRect(cx(c),y+8,.5,H_R2-16);
+  }
+  ctx.fillStyle=BRD; ctx.fillRect(0,y+H_R2-.5,DW,.5);
+  y+=H_R2;
+
+  // ── ROW 3: KREDİ TUTARI
+  ctx.fillStyle=WHITE; ctx.fillRect(0,y,DW,H_R3);
+  ctx.textAlign='left'; ctx.font='bold 12px Arial'; ctx.fillStyle=MID; ctx.textBaseline='middle';
+  ctx.fillText('Kredi Tutarı',cx(0)+24,y+H_R3/2-7);
+  ctx.font='400 10px Arial'; ctx.fillStyle='#8B9DB8';
+  ctx.fillText('Peşinat: 0 ₺',cx(0)+24,y+H_R3/2+8);
+  for(var c=1;c<5;c++){
+    ctx.textAlign='center'; ctx.font='600 14px Arial'; ctx.fillStyle=NAVYLI;
+    ctx.fillText(fmt(kredi)+' ₺',cx(c)+COLS[c]/2,y+H_R3/2);
+    ctx.fillStyle=BRD; ctx.fillRect(cx(c),y+8,.5,H_R3-16);
+  }
+  ctx.fillStyle=BRD; ctx.fillRect(0,y+H_R3-.5,DW,.5);
+  y+=H_R3;
+
+  // ── BADGE STRIP
+  ctx.fillStyle=NAVY; ctx.fillRect(0,y,DW,H_BDGE);
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='500 11px Arial'; ctx.fillStyle=GOLD;
+  ctx.fillText('• Hızlı Ön İnceleme  ·  Esnek Vade  ·  3 Aya Kadar Erteleme  ·  Erken Ödeme İmkânı  ·  Ara Ödeme İmkânı',DW/2,y+H_BDGE/2);
+  y+=H_BDGE;
+
+  // ── WATERMARK
+  ctx.save();
+  ctx.globalAlpha=.055;
+  ctx.translate(DW/2, H_HDR+H_GOLD+H_PRC+(H_TH+H_R1+H_R2+H_R3)/2);
+  ctx.rotate(-16*Math.PI/180);
+  ctx.font='bold 88px Arial'; ctx.fillStyle=NAVY;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('KREDİZMİR',0,0);
+  ctx.restore();
+
+  // ── FOOTER
+  ctx.fillStyle=BG; ctx.fillRect(0,y,DW,H_FTR);
+  ctx.fillStyle=BRD; ctx.fillRect(0,y,DW,.5);
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.font='400 9.5px Arial'; ctx.fillStyle=MID;
+  ctx.fillText('* Faiz oranı ve taksit tutarları kişinin durumuna göre değişkenlik gösterir.',20,y+H_FTR/2);
+  ctx.textAlign='right';
+  ctx.fillText('panel.kredizmir.com',DW-20,y+H_FTR/2);
+
+  document.getElementById('tabloImg').src=cv.toDataURL('image/png');
+  document.getElementById('sonuc').classList.add('goster');
+}
+
+function linkKopyala(btn){
+  var fiyat=okuFiyat();
+  if(!fiyat||fiyat<=0){ alert('Önce tabloyu oluşturun.'); return; }
+  var r=document.querySelector('input[name="aktifFaiz"]:checked').value;
+  var url=location.origin+location.pathname+'?f='+fiyat+'&r='+r;
+  var orig=btn.innerHTML;
+  var copy=function(){ btn.innerHTML='✓ Kopyalandı'; btn.classList.add('copied'); setTimeout(function(){ btn.innerHTML=orig; btn.classList.remove('copied'); },2000); };
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(copy).catch(function(){ fbCopy(url); copy(); }); }
+  else{ fbCopy(url); copy(); }
+}
+function fbCopy(t){ var a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0'; document.body.appendChild(a); a.select(); try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(a); }
+
+function wpGonder(){
+  var fiyat=okuFiyat();
+  if(!fiyat||fiyat<=0){ alert('Önce tabloyu oluşturun.'); return; }
+  var r=document.querySelector('input[name="aktifFaiz"]:checked').value;
+  var link=location.origin+location.pathname+'?f='+fiyat+'&r='+r;
+  var m='Merhaba 👋\n\nSizin için hazırladığım *0 Peşinat* ödeme tablosunu inceleyebilirsiniz:\n\n'+link+'\n\nTablo üzerinden doğrudan başvuru yapabilirsiniz. 📋';
+  window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank');
+}
+
+function musteruModuAktiflestir(){
+  var p=new URLSearchParams(window.location.search);
+  var f=p.get('f'), r=p.get('r');
+  if(!f) return false;
+  document.getElementById('fiyat').value=Math.round(parseFloat(f)||0).toLocaleString('tr-TR');
+  var fe=document.getElementById('faizSec'+(r||'1'));
+  if(fe) fe.checked=true;
+  ['logo-bar','card','btn-hesap-wrapper'].forEach(function(c){ var e=document.querySelector('.'+c); if(e) e.style.display='none'; });
+  var gb=document.getElementById('geri-btn'); if(gb) gb.style.display='none';
+  var ar=document.querySelector('.aksiyon-row'); if(ar) ar.style.display='none';
+  document.getElementById('musteri-basvuru').style.display='block';
+  hesapla();
+  return true;
+}
+
+window.addEventListener('load', function(){
+  musteruModuAktiflestir();
+});
+</script>
+</body>
+</html>

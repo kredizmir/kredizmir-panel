@@ -264,9 +264,11 @@ let sel = null, listData = [], isFuzzy = false, activeRate = 4.75;
 function fmt(n){return Number(n).toLocaleString('tr-TR');}
 
 function getAgeInfo(yr){
-  if(yr>=2019) return {label:'2019 ve Üzeri',pct:100,vade:60,cls:'g'};
-  if(yr>=2015) return {label:'2015–2018',pct:80,vade:48,cls:'o'};
-  return {label:'2014 ve Altı',pct:50,vade:36,cls:'r'};
+  const age=CUR_YEAR-yr;
+  if(age<=6)  return {label:'1-6 Yaş',pct:100,vade:60,cls:'g'};
+  if(age<=11) return {label:'7-11 Yaş',pct:80,vade:48,cls:'o'};
+  if(age<=15) return {label:'11-15 Yaş',pct:50,vade:36,cls:'r'};
+  return {label:'15+ Yaş',pct:0,vade:0,cls:'r'};
 }
 function pmt(rate,n,pv){if(!rate||!n)return 0;const r=rate/100;return Math.round(pv*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1));}
 function calcCredit(kaskoVal,yr){const ai=getAgeInfo(yr);const kredi=Math.round(kaskoVal*ai.pct/100);const taksit=pmt(activeRate,ai.vade,kredi);return{...ai,kredi,taksit};}

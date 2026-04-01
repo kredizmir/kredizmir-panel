@@ -175,14 +175,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .clear-btn{width:100%;margin-top:10px;padding:10px;background:transparent;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;}
 .clear-btn:hover{border-color:var(--red);color:var(--red);}
 
-/* Vehicle type tabs */
-.type-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:14px;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;}
-.type-tab{padding:11px 8px;background:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;}
-.type-tab:first-child{border-right:1px solid var(--border);}
-.type-tab.active{background:var(--navy);color:#fff;}
-.type-tab .tab-icon{display:block;font-size:18px;margin-bottom:3px;}
-.type-tab .tab-sub{display:block;font-size:10px;font-weight:400;opacity:.7;letter-spacing:.3px;}
-
 /* Hızlı Seçenekler */
 .quick-section{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow);}
 .quick-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
@@ -231,20 +223,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <div class="page">
-
-  <div class="type-tabs">
-    <button class="type-tab active" id="tabBinek" onclick="setType('binek')">
-      <span class="tab-icon">🚗</span>
-      BİNEK
-      <span class="tab-sub">Sedan · Hatchback · SUV</span>
-    </button>
-    <button class="type-tab" id="tabTicari" onclick="setType('ticari')">
-      <span class="tab-icon">🚐</span>
-      HAFİF TİCARİ
-      <span class="tab-sub">Panelvan · Camlı Van</span>
-    </button>
-  </div>
-
   <div class="quick-section">
     <div class="quick-title">⚡ Hızlı Seçenekler</div>
     <div class="quick-placeholder">Yakında eklenecek — sık kullanılan araç modelleri burada listelenecek</div>
@@ -327,26 +305,7 @@ const CUR_YEAR = 2026;
   const el=document.getElementById('yf');
   el.innerHTML='<option value="">— Model Yılı Seçin —</option>'+yrs.map(y=>`<option>${y}</option>`).join('');
 })();
-let sel = null, listData = [], isFuzzy = false, activeRate = 4.75, activeType = 'binek';
-
-function isHafifTicari(r){
-  const m=r[3].toUpperCase();
-  return /CARGO|PANELVAN|FIORINO|NEMO |KANGOO EXPRESS|KANGOO MULTIX|TRANSIT CONNECT|TRANSIT VAN|TRANSPORTER|CRAFTER|SPRINTER|VITO |MASTER |TRAFIC|JUMPY|JUMPER|VIVARO|BOXER|DUCATO|BERLINGO PANEL|BERLINGO CARGO|PARTNER CARGO|PARTNER ORIGIN|COMBO CARGO|CADDY CARGO|EXPRESS CARGO/.test(m);
-}
-
-function setType(type){
-  activeType=type;
-  document.getElementById('tabBinek').classList.toggle('active',type==='binek');
-  document.getElementById('tabTicari').classList.toggle('active',type==='ticari');
-  // Marka dropdown'ını sıfırla — farklı kategoriye geçince eski filtreler geçersiz
-  var mf=document.getElementById('mf');
-  var modelf=document.getElementById('modelf');
-  mf.value='';
-  modelf.innerHTML='<option value="">Tüm Modeller</option>';
-  modelf.disabled=true;
-  onS();
-}
-
+let sel = null, listData = [], isFuzzy = false, activeRate = 4.75;
 function fmt(n){return Number(n).toLocaleString('tr-TR');}
 
 function getAgeInfo(yr){
@@ -475,8 +434,7 @@ function doS(){
     const matchM=!mf||r[2]===mf;
     const matchMod=!modelf||r[3]===modelf;
     const matchY=!effectiveYear||String(r[5])===effectiveYear;
-    const matchType=activeType==='ticari'?isHafifTicari(r):!isHafifTicari(r);
-    return matchM&&matchMod&&matchY&&matchType;
+    return matchM&&matchMod&&matchY;
   });
 
   let results=[];

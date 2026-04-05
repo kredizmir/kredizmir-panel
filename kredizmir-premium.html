@@ -1015,12 +1015,12 @@ function drawVergiPhoto(T, img, fx, fy, fw, fh, placeholder) {
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, ix + (iw - dw) / 2, iy + (ih - dh) / 2, dw, dh);
   } else {
-    ctx.fillStyle = '#0D2040';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
     ctx.fillRect(ix, iy, iw, ih);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = "600 20px 'Barlow Condensed', sans-serif";
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.font = "600 18px 'Barlow Condensed', sans-serif";
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
     ctx.fillText(placeholder, ix + iw / 2, iy + ih / 2);
   }
   ctx.restore();
@@ -1063,41 +1063,38 @@ function drawVergiLogo(T, cx, cy) {
 }
 
 function drawVergiLayout(T) {
-  // 1. Arka plan
+  // 1. Tek renk zemin — hiçbir ayrı blok yok
   ctx.fillStyle = T.bg;
   ctx.fillRect(0, 0, W, H);
 
-  // 2. Header bar (y=0 h=158)
-  ctx.fillStyle = T.headerBg;
-  ctx.fillRect(0, 0, W, 158);
-  // Alt çizgi (ince, soluk)
-  ctx.fillStyle = T.divider;
-  ctx.fillRect(0, 155, W, 1);
-
-  // 3. Logo (sol üst, cx=80 cy=79)
+  // 2. Logo (sol üst, cx=80 cy=79)
   drawVergiLogo(T, 80, 79);
 
-  // 4. "VERGİ LEVHASI ÖZEL" etiketi
+  // 3. "VERGİ LEVHASI ÖZEL" küçük etiket
   ctx.save();
   ctx.textAlign    = 'left';
   ctx.textBaseline = 'middle';
-  ctx.font         = "italic 700 36px 'Barlow Condensed', sans-serif";
+  ctx.font         = "italic 700 34px 'Barlow Condensed', sans-serif";
   ctx.fillStyle    = T.titleSub;
-  ctx.fillText('VERGİ LEVHASI ÖZEL', 178, 55);
+  ctx.fillText('VERGİ LEVHASI ÖZEL', 175, 52);
   ctx.restore();
 
-  // 5. "0 PEŞİNAT" büyük (header sağ bölgesi)
+  // 4. "0 PEŞİNAT" büyük (header sağ bölgesi)
   ctx.save();
   ctx.textAlign    = 'center';
   ctx.textBaseline = 'middle';
   const pFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
-  const pSz = fitFont(ctx, '0 PEŞİNAT', 840, 112, pFn);
+  const pSz = fitFont(ctx, '0 PEŞİNAT', 820, 112, pFn);
   ctx.font         = pFn(pSz);
   ctx.fillStyle    = T.pesinat;
-  ctx.shadowColor  = 'rgba(0,0,0,0.5)';
-  ctx.shadowBlur   = 14;
-  ctx.fillText('0 PEŞİNAT', 590, 107);
+  ctx.shadowColor  = 'rgba(0,0,0,0.45)';
+  ctx.shadowBlur   = 12;
+  ctx.fillText('0 PEŞİNAT', 590, 105);
   ctx.restore();
+
+  // 5. İnce header ayırıcı çizgi
+  ctx.fillStyle = T.divider;
+  ctx.fillRect(30, 152, W - 60, 1);
 
   // 6. Ana fotoğraf (sol: x=15 y=163 w=695 h=640)
   drawVergiPhoto(T, S.carImg, 15, 163, 695, 640, 'Ana Fotoğraf');
@@ -1105,43 +1102,40 @@ function drawVergiLayout(T) {
   // 7. İç / ekspertiz fotoğrafı (sağ üst: x=725 y=163 w=340 h=305)
   drawVergiPhoto(T, S.innerImg, 725, 163, 340, 305, 'İç / Ekspertiz');
 
-  // 8. Bilgi paneli — sağ alt (x=725 y=475 w=340 h=330)
+  // 8. Bilgi paneli — sağ alt, yalnızca text
   const model = ($('model').value || 'MODEL ADI YIL').toUpperCase();
   const km    = ($('km').value    || 'KM').toUpperCase();
-
-  // İnce divider
-  ctx.fillStyle = T.divider;
-  ctx.fillRect(725, 476, 340, 1);
 
   ctx.textAlign    = 'center';
   ctx.textBaseline = 'top';
   // Model (büyük italic)
   const mFn = sz => `italic 800 ${sz}px 'Barlow Condensed', sans-serif`;
-  const mSz = fitFont(ctx, model, 315, 54, mFn);
+  const mSz = fitFont(ctx, model, 315, 52, mFn);
   ctx.font      = mFn(mSz);
   ctx.fillStyle = T.model;
-  ctx.fillText(model, 895, 496);
-  // KM (daha küçük)
-  ctx.font      = "italic 700 34px 'Barlow Condensed', sans-serif";
+  ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 8;
+  ctx.fillText(model, 895, 485);
+  // KM
+  ctx.font      = "italic 700 32px 'Barlow Condensed', sans-serif";
   ctx.fillStyle = T.km;
-  ctx.fillText(km, 895, 496 + mSz + 12);
+  ctx.shadowBlur = 0;
+  ctx.fillText(km, 895, 485 + mSz + 10);
 
-  // 9. Alt bar (y=813 h=267)
-  ctx.fillStyle = T.bottomBg;
-  ctx.fillRect(0, 813, W, 267);
+  // 9. İnce alt ayırıcı çizgi
   ctx.fillStyle = T.divider;
-  ctx.fillRect(0, 813, W, 1);
+  ctx.fillRect(30, 818, W - 60, 1);
 
+  // 10. Taksit alanı — yalnızca text, arka plan yok
   const taksitVal = (S.taksit || '').trim() || '---';
   ctx.textAlign    = 'center';
   ctx.textBaseline = 'middle';
   // Küçük etiket
-  ctx.font      = "italic 600 30px 'Barlow Condensed', sans-serif";
+  ctx.font      = "italic 600 28px 'Barlow Condensed', sans-serif";
   ctx.fillStyle = T.taksitLabel;
-  ctx.fillText('AYLIK TAKSİT', W / 2, 852);
+  ctx.fillText('AYLIK TAKSİT', W / 2, 858);
   // Büyük tutar
   const tFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
-  const tSz = fitFont(ctx, taksitVal + ' ₺', W - 80, 132, tFn);
+  const tSz = fitFont(ctx, taksitVal + ' ₺', W - 80, 140, tFn);
   ctx.font         = tFn(tSz);
   ctx.fillStyle    = T.taksit;
   ctx.shadowColor  = 'rgba(0,0,0,0.55)';
@@ -1608,6 +1602,12 @@ function generateAndShow() {
   draw();
   const url = canvas.toDataURL('image/jpeg', 0.97);
   document.getElementById('result-img').src = url;
+  // Vergi temasında sarı border yerine ince beyaz
+  const wrap = document.querySelector('.result-img-wrap');
+  wrap.style.borderColor = S.theme === 'vergi' ? 'rgba(255,255,255,0.2)' : 'var(--accent)';
+  wrap.style.boxShadow   = S.theme === 'vergi'
+    ? '0 12px 50px rgba(0,0,0,0.8)'
+    : '0 12px 50px rgba(0,0,0,0.8)';
   document.getElementById('screen-form').classList.remove('active');
   document.getElementById('screen-result').classList.add('active');
   window.scrollTo(0,0);

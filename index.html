@@ -188,7 +188,8 @@
     #yonetimOverlay.goster { display:flex; }
     #yonetimBox {
       background:#132236; border:1px solid #1e3a5f; border-radius:16px;
-      padding:28px 24px; min-width:280px; max-width:340px; width:90%;
+      padding:28px 24px; min-width:280px; max-width:380px; width:93%;
+      max-height:90vh; overflow-y:auto;
     }
     .yon-baslik { font-size:14px; font-weight:700; color:#4db8ff; letter-spacing:1px; margin-bottom:16px; text-align:center; }
     .yon-kullanici {
@@ -205,6 +206,19 @@
       border:none; border-radius:10px; color:#fff; font-weight:700;
       font-size:14px; cursor:pointer; font-family:inherit;
     }
+    .yon-log-baslik{display:flex;justify-content:space-between;align-items:center;margin-top:18px;margin-bottom:8px;font-size:11px;font-weight:700;color:#4db8ff;letter-spacing:1px;}
+    .yon-log-temizle{background:transparent;border:1px solid #c0392b;color:#e74c3c;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;cursor:pointer;font-family:inherit;}
+    .yon-log-temizle:hover{background:#c0392b;color:#fff;}
+    .yon-log-bos{font-size:12px;color:#4a6a8a;text-align:center;padding:12px 0;}
+    .yon-log-liste{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+    .yon-log-satir{display:grid;grid-template-columns:18px 1fr 1fr auto;align-items:center;gap:6px;background:#0d1b2a;border-radius:7px;padding:7px 10px;font-size:11px;}
+    .log-ikon{font-size:12px;}
+    .log-etiket{font-weight:700;letter-spacing:.5px;}
+    .log-giris .log-etiket{color:#2ecc71;}
+    .log-cikis .log-etiket{color:#e74c3c;}
+    .log-sayfa .log-etiket{color:#f39c12;font-size:10px;}
+    .log-kisi{color:#8aaccc;font-weight:600;}
+    .log-zaman{color:#4a6a8a;font-size:10px;text-align:right;white-space:nowrap;}
     #hosgeldinOverlay {
       position:fixed; inset:0; z-index:10000;
       background:rgba(13,27,42,0.93);
@@ -273,7 +287,7 @@
   </div>
 
   <div class="cards">
-    <a href="konum-gonder.html" class="card">
+    <a href="konum-gonder.html" class="card" onclick="sayfaLogla('Konum Gönder')">
       <div class="card-icon icon-orange">📍</div>
       <div class="card-body">
         <h3>Konum Gönder</h3>
@@ -282,7 +296,7 @@
       <div class="card-arrow">›</div>
     </a>
 
-    <a href="evrak-talebi.html" class="card">
+    <a href="evrak-talebi.html" class="card" onclick="sayfaLogla('Evrak Talebi')">
       <div class="card-icon icon-purple">📋</div>
       <div class="card-body">
         <h3>Evrak Talebi</h3>
@@ -291,7 +305,7 @@
       <div class="card-arrow">›</div>
     </a>
 
-    <a href="galeri-odeme-tablosu.html?skip=1" class="card">
+    <a href="galeri-odeme-tablosu.html?skip=1" class="card" onclick="sayfaLogla('Galeri Ödeme Tablosu')">
       <div class="card-icon icon-blue">🏪</div>
       <div class="card-body">
         <h3>Galeriler için Ödeme Tablosu</h3>
@@ -301,7 +315,7 @@
     </a>
 
     <div class="card" style="flex-direction:column;align-items:stretch;cursor:default;">
-      <div style="display:flex;align-items:center;gap:16px;" onclick="window.location='on-basvuru.html'" style="cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:16px;cursor:pointer;" onclick="sayfaLogla('Başvuru Formu');window.location='on-basvuru.html'">
         <div class="card-icon icon-green">📝</div>
         <div class="card-body">
           <h3>Başvuru Formu</h3>
@@ -315,7 +329,7 @@
       </div>
     </div>
 
-    <a href="Son1.html" class="card">
+    <a href="Son1.html" class="card" onclick="sayfaLogla('Ödeme Tablosu')">
       <div class="card-icon icon-blue">📊</div>
       <div class="card-body">
         <h3>Ödeme Tablosu (Yeni)</h3>
@@ -324,7 +338,7 @@
       <div class="card-arrow">›</div>
     </a>
 
-    <a href="kasko-sorgula 3.html" class="card">
+    <a href="kasko-sorgula 3.html" class="card" onclick="sayfaLogla('Kasko Sorgulama')">
       <div class="card-icon" style="background:linear-gradient(135deg,#0B1E3D,#1A3566);">🔍</div>
       <div class="card-body">
         <h3>Kasko Değeri &amp; Kredi <span class="card-badge">YENİ</span></h3>
@@ -352,12 +366,38 @@ var KULLANICILAR = {
   'yagmur':   { pin: '3535', rol: 'ekip',     ad: 'Yağmur',    hosgeldin: 'Hoşgeldin Güzel Kız 🌸'  }
 };
 
+var aktifK = null;
+
+/* ── Aktivite Loglama ── */
+function aktiviteKaydet(data){
+  data.zaman = new Date().toISOString();
+  try{
+    var log = JSON.parse(localStorage.getItem('kredizmir_aktivite')||'[]');
+    log.unshift(data);
+    if(log.length > 200) log = log.slice(0,200);
+    localStorage.setItem('kredizmir_aktivite', JSON.stringify(log));
+  }catch(e){}
+}
+function sayfaLogla(sayfa){
+  if(aktifK) aktiviteKaydet({olay:'sayfa', kullanici:aktifK.kullanici, ad:aktifK.ad, sayfa:sayfa});
+}
+function logZaman(iso){
+  var d = new Date(iso);
+  var saat = d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  var bug = new Date(); bug.setHours(0,0,0,0);
+  var dun = new Date(bug - 86400000);
+  if(d >= bug) return 'Bugün '+saat;
+  if(d >= dun) return 'Dün '+saat;
+  return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit'})+' '+saat;
+}
+
 (function(){
   var giris = sessionStorage.getItem('panelGiris');
   if(giris && giris !== '1'){
     try {
       var k = JSON.parse(giris);
       if(k && k.kullanici && k.rol){
+        aktifK = k;
         document.getElementById('pinOverlay').classList.add('hidden');
         panelAyarla(k);
         return;
@@ -369,6 +409,8 @@ var KULLANICILAR = {
 
 window.addEventListener('pageshow', function(e){
   if(e.persisted){
+    if(aktifK) aktiviteKaydet({olay:'cikis', kullanici:aktifK.kullanici, ad:aktifK.ad});
+    aktifK = null;
     sessionStorage.removeItem('panelGiris');
     document.getElementById('pinOverlay').classList.remove('hidden');
     document.getElementById('kullanici').value = '';
@@ -383,6 +425,8 @@ function pinKontrol(inp){
   var k = KULLANICILAR[ad];
   if(k && inp.value === k.pin){
     sessionStorage.setItem('panelGiris', JSON.stringify({kullanici: ad, ad: k.ad, rol: k.rol}));
+    aktifK = {kullanici: ad, ad: k.ad, rol: k.rol};
+    aktiviteKaydet({olay:'giris', kullanici:ad, ad:k.ad});
     document.getElementById('pinOverlay').classList.add('hidden');
     panelAyarla(k);
     hosgeldinGoster(k.hosgeldin);
@@ -418,8 +462,37 @@ function yonetimAc(){
       (u.rol==='yonetici'?'Yönetici':'Ekip') + '</span>' +
       '</div>';
   });
+  var log = [];
+  try{ log = JSON.parse(localStorage.getItem('kredizmir_aktivite')||'[]'); }catch(e){}
+  html += '<div class="yon-log-baslik"><span>📋 AKTİVİTE GEÇMİŞİ</span>' +
+    '<button class="yon-log-temizle" onclick="logTemizle()">Temizle</button></div>';
+  if(!log.length){
+    html += '<div class="yon-log-bos">Henüz aktivite kaydı yok.</div>';
+  } else {
+    html += '<div class="yon-log-liste">';
+    log.forEach(function(e){
+      var ikon,cls,etiket;
+      if(e.olay==='giris'){ikon='🟢';cls='log-giris';etiket='GİRİŞ';}
+      else if(e.olay==='cikis'){ikon='🔴';cls='log-cikis';etiket='ÇIKIŞ';}
+      else{ikon='📄';cls='log-sayfa';etiket=e.sayfa||'Sayfa';}
+      html += '<div class="yon-log-satir '+cls+'">' +
+        '<span class="log-ikon">'+ikon+'</span>' +
+        '<span class="log-etiket">'+etiket+'</span>' +
+        '<span class="log-kisi">'+(e.ad||e.kullanici||'?')+'</span>' +
+        '<span class="log-zaman">'+logZaman(e.zaman)+'</span>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
   document.getElementById('yonetimListe').innerHTML = html;
   document.getElementById('yonetimOverlay').classList.add('goster');
+}
+
+function logTemizle(){
+  if(confirm('Tüm aktivite geçmişi silinsin mi?')){
+    localStorage.removeItem('kredizmir_aktivite');
+    yonetimAc();
+  }
 }
 
 var FORM_URL = 'https://bit.ly/kredizmir-basvuru';

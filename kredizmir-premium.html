@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>KREDİZMİR İlan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Barlow+Condensed:wght@600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
@@ -416,6 +416,32 @@ canvas{display:none;}
     </div>
     <input type="file" id="carFile" accept="image/*" style="display:none">
 
+    <!-- İÇ / EKSPERTİZ FOTOĞRAFI — sadece Vergi Özel temasında görünür -->
+    <div id="inner-photo-card" class="card" style="display:none;">
+      <label class="qlabel">📷 İç / Ekspertiz Fotoğrafı</label>
+      <div id="inner-drop-zone" onclick="document.getElementById('innerFile').click()"
+           style="border:2px dashed rgba(255,255,255,0.25);border-radius:12px;
+                  padding:20px;text-align:center;cursor:pointer;margin-top:8px;
+                  background:rgba(255,255,255,0.04);">
+        <div id="inner-placeholder">
+          <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;
+                      font-size:14px;letter-spacing:1px;color:var(--muted);">İÇ / EKSPERTİZ FOTOĞRAFI EKLE</div>
+          <div style="font-size:11px;color:var(--muted);font-family:Arial,sans-serif;
+                      margin-top:4px;">Dokunarak seç</div>
+        </div>
+        <div id="inner-preview" style="display:none;">
+          <img id="inner-thumb" alt="iç" style="max-width:100%;max-height:140px;
+               border-radius:8px;object-fit:cover;">
+          <div style="text-align:center;color:#6add6a;font-size:11px;
+                      font-family:Arial,sans-serif;margin-top:6px;">
+            ✓ İç fotoğraf seçildi — değiştirmek için dokun
+          </div>
+        </div>
+      </div>
+      <input type="file" id="innerFile" accept="image/*" style="display:none">
+    </div>
+
     <!-- MODEL -->
     <div class="card">
       <div class="field">
@@ -466,11 +492,22 @@ canvas{display:none;}
       </div>
     </div>
 
+    <!-- TAKSİT — sadece Vergi Özel temasında görünür -->
+    <div id="taksit-card" class="card" style="display:none;">
+      <div class="field">
+        <label class="qlabel">📅 Aylık Taksit Tutarı</label>
+        <input type="text" id="taksit" class="qinput"
+          placeholder="örn: 42.500"
+          inputmode="numeric"
+          style="font-size:20px;font-weight:700;letter-spacing:1px;">
+      </div>
+    </div>
+
     <!-- TEMA -->
     <div class="card">
       <div class="field">
         <label class="qlabel">🎨 Tema</label>
-        <div class="theme-chips" id="themeGroup">
+        <div class="theme-chips" id="themeGroup" style="grid-template-columns:1fr 1fr;">
           <div class="theme-chip active" data-val="blue"
                style="background:linear-gradient(135deg,#0450B8,#1a70e0);">
             <div class="tc-dot" style="background:#F5C518;"></div>Mavi
@@ -482,6 +519,10 @@ canvas{display:none;}
           <div class="theme-chip" data-val="navy"
                style="background:linear-gradient(135deg,#0a1628,#1a3060);">
             <div class="tc-dot" style="background:#F5C518;"></div>Lacivert
+          </div>
+          <div class="theme-chip" data-val="vergi"
+               style="background:linear-gradient(135deg,#0A1A2F,#1a3060);border:1px solid rgba(255,255,255,0.25);">
+            <div class="tc-dot" style="background:#FFFFFF;"></div>Vergi Özel
           </div>
         </div>
       </div>
@@ -594,6 +635,8 @@ canvas{display:none;}
 ══════════════════════════════════════════════════════ */
 const S = {
   carImg:   null,
+  innerImg: null,
+  taksit:   '',
   logoImg:  null,
   theme:    'blue',
   logoPos:  'topright',
@@ -654,6 +697,22 @@ const THEMES = {
     priceWhite:'#FFFFFF',
     priceYellow:'#F4EB4D',
     shadowColor:'rgba(0,5,20,0.75)',
+  },
+  vergi: {
+    bg:          '#0A1A2F',
+    headerBg:    '#0D2040',
+    bottomBg:    '#0D2040',
+    border:      'rgba(255,255,255,0.85)',
+    title:       '#FFFFFF',
+    titleSub:    'rgba(255,255,255,0.65)',
+    pesinat:     '#FFFFFF',
+    model:       '#FFFFFF',
+    km:          'rgba(255,255,255,0.72)',
+    taksit:      '#FFFFFF',
+    taksitLabel: 'rgba(255,255,255,0.65)',
+    logoRing:    '#1e3a5f',
+    logoInner:   '#FFFFFF',
+    divider:     'rgba(255,255,255,0.25)',
   },
 };
 
@@ -940,9 +999,178 @@ function drawPrices(T) {
 }
 
 /* ══════════════════════════════════════════════════════
+   VERGİ LEVHASI ÖZEL — LAYOUT
+══════════════════════════════════════════════════════ */
+
+function drawVergiPhoto(T, img, fx, fy, fw, fh, placeholder) {
+  const pad = 10, cr = 8;
+  const ix = fx + pad, iy = fy + pad, iw = fw - pad * 2, ih = fh - pad * 2;
+  ctx.save();
+  ctx.strokeStyle = T.border;
+  ctx.lineWidth = 3;
+  roundRect(ctx, fx + 1.5, fy + 1.5, fw - 3, fh - 3, cr + 2);
+  ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  roundRect(ctx, ix, iy, iw, ih, cr);
+  ctx.clip();
+  if (img) {
+    const sc = Math.max(iw / img.width, ih / img.height);
+    const dw = img.width * sc, dh = img.height * sc;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, ix + (iw - dw) / 2, iy + (ih - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = '#0D2040';
+    ctx.fillRect(ix, iy, iw, ih);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = "600 22px 'Barlow Condensed', sans-serif";
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText(placeholder, ix + iw / 2, iy + ih / 2);
+  }
+  ctx.restore();
+}
+
+function drawVergiLogo(T, cx, cy) {
+  const outerR = 68, innerR = 58;
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoRing;
+  ctx.fill();
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur  = 10;
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoInner;
+  ctx.fill();
+  ctx.restore();
+  if (S.logoImg) {
+    const ls = innerR * 2 - 4;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR - 1, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(S.logoImg, cx - ls / 2, cy - ls / 2, ls, ls);
+    ctx.restore();
+  } else {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 12px Oswald, sans-serif';
+    ctx.fillStyle = '#0450B8';
+    ctx.fillText('KREDİZMİR', cx, cy + 20);
+    ctx.font = '9px Oswald, sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText('TAKSİTLE ARABA', cx, cy + 36);
+  }
+}
+
+function drawVergiLayout(T) {
+  // 1. Arka plan
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Header bar (y=0 h=158)
+  ctx.fillStyle = T.headerBg;
+  ctx.fillRect(0, 0, W, 158);
+  // Alt çizgi
+  ctx.fillStyle = T.border;
+  ctx.fillRect(0, 155, W, 3);
+
+  // 3. Logo (sol üst, cx=80 cy=79)
+  drawVergiLogo(T, 80, 79);
+
+  // 4. "VERGİ LEVHASI ÖZEL" etiketi
+  ctx.save();
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font         = "italic 700 36px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle    = T.titleSub;
+  ctx.fillText('VERGİ LEVHASI ÖZEL', 178, 55);
+  ctx.restore();
+
+  // 5. "0 PEŞİNAT" büyük (header sağ bölgesi)
+  ctx.save();
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  const pFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
+  const pSz = fitFont(ctx, '0 PEŞİNAT', 840, 112, pFn);
+  ctx.font         = pFn(pSz);
+  ctx.fillStyle    = T.pesinat;
+  ctx.shadowColor  = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur   = 14;
+  ctx.fillText('0 PEŞİNAT', 590, 107);
+  ctx.restore();
+
+  // 6. Ana fotoğraf (sol: x=15 y=163 w=695 h=640)
+  drawVergiPhoto(T, S.carImg, 15, 163, 695, 640, 'Ana Fotoğraf');
+
+  // 7. İç / ekspertiz fotoğrafı (sağ üst: x=725 y=163 w=340 h=305)
+  drawVergiPhoto(T, S.innerImg, 725, 163, 340, 305, 'İç / Ekspertiz');
+
+  // 8. Bilgi paneli — sağ alt (x=725 y=475 w=340 h=330)
+  const model = ($('model').value || 'MODEL ADI YIL').toUpperCase();
+  const km    = ($('km').value    || 'KM').toUpperCase();
+
+  // İnce divider
+  ctx.fillStyle = T.divider;
+  ctx.fillRect(725, 476, 340, 1);
+
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'top';
+  // Model (büyük italic)
+  const mFn = sz => `italic 800 ${sz}px 'Barlow Condensed', sans-serif`;
+  const mSz = fitFont(ctx, model, 315, 54, mFn);
+  ctx.font      = mFn(mSz);
+  ctx.fillStyle = T.model;
+  ctx.fillText(model, 895, 496);
+  // KM (daha küçük)
+  ctx.font      = "italic 700 34px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle = T.km;
+  ctx.fillText(km, 895, 496 + mSz + 12);
+
+  // 9. Alt bar (y=813 h=267)
+  ctx.fillStyle = T.bottomBg;
+  ctx.fillRect(0, 813, W, 267);
+  ctx.fillStyle = T.border;
+  ctx.fillRect(0, 813, W, 3);
+
+  const taksitVal = (S.taksit || '').trim() || '---';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  // Küçük etiket
+  ctx.font      = "italic 600 30px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle = T.taksitLabel;
+  ctx.fillText('AYLIK TAKSİT', W / 2, 852);
+  // Büyük tutar
+  const tFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
+  const tSz = fitFont(ctx, taksitVal + ' ₺', W - 80, 132, tFn);
+  ctx.font         = tFn(tSz);
+  ctx.fillStyle    = T.taksit;
+  ctx.shadowColor  = 'rgba(0,0,0,0.55)';
+  ctx.shadowBlur   = 18;
+  ctx.fillText(taksitVal + ' ₺', W / 2, 957);
+  ctx.shadowBlur = 0;
+
+  // 10. Watermark
+  ctx.save();
+  ctx.globalAlpha  = 0.07;
+  ctx.font         = '700 11px Oswald, sans-serif';
+  ctx.fillStyle    = '#ffffff';
+  ctx.textAlign    = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('kredizmir.com', W - 18, H - 12);
+  ctx.restore();
+}
+
+/* ══════════════════════════════════════════════════════
    MAIN DRAW
 ══════════════════════════════════════════════════════ */
 function draw() {
+  if (S.theme === 'vergi') { ctx.clearRect(0, 0, W, H); drawVergiLayout(THEMES.vergi); return; }
   const T = THEMES[S.theme];
   ctx.clearRect(0, 0, W, H);
 
@@ -1498,6 +1726,23 @@ function setupEvents() {
     reader.readAsDataURL(file);
   });
 
+  // Inner image (vergi teması)
+  $('innerFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    loadImageFile(file, img => { S.innerImg = img; draw(); });
+    const reader = new FileReader();
+    reader.onload = ev => {
+      $('inner-thumb').src = ev.target.result;
+      $('inner-preview').style.display = 'block';
+      $('inner-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Taksit (vergi teması)
+  $('taksit').addEventListener('input', e => { S.taksit = e.target.value; draw(); });
+
   // Logo image
   $('logoFile').addEventListener('change', e => {
     loadImageFile(e.target.files[0], img => {
@@ -1513,7 +1758,11 @@ function setupEvents() {
   $('showFrame').addEventListener('change', e => { S.showFrame = e.target.checked; draw(); });
 
   // Radio groups
-  setupRadioGroup('themeGroup',    'theme');
+  setupRadioGroup('themeGroup', 'theme', val => {
+    const isVergi = val === 'vergi';
+    $('inner-photo-card').style.display = isVergi ? 'block' : 'none';
+    $('taksit-card').style.display      = isVergi ? 'block' : 'none';
+  });
   setupRadioGroup('logoPosGroup',  'logoPos');
   // modelPosGroup removed in streamlined UI
 

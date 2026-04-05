@@ -204,6 +204,7 @@ h1 span{color:#e8c47a}
 <div class="toast" id="toast"></div>
 
 <script>
+(function(){try{var s=sessionStorage.getItem("panelGiris");if(s&&s!=="1"){var k=JSON.parse(s);if(k&&k.kullanici){var l=JSON.parse(localStorage.getItem("kredizmir_aktivite")||"[]");l.unshift({zaman:new Date().toISOString(),kullanici:k.kullanici,ad:k.ad,olay:"sayfa",sayfa:"Evrak Talebi"});if(l.length>200)l=l.slice(0,200);localStorage.setItem("kredizmir_aktivite",JSON.stringify(l));}}}catch(e){}})();
 var toastT;
 function toast(m){
   clearTimeout(toastT);

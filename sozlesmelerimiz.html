@@ -21,7 +21,6 @@
       padding:20px 16px 40px;
     }
 
-    /* NAV */
     .nav-bar{
       max-width:800px;margin:0 auto 14px;
       display:flex;gap:10px;align-items:center;
@@ -43,8 +42,6 @@
       box-shadow:0 8px 40px rgba(0,0,0,0.22);
       position:relative;overflow:hidden;
     }
-
-    /* WATERMARK */
     .watermark{
       position:absolute;
       font-size:220px;font-weight:900;
@@ -61,21 +58,13 @@
     .doc-header{
       background:#fff;
       padding:22px 28px 18px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
+      display:flex;justify-content:space-between;align-items:flex-start;
       border-bottom:3px solid var(--gold);
     }
-    .logo-text{
-      font-size:38px;font-weight:900;
-      color:var(--navy);letter-spacing:-1.5px;line-height:1;
-    }
+    .logo-text{font-size:38px;font-weight:900;color:var(--navy);letter-spacing:-1.5px;line-height:1;}
     .logo-sub{font-size:11px;color:#7a8898;margin-top:5px;font-style:italic;}
     .doc-title{text-align:right;}
-    .doc-title .main{
-      font-size:17px;font-weight:900;
-      color:var(--navy);letter-spacing:.5px;text-transform:uppercase;
-    }
+    .doc-title .main{font-size:17px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;}
     .doc-title .sub{font-size:11px;color:#7a8898;margin-top:4px;font-style:italic;}
 
     /* SECTION HEADER */
@@ -85,8 +74,6 @@
       letter-spacing:2px;text-transform:uppercase;
       padding:9px 28px;
     }
-
-    /* SECTION CONTENT */
     .sc{padding:14px 28px 20px;}
 
     /* CUSTOMER INFO */
@@ -96,8 +83,20 @@
     .ic:nth-child(even){padding-left:28px;}
     .ic:nth-last-child(-n+2){border-bottom:none;}
     .il{font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-    .iv{font-size:14px;font-weight:700;color:var(--text);min-height:22px;padding-bottom:3px;border-bottom:1.5px dashed #bcc;}
-    .iv.filled{border-bottom:none;}
+
+    /* EDITABLE FIELDS — white bg */
+    .ef{
+      width:100%;border:none;outline:none;
+      background:transparent;
+      font-family:inherit;font-size:14px;font-weight:700;
+      color:var(--text);
+      border-bottom:1.5px dashed #bcc;
+      padding-bottom:3px;
+      min-height:22px;
+    }
+    .ef.filled{border-bottom:none;}
+    .ef:focus{border-bottom-color:var(--navy);background:rgba(11,30,61,0.04);border-bottom-style:solid;}
+    .ef::placeholder{color:#bcc;font-weight:400;}
 
     /* FINANSMAN OZETI */
     .fin-sec{
@@ -105,22 +104,30 @@
       padding:20px 28px;
       display:flex;gap:2px;
     }
-    .fc{
-      flex:1;padding:10px 16px;
-      border-right:1px solid rgba(255,255,255,.12);
-    }
+    .fc{flex:1;padding:10px 16px;border-right:1px solid rgba(255,255,255,.12);}
     .fc:last-child{border-right:none;}
     .fc.dark{
-      background:var(--navy-dark);
-      border-radius:4px;border-right:none;
-      margin-left:6px;flex:0 0 115px;
+      background:var(--navy-dark);border-radius:4px;
+      border-right:none;margin-left:6px;flex:0 0 115px;
     }
     .fl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:2px;}
     .fs{font-size:8px;color:rgba(255,255,255,.4);margin-bottom:10px;}
     .fc.dark .fl{color:rgba(255,255,255,.8);}
     .fc.dark .fs{color:rgba(255,255,255,.55);}
-    .fv{font-size:20px;font-weight:900;color:#fff;line-height:1.1;}
-    .fv.dots{color:rgba(255,255,255,.35);font-size:16px;letter-spacing:4px;}
+
+    /* EDITABLE FIELDS — navy bg */
+    .ef-fin{
+      width:100%;border:none;outline:none;
+      background:transparent;
+      font-family:inherit;font-size:20px;font-weight:900;
+      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.2);
+      padding-bottom:2px;
+    }
+    .ef-fin:focus{border-bottom-color:rgba(255,255,255,.7);}
+    .ef-fin::placeholder{color:rgba(255,255,255,.3);}
+    .ef-fin.dots{color:rgba(255,255,255,.35);font-size:16px;letter-spacing:4px;}
+    .ef-fin.dots:focus{color:#fff;letter-spacing:0;font-size:20px;}
 
     /* GIDER LIST */
     .gl{padding:0 28px;background:#fff;}
@@ -135,6 +142,20 @@
     .gname{font-size:13px;font-weight:700;color:var(--text);}
     .gdesc{font-size:10px;color:var(--text3);margin-top:1px;}
     .gamt{font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;}
+
+    /* EDITABLE AMOUNT — gider right side */
+    .ef-amt{
+      border:none;outline:none;
+      background:transparent;
+      font-family:inherit;font-size:13px;font-weight:800;
+      color:var(--text);
+      text-align:right;
+      width:110px;
+      border-bottom:1px dashed #bcc;
+      padding-bottom:2px;
+    }
+    .ef-amt:focus{border-bottom-color:var(--navy);border-bottom-style:solid;}
+
     .gtotal{
       display:flex;align-items:center;justify-content:space-between;
       background:var(--navy);padding:14px 28px;
@@ -143,31 +164,18 @@
     .gtamt{font-size:17px;font-weight:900;color:#fff;}
 
     /* ONAY IMZA */
-    .onay-box{
-      border:1px solid var(--border);
-      border-radius:4px;padding:14px 16px;
-      margin-bottom:24px;
-    }
+    .onay-box{border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:24px;}
     .onay-text{font-size:11.5px;line-height:1.75;color:var(--text2);font-style:italic;}
     .imza-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:8px;}
-    .imza-field{
-      border-top:1.5px solid #888;padding-top:6px;
-      font-size:9px;font-weight:700;letter-spacing:1.2px;
-      text-transform:uppercase;color:var(--text3);
-    }
+    .imza-field{border-top:1.5px solid #888;padding-top:6px;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);}
 
     /* BILGILENDIRME */
     .bilgi-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
     .bilgi-list li{display:flex;gap:10px;font-size:10.5px;line-height:1.7;color:var(--text2);}
     .bnum{font-weight:800;color:var(--navy);flex-shrink:0;width:16px;}
 
-    /* DOC FOOTER */
-    .doc-foot{
-      background:#fff;
-      padding:14px 28px;
-      text-align:center;
-      border-top:1px solid var(--border);
-    }
+    /* FOOTER */
+    .doc-foot{background:#fff;padding:14px 28px;text-align:center;border-top:1px solid var(--border);}
     .doc-foot p{font-size:10px;color:var(--gold);font-style:italic;font-weight:600;line-height:1.7;}
 
     /* PRINT */
@@ -175,13 +183,14 @@
       body{background:#fff;padding:0;}
       .nav-bar{display:none;}
       .doc{box-shadow:none;max-width:100%;border:2px solid var(--navy);}
+      .ef,.ef-fin,.ef-amt{border-bottom:none!important;background:transparent!important;}
     }
 
     /* MOBILE */
     @media(max-width:600px){
       body{padding:10px 8px;}
       .doc-header{padding:16px 14px 14px;}
-      .logo-text{font-size:28px;}
+      .logo-text{font-size:26px;}
       .doc-title .main{font-size:13px;}
       .sh{padding:8px 14px;}
       .sc{padding:12px 14px 16px;}
@@ -228,27 +237,27 @@
     <div class="info-grid">
       <div class="ic">
         <div class="il">Müşteri Adı Soyadı</div>
-        <div class="iv filled">EREN KOYUNCU</div>
+        <input class="ef" id="musteri-ad" type="text" placeholder="Ad Soyad" autocomplete="off">
       </div>
       <div class="ic">
         <div class="il">TC Kimlik No</div>
-        <div class="iv">— — — — — — — — — — —</div>
+        <input class="ef" id="tc-no" type="text" placeholder="— — — — — — — — — — —" maxlength="11" inputmode="numeric" autocomplete="off">
       </div>
       <div class="ic">
         <div class="il">Araç Markası / Modeli</div>
-        <div class="iv">................................</div>
+        <input class="ef" id="arac-model" type="text" placeholder="................................" autocomplete="off">
       </div>
       <div class="ic">
         <div class="il">Model Yılı / Plaka</div>
-        <div class="iv">.............. / ..............</div>
+        <input class="ef" id="arac-yil-plaka" type="text" placeholder="............ / ............" autocomplete="off">
       </div>
       <div class="ic">
         <div class="il">Finansman Sağlayıcı</div>
-        <div class="iv filled">KREDİZMİR Vadelendirilen</div>
+        <input class="ef filled" id="fin-saglayici" type="text" value="KREDİZMİR Vadelendirilen" autocomplete="off">
       </div>
       <div class="ic">
         <div class="il">Başvuru Tarihi</div>
-        <div class="iv">...... / ...... / ..........</div>
+        <input class="ef" id="basvuru-tarihi" type="text" placeholder="...... / ...... / .........." autocomplete="off">
       </div>
     </div>
   </div>
@@ -259,27 +268,27 @@
     <div class="fc">
       <div class="fl">Kredi Tutarı</div>
       <div class="fs">Onaylanan finansman</div>
-      <div class="fv">595.000 TL</div>
+      <input class="ef-fin" id="kredi-tutari" type="text" placeholder="0 TL" oninput="fmtFin(this)">
     </div>
     <div class="fc">
       <div class="fl">Net Ele Geçen</div>
       <div class="fs">Müşteriye kalan net tutar</div>
-      <div class="fv">540.000 TL</div>
+      <input class="ef-fin" id="net-ele-gecen" type="text" placeholder="0 TL" oninput="fmtFin(this)">
     </div>
     <div class="fc">
       <div class="fl">Tahmini Toplam Gider</div>
       <div class="fs">Masraf ve kesintiler dahil</div>
-      <div class="fv">55.632 TL</div>
+      <input class="ef-fin" id="tahmini-toplam" type="text" placeholder="0 TL" readonly tabindex="-1" style="cursor:default;">
     </div>
     <div class="fc">
       <div class="fl">Vade</div>
       <div class="fs">Ay</div>
-      <div class="fv dots">.........</div>
+      <input class="ef-fin dots" id="vade" type="text" placeholder="........." oninput="this.classList.remove('dots')" autocomplete="off">
     </div>
     <div class="fc dark">
       <div class="fl">Faiz Oranı</div>
       <div class="fs">Aylık</div>
-      <div class="fv dots">% ......</div>
+      <input class="ef-fin dots" id="faiz" type="text" placeholder="% ......" oninput="this.classList.remove('dots')" autocomplete="off">
     </div>
   </div>
 
@@ -315,13 +324,16 @@
       <div class="gamt">6.000 TL</div>
     </div>
     <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Aktif Bank dosya ve ekran kullanım bedeli</div><div class="gdesc">Banka sistem ve işlem gideri</div></div></div>
-      <div class="gamt">23.382 TL</div>
+      <div class="gleft"><div class="gdot"></div><div>
+        <div class="gname">Aktif Bank dosya ve ekran kullanım bedeli</div>
+        <div class="gdesc">Banka sistem ve işlem gideri</div>
+      </div></div>
+      <input class="ef-amt" id="aktif-amt" type="text" value="23.382 TL" oninput="updateToplam()">
     </div>
   </div>
   <div class="gtotal">
     <div class="gtlabel">TOPLAM GİDER TUTARI</div>
-    <div class="gtamt">55.632 TL</div>
+    <div class="gtamt" id="toplam-gider">55.632 TL</div>
   </div>
 
   <!-- 4. ONAY VE İMZA -->
@@ -363,5 +375,34 @@
   </div>
 </div>
 
+<script>
+// Sabit gider kalemleri toplamı (Aktif Bank hariç)
+var SABIT_GIDER = 6250 + 6000 + 3000 + 4000 + 3000 + 4000 + 6000; // 32.250
+
+function parseTL(str) {
+  if (!str) return 0;
+  // "23.382 TL" → 23382
+  return parseInt(str.replace(/[^\d]/g, '')) || 0;
+}
+
+function formatTL(num) {
+  return num.toLocaleString('tr-TR') + ' TL';
+}
+
+function fmtFin(el) {
+  var raw = parseTL(el.value);
+  if (raw > 0) el.value = formatTL(raw);
+}
+
+function updateToplam() {
+  var aktif = parseTL(document.getElementById('aktif-amt').value);
+  var toplam = SABIT_GIDER + aktif;
+  document.getElementById('toplam-gider').textContent = formatTL(toplam);
+  document.getElementById('tahmini-toplam').value = formatTL(toplam);
+}
+
+// İlk yüklemede toplamı hesapla
+updateToplam();
+</script>
 </body>
 </html>

@@ -8,53 +8,148 @@
     :root{
       --navy:#0B1E3D;
       --navy-dark:#060f20;
+      --navy-bg:#0d1b2a;
       --gold:#C9A535;
+      --white:#fff;
       --border:#dde3ed;
       --text:#0B1E3D;
       --text2:#3d4a5c;
       --text3:#8a96a8;
     }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{
+    body{font-family:'Arial','Helvetica Neue',Helvetica,sans-serif;min-height:100vh;}
+
+    /* ═══════════════════════════════
+       EKRAN 1: FORM
+    ═══════════════════════════════ */
+    #ekran1{
+      background:var(--navy-bg);
+      color:#e8f0fe;
+      min-height:100vh;
+      padding:20px 16px 48px;
+    }
+    .form-header{
+      max-width:720px;margin:0 auto 24px;
+      display:flex;align-items:center;gap:14px;
+    }
+    .btn-back{
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.18);
+      color:#e8f0fe;padding:8px 16px;
+      border-radius:8px;font-size:13px;font-weight:700;
+      cursor:pointer;text-decoration:none;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .btn-back:hover{background:rgba(255,255,255,.16);}
+    .form-title{font-size:20px;font-weight:800;color:#e8f0fe;}
+
+    .form-wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
+
+    /* Kart */
+    .fcard{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;padding:20px;
+    }
+    .fcard-title{
+      font-size:10px;font-weight:800;letter-spacing:2px;
+      text-transform:uppercase;color:rgba(232,240,254,.5);
+      margin-bottom:14px;
+    }
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .frow.single{grid-template-columns:1fr;}
+    .fgroup{display:flex;flex-direction:column;gap:6px;}
+    .flabel{
+      font-size:10px;font-weight:700;letter-spacing:1px;
+      text-transform:uppercase;color:rgba(232,240,254,.5);
+    }
+    .finput{
+      background:rgba(255,255,255,.08);
+      border:1.5px solid rgba(255,255,255,.14);
+      border-radius:8px;
+      color:#e8f0fe;
+      font-family:inherit;font-size:15px;font-weight:600;
+      padding:11px 14px;outline:none;
+      transition:border-color .15s,background .15s;
+    }
+    .finput:focus{
+      border-color:rgba(201,165,53,.7);
+      background:rgba(255,255,255,.12);
+    }
+    .finput::placeholder{color:rgba(232,240,254,.25);font-weight:400;}
+
+    /* Toplam önizleme */
+    .toplam-preview{
+      background:rgba(201,165,53,.12);
+      border:1px solid rgba(201,165,53,.3);
+      border-radius:8px;padding:12px 16px;
+      font-size:13px;color:rgba(232,240,254,.8);
+      margin-top:10px;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .toplam-preview span{font-weight:800;color:var(--gold);font-size:15px;}
+
+    /* Oluştur butonu */
+    .btn-olustur{
+      width:100%;padding:16px;
+      background:var(--gold);border:none;
+      border-radius:10px;
+      font-family:inherit;font-size:15px;font-weight:800;
+      color:#fff;letter-spacing:.5px;
+      cursor:pointer;transition:.15s;
+      margin-top:8px;
+    }
+    .btn-olustur:hover{background:#b8922e;}
+    .btn-olustur:active{transform:scale(.99);}
+
+    /* ═══════════════════════════════
+       EKRAN 2: BELGE
+    ═══════════════════════════════ */
+    #ekran2{
+      display:none;
       background:#d8dde6;
-      font-family:'Arial','Helvetica Neue',Helvetica,sans-serif;
+      min-height:100vh;
       padding:20px 16px 40px;
     }
-
-    .nav-bar{
+    .doc-nav{
       max-width:800px;margin:0 auto 14px;
       display:flex;gap:10px;align-items:center;
     }
-    .btn{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:8px 16px;border-radius:7px;
+    .btn-edit{
+      background:var(--navy);color:#fff;
+      border:none;border-radius:7px;
+      padding:8px 16px;font-family:inherit;
       font-size:13px;font-weight:700;cursor:pointer;
-      text-decoration:none;border:none;
+      display:inline-flex;align-items:center;gap:6px;
     }
-    .btn-back{background:var(--navy);color:#fff;}
-    .btn-print{background:var(--gold);color:#fff;}
+    .btn-print{
+      background:var(--gold);color:#fff;
+      border:none;border-radius:7px;
+      padding:8px 16px;font-family:inherit;
+      font-size:13px;font-weight:700;cursor:pointer;
+      display:inline-flex;align-items:center;gap:6px;
+    }
 
-    /* DOCUMENT */
+    /* KAĞIT */
     .doc{
       max-width:800px;margin:0 auto;
       background:#fff;
       border:3px solid var(--navy);
-      box-shadow:0 8px 40px rgba(0,0,0,0.22);
+      box-shadow:0 8px 40px rgba(0,0,0,.22);
       position:relative;overflow:hidden;
     }
     .watermark{
       position:absolute;
       font-size:220px;font-weight:900;
-      color:rgba(11,30,61,0.045);
+      color:rgba(11,30,61,.04);
       top:28%;left:50%;
       transform:translateX(-50%) rotate(-20deg);
       pointer-events:none;z-index:0;
-      user-select:none;letter-spacing:-6px;
-      white-space:nowrap;
+      user-select:none;letter-spacing:-6px;white-space:nowrap;
     }
     .doc>*{position:relative;z-index:1;}
 
-    /* HEADER */
+    /* DOC HEADER */
     .doc-header{
       background:#fff;
       padding:22px 28px 18px;
@@ -63,9 +158,9 @@
     }
     .logo-text{font-size:38px;font-weight:900;color:var(--navy);letter-spacing:-1.5px;line-height:1;}
     .logo-sub{font-size:11px;color:#7a8898;margin-top:5px;font-style:italic;}
-    .doc-title{text-align:right;}
-    .doc-title .main{font-size:17px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;}
-    .doc-title .sub{font-size:11px;color:#7a8898;margin-top:4px;font-style:italic;}
+    .doc-title-right{text-align:right;}
+    .doc-title-right .main{font-size:17px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;}
+    .doc-title-right .sub{font-size:11px;color:#7a8898;margin-top:4px;font-style:italic;}
 
     /* SECTION HEADER */
     .sh{
@@ -76,94 +171,42 @@
     }
     .sc{padding:14px 28px 20px;}
 
-    /* CUSTOMER INFO */
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    /* MUSTERI INFO */
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;}
     .ic{padding:12px 0;border-bottom:1px solid var(--border);}
     .ic:nth-child(odd){padding-right:28px;border-right:1px solid var(--border);}
     .ic:nth-child(even){padding-left:28px;}
     .ic:nth-last-child(-n+2){border-bottom:none;}
     .il{font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-
-    /* EDITABLE FIELDS — white bg */
-    .ef{
-      width:100%;border:none;outline:none;
-      background:transparent;
-      font-family:inherit;font-size:14px;font-weight:700;
-      color:var(--text);
-      border-bottom:1.5px dashed #bcc;
-      padding-bottom:3px;
-      min-height:22px;
-    }
-    .ef.filled{border-bottom:none;}
-    .ef:focus{border-bottom-color:var(--navy);background:rgba(11,30,61,0.04);border-bottom-style:solid;}
-    .ef::placeholder{color:#bcc;font-weight:400;}
+    .iv{font-size:14px;font-weight:700;color:var(--text);min-height:22px;padding-bottom:2px;border-bottom:1.5px dashed #bcc;}
+    .iv.filled{border-bottom:none;}
 
     /* FINANSMAN OZETI */
-    .fin-sec{
-      background:var(--navy);
-      padding:20px 28px;
-      display:flex;gap:2px;
-    }
+    .fin-sec{background:var(--navy);padding:20px 28px;display:flex;gap:2px;}
     .fc{flex:1;padding:10px 16px;border-right:1px solid rgba(255,255,255,.12);}
     .fc:last-child{border-right:none;}
-    .fc.dark{
-      background:var(--navy-dark);border-radius:4px;
-      border-right:none;margin-left:6px;flex:0 0 115px;
-    }
+    .fc.dark{background:var(--navy-dark);border-radius:4px;border-right:none;margin-left:6px;flex:0 0 115px;}
     .fl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:2px;}
     .fs{font-size:8px;color:rgba(255,255,255,.4);margin-bottom:10px;}
     .fc.dark .fl{color:rgba(255,255,255,.8);}
     .fc.dark .fs{color:rgba(255,255,255,.55);}
+    .fv{font-size:20px;font-weight:900;color:#fff;line-height:1.1;}
+    .fv.dim{color:rgba(255,255,255,.4);font-size:16px;letter-spacing:2px;}
 
-    /* EDITABLE FIELDS — navy bg */
-    .ef-fin{
-      width:100%;border:none;outline:none;
-      background:transparent;
-      font-family:inherit;font-size:20px;font-weight:900;
-      color:#fff;
-      border-bottom:1px solid rgba(255,255,255,.2);
-      padding-bottom:2px;
-    }
-    .ef-fin:focus{border-bottom-color:rgba(255,255,255,.7);}
-    .ef-fin::placeholder{color:rgba(255,255,255,.3);}
-    .ef-fin.dots{color:rgba(255,255,255,.35);font-size:16px;letter-spacing:4px;}
-    .ef-fin.dots:focus{color:#fff;letter-spacing:0;font-size:20px;}
-
-    /* GIDER LIST */
+    /* GIDER */
     .gl{padding:0 28px;background:#fff;}
-    .gr{
-      display:flex;align-items:center;
-      justify-content:space-between;
-      padding:10px 0;border-bottom:1px solid var(--border);gap:12px;
-    }
+    .gr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
     .gr:last-child{border-bottom:none;}
     .gleft{display:flex;align-items:flex-start;gap:10px;}
     .gdot{width:9px;height:9px;border-radius:50%;background:var(--navy);flex-shrink:0;margin-top:4px;}
     .gname{font-size:13px;font-weight:700;color:var(--text);}
     .gdesc{font-size:10px;color:var(--text3);margin-top:1px;}
     .gamt{font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;}
-
-    /* EDITABLE AMOUNT — gider right side */
-    .ef-amt{
-      border:none;outline:none;
-      background:transparent;
-      font-family:inherit;font-size:13px;font-weight:800;
-      color:var(--text);
-      text-align:right;
-      width:110px;
-      border-bottom:1px dashed #bcc;
-      padding-bottom:2px;
-    }
-    .ef-amt:focus{border-bottom-color:var(--navy);border-bottom-style:solid;}
-
-    .gtotal{
-      display:flex;align-items:center;justify-content:space-between;
-      background:var(--navy);padding:14px 28px;
-    }
+    .gtotal{display:flex;align-items:center;justify-content:space-between;background:var(--navy);padding:14px 28px;}
     .gtlabel{font-size:13px;font-weight:900;color:#fff;letter-spacing:.5px;}
     .gtamt{font-size:17px;font-weight:900;color:#fff;}
 
-    /* ONAY IMZA */
+    /* ONAY */
     .onay-box{border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:24px;}
     .onay-text{font-size:11.5px;line-height:1.75;color:var(--text2);font-style:italic;}
     .imza-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:8px;}
@@ -174,32 +217,33 @@
     .bilgi-list li{display:flex;gap:10px;font-size:10.5px;line-height:1.7;color:var(--text2);}
     .bnum{font-weight:800;color:var(--navy);flex-shrink:0;width:16px;}
 
-    /* FOOTER */
+    /* DOC FOOTER */
     .doc-foot{background:#fff;padding:14px 28px;text-align:center;border-top:1px solid var(--border);}
     .doc-foot p{font-size:10px;color:var(--gold);font-style:italic;font-weight:600;line-height:1.7;}
 
     /* PRINT */
     @media print{
-      body{background:#fff;padding:0;}
-      .nav-bar{display:none;}
-      .doc{box-shadow:none;max-width:100%;border:2px solid var(--navy);}
-      .ef,.ef-fin,.ef-amt{border-bottom:none!important;background:transparent!important;}
+      body{background:#fff;}
+      #ekran1{display:none!important;}
+      #ekran2{display:block!important;background:#fff;padding:0;}
+      .doc-nav{display:none;}
+      .doc{box-shadow:none;border:2px solid var(--navy);max-width:100%;}
     }
 
     /* MOBILE */
     @media(max-width:600px){
-      body{padding:10px 8px;}
-      .doc-header{padding:16px 14px 14px;}
-      .logo-text{font-size:26px;}
-      .doc-title .main{font-size:13px;}
-      .sh{padding:8px 14px;}
-      .sc{padding:12px 14px 16px;}
+      .frow{grid-template-columns:1fr;}
+      #ekran1{padding:14px 12px 40px;}
+      .form-title{font-size:16px;}
       .fin-sec{flex-wrap:wrap;padding:14px;gap:6px;}
       .fc{flex:1 1 calc(50% - 4px);border-right:none;padding:8px 10px;}
       .fc.dark{flex:1 1 calc(50% - 4px);margin-left:0;}
+      .doc-header{padding:16px 14px 14px;}
+      .logo-text{font-size:26px;}
+      .sh{padding:8px 14px;}
+      .sc{padding:12px 14px 16px;}
       .gl{padding:0 14px;}
       .gtotal{padding:12px 14px;}
-      .doc-foot{padding:12px 14px;}
       .info-grid{grid-template-columns:1fr;}
       .ic:nth-child(odd){padding-right:0;border-right:none;}
       .ic:nth-child(even){padding-left:0;}
@@ -211,198 +255,342 @@
 </head>
 <body>
 
-<div class="nav-bar">
-  <a href="index.html" class="btn btn-back">← Geri</a>
-  <button class="btn btn-print" onclick="window.print()">🖨️ Yazdır</button>
+<!-- ══════════════════════════════
+     EKRAN 1: FORM
+══════════════════════════════ -->
+<div id="ekran1">
+  <div class="form-header">
+    <a href="index.html" class="btn-back">← Geri</a>
+    <span class="form-title">Finansal Çözüm Teklifi Oluştur</span>
+  </div>
+
+  <div class="form-wrap">
+
+    <!-- Müşteri -->
+    <div class="fcard">
+      <div class="fcard-title">Müşteri Bilgileri</div>
+      <div class="frow">
+        <div class="fgroup">
+          <label class="flabel">Müşteri Adı Soyadı *</label>
+          <input class="finput" id="f-ad" type="text" placeholder="EREN KOYUNCU" autocomplete="off">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">TC Kimlik No</label>
+          <input class="finput" id="f-tc" type="text" placeholder="— — — — — — — — — — —" maxlength="11" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <!-- Araç -->
+    <div class="fcard">
+      <div class="fcard-title">Araç Bilgileri</div>
+      <div class="frow">
+        <div class="fgroup">
+          <label class="flabel">Araç Markası / Modeli</label>
+          <input class="finput" id="f-arac" type="text" placeholder="Toyota Corolla" autocomplete="off">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Model Yılı / Plaka</label>
+          <input class="finput" id="f-yil" type="text" placeholder="2020 / 34 ABC 123" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <!-- Finansman -->
+    <div class="fcard">
+      <div class="fcard-title">Finansman Bilgileri</div>
+      <div class="frow">
+        <div class="fgroup">
+          <label class="flabel">Kredi Tutarı (TL) *</label>
+          <input class="finput" id="f-kredi" type="text" placeholder="595.000" inputmode="numeric" oninput="fmtInput(this)">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Net Ele Geçen (TL)</label>
+          <input class="finput" id="f-net" type="text" placeholder="540.000" inputmode="numeric" oninput="fmtInput(this)">
+        </div>
+      </div>
+      <div class="frow" style="margin-top:12px;">
+        <div class="fgroup">
+          <label class="flabel">Vade (Ay)</label>
+          <input class="finput" id="f-vade" type="text" placeholder="36" inputmode="numeric" maxlength="3">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Faiz Oranı (% Aylık)</label>
+          <input class="finput" id="f-faiz" type="text" placeholder="% 4.75" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <!-- Gider -->
+    <div class="fcard">
+      <div class="fcard-title">Aktif Bank Bedeli</div>
+      <div class="frow single">
+        <div class="fgroup">
+          <label class="flabel">Aktif Bank Dosya ve Ekran Kullanım Bedeli (TL)</label>
+          <input class="finput" id="f-aktif" type="text" placeholder="23.382" inputmode="numeric" oninput="fmtInput(this);calcToplam();">
+        </div>
+      </div>
+      <div class="toplam-preview" id="toplam-preview">
+        <span>Sabit Giderler:</span> 32.250 TL &nbsp;+&nbsp; Aktif Bank: <span id="prev-aktif">0 TL</span> &nbsp;=&nbsp; Toplam: <span id="prev-toplam">32.250 TL</span>
+      </div>
+    </div>
+
+    <!-- Başvuru tarihi -->
+    <div class="fcard">
+      <div class="fcard-title">Başvuru Bilgisi</div>
+      <div class="frow single">
+        <div class="fgroup">
+          <label class="flabel">Başvuru Tarihi</label>
+          <input class="finput" id="f-tarih" type="text" placeholder="gg/aa/yyyy" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-olustur" onclick="olustur()">Tablo Oluştur →</button>
+  </div>
 </div>
 
-<div class="doc">
-  <div class="watermark">K</div>
-
-  <!-- HEADER -->
-  <div class="doc-header">
-    <div>
-      <div class="logo-text">KREDİZMİR</div>
-      <div class="logo-sub">Rotanız mutluluk olsun.</div>
-    </div>
-    <div class="doc-title">
-      <div class="main">Finansal Çözüm Teklifi</div>
-      <div class="sub">Ön Onay ve Bilgilendirme Formu</div>
-    </div>
+<!-- ══════════════════════════════
+     EKRAN 2: BELGE
+══════════════════════════════ -->
+<div id="ekran2">
+  <div class="doc-nav">
+    <button class="btn-edit" onclick="duzelt()">← Düzenle</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Yazdır</button>
   </div>
 
-  <!-- 1. MÜŞTERİ VE ARAÇ BİLGİLERİ -->
-  <div class="sh">Müşteri ve Araç Bilgileri</div>
-  <div class="sc">
-    <div class="info-grid">
-      <div class="ic">
-        <div class="il">Müşteri Adı Soyadı</div>
-        <input class="ef" id="musteri-ad" type="text" placeholder="Ad Soyad" autocomplete="off">
+  <div class="doc">
+    <div class="watermark">K</div>
+
+    <!-- HEADER -->
+    <div class="doc-header">
+      <div>
+        <div class="logo-text">KREDİZMİR</div>
+        <div class="logo-sub">Rotanız mutluluk olsun.</div>
       </div>
-      <div class="ic">
-        <div class="il">TC Kimlik No</div>
-        <input class="ef" id="tc-no" type="text" placeholder="— — — — — — — — — — —" maxlength="11" inputmode="numeric" autocomplete="off">
-      </div>
-      <div class="ic">
-        <div class="il">Araç Markası / Modeli</div>
-        <input class="ef" id="arac-model" type="text" placeholder="................................" autocomplete="off">
-      </div>
-      <div class="ic">
-        <div class="il">Model Yılı / Plaka</div>
-        <input class="ef" id="arac-yil-plaka" type="text" placeholder="............ / ............" autocomplete="off">
-      </div>
-      <div class="ic">
-        <div class="il">Finansman Sağlayıcı</div>
-        <input class="ef filled" id="fin-saglayici" type="text" value="KREDİZMİR Vadelendirilen" autocomplete="off">
-      </div>
-      <div class="ic">
-        <div class="il">Başvuru Tarihi</div>
-        <input class="ef" id="basvuru-tarihi" type="text" placeholder="...... / ...... / .........." autocomplete="off">
+      <div class="doc-title-right">
+        <div class="main">Finansal Çözüm Teklifi</div>
+        <div class="sub">Ön Onay ve Bilgilendirme Formu</div>
       </div>
     </div>
-  </div>
 
-  <!-- 2. FİNANSMAN ÖZETİ -->
-  <div class="sh">Finansman Özeti</div>
-  <div class="fin-sec">
-    <div class="fc">
-      <div class="fl">Kredi Tutarı</div>
-      <div class="fs">Onaylanan finansman</div>
-      <input class="ef-fin" id="kredi-tutari" type="text" placeholder="0 TL" oninput="fmtFin(this)">
+    <!-- 1. MÜŞTERİ VE ARAÇ BİLGİLERİ -->
+    <div class="sh">Müşteri ve Araç Bilgileri</div>
+    <div class="sc">
+      <div class="info-grid">
+        <div class="ic">
+          <div class="il">Müşteri Adı Soyadı</div>
+          <div class="iv filled" id="d-ad"></div>
+        </div>
+        <div class="ic">
+          <div class="il">TC Kimlik No</div>
+          <div class="iv" id="d-tc"></div>
+        </div>
+        <div class="ic">
+          <div class="il">Araç Markası / Modeli</div>
+          <div class="iv" id="d-arac"></div>
+        </div>
+        <div class="ic">
+          <div class="il">Model Yılı / Plaka</div>
+          <div class="iv" id="d-yil"></div>
+        </div>
+        <div class="ic">
+          <div class="il">Finansman Sağlayıcı</div>
+          <div class="iv filled">KREDİZMİR Vadelendirilen</div>
+        </div>
+        <div class="ic">
+          <div class="il">Başvuru Tarihi</div>
+          <div class="iv filled" id="d-tarih"></div>
+        </div>
+      </div>
     </div>
-    <div class="fc">
-      <div class="fl">Net Ele Geçen</div>
-      <div class="fs">Müşteriye kalan net tutar</div>
-      <input class="ef-fin" id="net-ele-gecen" type="text" placeholder="0 TL" oninput="fmtFin(this)">
-    </div>
-    <div class="fc">
-      <div class="fl">Tahmini Toplam Gider</div>
-      <div class="fs">Masraf ve kesintiler dahil</div>
-      <input class="ef-fin" id="tahmini-toplam" type="text" placeholder="0 TL" readonly tabindex="-1" style="cursor:default;">
-    </div>
-    <div class="fc">
-      <div class="fl">Vade</div>
-      <div class="fs">Ay</div>
-      <input class="ef-fin dots" id="vade" type="text" placeholder="........." oninput="this.classList.remove('dots')" autocomplete="off">
-    </div>
-    <div class="fc dark">
-      <div class="fl">Faiz Oranı</div>
-      <div class="fs">Aylık</div>
-      <input class="ef-fin dots" id="faiz" type="text" placeholder="% ......" oninput="this.classList.remove('dots')" autocomplete="off">
-    </div>
-  </div>
 
-  <!-- 3. KESİNTİ VE GİDER KALEMLERİ -->
-  <div class="sh">Kesinti ve Gider Kalemleri</div>
-  <div class="gl">
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin tesis bedeli</div><div class="gdesc">Araç üzerine rehin konulması işlemi</div></div></div>
-      <div class="gamt">6.250 TL</div>
+    <!-- 2. FİNANSMAN ÖZETİ -->
+    <div class="sh">Finansman Özeti</div>
+    <div class="fin-sec">
+      <div class="fc">
+        <div class="fl">Kredi Tutarı</div>
+        <div class="fs">Onaylanan finansman</div>
+        <div class="fv" id="d-kredi"></div>
+      </div>
+      <div class="fc">
+        <div class="fl">Net Ele Geçen</div>
+        <div class="fs">Müşteriye kalan net tutar</div>
+        <div class="fv" id="d-net"></div>
+      </div>
+      <div class="fc">
+        <div class="fl">Tahmini Toplam Gider</div>
+        <div class="fs">Masraf ve kesintiler dahil</div>
+        <div class="fv" id="d-toplam-fin"></div>
+      </div>
+      <div class="fc">
+        <div class="fl">Vade</div>
+        <div class="fs">Ay</div>
+        <div class="fv dim" id="d-vade"></div>
+      </div>
+      <div class="fc dark">
+        <div class="fl">Faiz Oranı</div>
+        <div class="fs">Aylık</div>
+        <div class="fv dim" id="d-faiz"></div>
+      </div>
     </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin fek bedeli</div><div class="gdesc">Kredi bitiminde rehin kaldırma işlemi</div></div></div>
-      <div class="gamt">6.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Dosya masrafı / yol / üst alım</div><div class="gdesc">Sözleşme ve işlem giderleri</div></div></div>
-      <div class="gamt">3.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Kredi koordinasyon ve vekalet gideri</div><div class="gdesc">Operasyon ve vekalet süreç gideri</div></div></div>
-      <div class="gamt">4.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">KKS bedeli</div><div class="gdesc">Kredinin kullanıma açılış işlemi</div></div></div>
-      <div class="gamt">3.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Finansal koruma sigortası</div><div class="gdesc">Kredi ödeme güvence hizmeti</div></div></div>
-      <div class="gamt">4.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div><div class="gname">Zorunlu vergi ve fon kesintileri</div><div class="gdesc">BSMV, KKDF ve yasal yükümlülükler</div></div></div>
-      <div class="gamt">6.000 TL</div>
-    </div>
-    <div class="gr">
-      <div class="gleft"><div class="gdot"></div><div>
-        <div class="gname">Aktif Bank dosya ve ekran kullanım bedeli</div>
-        <div class="gdesc">Banka sistem ve işlem gideri</div>
-      </div></div>
-      <input class="ef-amt" id="aktif-amt" type="text" value="23.382 TL" oninput="updateToplam()">
-    </div>
-  </div>
-  <div class="gtotal">
-    <div class="gtlabel">TOPLAM GİDER TUTARI</div>
-    <div class="gtamt" id="toplam-gider">55.632 TL</div>
-  </div>
 
-  <!-- 4. ONAY VE İMZA -->
-  <div class="sh">Onay ve İmza</div>
-  <div class="sc">
-    <div class="onay-box">
-      <p class="onay-text">İşbu belgede yer alan finansman tutarı, net ele geçen tutar, vade, oran ve gider kalemlerine ilişkin bilgilendirmeyi okuduğumu, anladığımı ve tarafıma sözlü/yazılı olarak açıklandığını kabul ederim. Kişisel verilerimin ilgili mevzuat kapsamında finansman sürecinin yürütülmesi amacıyla işlenmesine onay verdiğimi beyan ederim.</p>
+    <!-- 3. KESİNTİ VE GİDER KALEMLERİ -->
+    <div class="sh">Kesinti ve Gider Kalemleri</div>
+    <div class="gl">
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin tesis bedeli</div><div class="gdesc">Araç üzerine rehin konulması işlemi</div></div></div>
+        <div class="gamt">6.250 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin fek bedeli</div><div class="gdesc">Kredi bitiminde rehin kaldırma işlemi</div></div></div>
+        <div class="gamt">6.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Dosya masrafı / yol / üst alım</div><div class="gdesc">Sözleşme ve işlem giderleri</div></div></div>
+        <div class="gamt">3.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Kredi koordinasyon ve vekalet gideri</div><div class="gdesc">Operasyon ve vekalet süreç gideri</div></div></div>
+        <div class="gamt">4.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">KKS bedeli</div><div class="gdesc">Kredinin kullanıma açılış işlemi</div></div></div>
+        <div class="gamt">3.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Finansal koruma sigortası</div><div class="gdesc">Kredi ödeme güvence hizmeti</div></div></div>
+        <div class="gamt">4.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Zorunlu vergi ve fon kesintileri</div><div class="gdesc">BSMV, KKDF ve yasal yükümlülükler</div></div></div>
+        <div class="gamt">6.000 TL</div>
+      </div>
+      <div class="gr">
+        <div class="gleft"><div class="gdot"></div><div><div class="gname">Aktif Bank dosya ve ekran kullanım bedeli</div><div class="gdesc">Banka sistem ve işlem gideri</div></div></div>
+        <div class="gamt" id="d-aktif"></div>
+      </div>
     </div>
-    <div class="imza-row">
-      <div class="imza-field">Ad Soyad</div>
-      <div class="imza-field">İmza</div>
-      <div class="imza-field">Tarih</div>
+    <div class="gtotal">
+      <div class="gtlabel">TOPLAM GİDER TUTARI</div>
+      <div class="gtamt" id="d-toplam"></div>
     </div>
-  </div>
 
-  <!-- 5. BİLGİLENDİRME VE KORUYUCU HÜKÜMLER -->
-  <div class="sh">Bilgilendirme ve Koruyucu Hükümler</div>
-  <div class="sc">
-    <ol class="bilgi-list">
-      <li>
-        <span class="bnum">1.</span>
-        <span>Bu belgede yer alan tutar, oran, masraf ve vade bilgileri ön değerlendirme niteliğinde olup; nihai onay ilgili banka veya finans kuruluşunun sistem, skor, ekspertiz ve evrak incelemesi sonucunda kesinleşir.</span>
-      </li>
-      <li>
-        <span class="bnum">2.</span>
-        <span>KREDİZMİR, finansman sürecinde danışmanlık, bilgilendirme ve organizasyon desteği sunmakta olup; kredi tahsisi, nihai faiz oranı, kesin ödeme planı ve kullandırım şartları ilgili finans kuruluşunun onayına tabidir.</span>
-      </li>
-      <li>
-        <span class="bnum">3.</span>
-        <span>Araç durumu, kasko değeri, ekspertiz sonucu, müşteri kredi profili, yasal kesintiler ve güncel finansman politikalarına bağlı olarak bu belgede yer alan verilerde değişiklik oluşabilir; KREDİZMİR bu değişikliklerden kaynaklı nihai kurum kararından sorumlu tutulamaz.</span>
-      </li>
-    </ol>
-  </div>
+    <!-- 4. ONAY VE İMZA -->
+    <div class="sh">Onay ve İmza</div>
+    <div class="sc">
+      <div class="onay-box">
+        <p class="onay-text">İşbu belgede yer alan finansman tutarı, net ele geçen tutar, vade, oran ve gider kalemlerine ilişkin bilgilendirmeyi okuduğumu, anladığımı ve tarafıma sözlü/yazılı olarak açıklandığını kabul ederim. Kişisel verilerimin ilgili mevzuat kapsamında finansman sürecinin yürütülmesi amacıyla işlenmesine onay verdiğimi beyan ederim.</p>
+      </div>
+      <div class="imza-row">
+        <div class="imza-field">Ad Soyad</div>
+        <div class="imza-field">İmza</div>
+        <div class="imza-field">Tarih</div>
+      </div>
+    </div>
 
-  <!-- FOOTER -->
-  <div class="doc-foot">
-    <p>Bu belge müşteri bilgilendirme ve ön değerlendirme amaçlı düzenlenmiştir.</p>
-    <p>Kesin onay, ilgili kurum değerlendirmesi ve evrak incelemesi sonrası netleşir.</p>
+    <!-- 5. BİLGİLENDİRME -->
+    <div class="sh">Bilgilendirme ve Koruyucu Hükümler</div>
+    <div class="sc">
+      <ol class="bilgi-list">
+        <li><span class="bnum">1.</span><span>Bu belgede yer alan tutar, oran, masraf ve vade bilgileri ön değerlendirme niteliğinde olup; nihai onay ilgili banka veya finans kuruluşunun sistem, skor, ekspertiz ve evrak incelemesi sonucunda kesinleşir.</span></li>
+        <li><span class="bnum">2.</span><span>KREDİZMİR, finansman sürecinde danışmanlık, bilgilendirme ve organizasyon desteği sunmakta olup; kredi tahsisi, nihai faiz oranı, kesin ödeme planı ve kullandırım şartları ilgili finans kuruluşunun onayına tabidir.</span></li>
+        <li><span class="bnum">3.</span><span>Araç durumu, kasko değeri, ekspertiz sonucu, müşteri kredi profili, yasal kesintiler ve güncel finansman politikalarına bağlı olarak bu belgede yer alan verilerde değişiklik oluşabilir; KREDİZMİR bu değişikliklerden kaynaklı nihai kurum kararından sorumlu tutulamaz.</span></li>
+      </ol>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="doc-foot">
+      <p>Bu belge müşteri bilgilendirme ve ön değerlendirme amaçlı düzenlenmiştir.</p>
+      <p>Kesin onay, ilgili kurum değerlendirmesi ve evrak incelemesi sonrası netleşir.</p>
+    </div>
   </div>
 </div>
 
 <script>
-// Sabit gider kalemleri toplamı (Aktif Bank hariç)
-var SABIT_GIDER = 6250 + 6000 + 3000 + 4000 + 3000 + 4000 + 6000; // 32.250
+var SABIT = 32250;
 
-function parseTL(str) {
-  if (!str) return 0;
-  // "23.382 TL" → 23382
-  return parseInt(str.replace(/[^\d]/g, '')) || 0;
+function parseTL(v){
+  return parseInt((v||'').replace(/[^\d]/g,''))||0;
+}
+function formatTL(n){
+  return n.toLocaleString('tr-TR')+' TL';
+}
+function fmtInput(el){
+  var n=parseTL(el.value);
+  if(n>0) el.value=n.toLocaleString('tr-TR');
+}
+function calcToplam(){
+  var aktif=parseTL(document.getElementById('f-aktif').value);
+  var toplam=SABIT+aktif;
+  document.getElementById('prev-aktif').textContent=formatTL(aktif);
+  document.getElementById('prev-toplam').textContent=formatTL(toplam);
 }
 
-function formatTL(num) {
-  return num.toLocaleString('tr-TR') + ' TL';
+// Bugünün tarihi
+(function(){
+  var d=new Date();
+  var dd=String(d.getDate()).padStart(2,'0');
+  var mm=String(d.getMonth()+1).padStart(2,'0');
+  var yy=d.getFullYear();
+  document.getElementById('f-tarih').value=dd+'/'+mm+'/'+yy;
+})();
+
+function olustur(){
+  var ad=document.getElementById('f-ad').value.trim();
+  var kredi=document.getElementById('f-kredi').value.trim();
+  if(!ad){
+    document.getElementById('f-ad').focus();
+    document.getElementById('f-ad').style.borderColor='#e05c5c';
+    setTimeout(function(){document.getElementById('f-ad').style.borderColor='';},1500);
+    return;
+  }
+  if(!kredi){
+    document.getElementById('f-kredi').focus();
+    document.getElementById('f-kredi').style.borderColor='#e05c5c';
+    setTimeout(function(){document.getElementById('f-kredi').style.borderColor='';},1500);
+    return;
+  }
+
+  var aktif=parseTL(document.getElementById('f-aktif').value);
+  var toplam=SABIT+aktif;
+  var vadeVal=document.getElementById('f-vade').value.trim();
+  var faizVal=document.getElementById('f-faiz').value.trim();
+
+  // Belgeyi doldur
+  document.getElementById('d-ad').textContent=ad.toUpperCase();
+  document.getElementById('d-tc').textContent=document.getElementById('f-tc').value.trim()||'— — — — — — — — — — —';
+  document.getElementById('d-arac').textContent=document.getElementById('f-arac').value.trim()||'................................';
+  document.getElementById('d-yil').textContent=document.getElementById('f-yil').value.trim()||'............ / ............';
+  document.getElementById('d-tarih').textContent=document.getElementById('f-tarih').value.trim();
+  document.getElementById('d-kredi').textContent=formatTL(parseTL(kredi));
+
+  var net=parseTL(document.getElementById('f-net').value);
+  document.getElementById('d-net').textContent=net>0?formatTL(net):'— — — — —';
+  document.getElementById('d-toplam-fin').textContent=formatTL(toplam);
+
+  var dVade=document.getElementById('d-vade');
+  dVade.textContent=vadeVal?vadeVal+' Ay':'........';
+  dVade.className='fv'+(vadeVal?'':' dim');
+
+  var dFaiz=document.getElementById('d-faiz');
+  dFaiz.textContent=faizVal?faizVal:'% ......';
+  dFaiz.className='fv'+(faizVal?'':' dim');
+
+  document.getElementById('d-aktif').textContent=aktif>0?formatTL(aktif):'— — —';
+  document.getElementById('d-toplam').textContent=formatTL(toplam);
+
+  // Geçiş
+  document.getElementById('ekran1').style.display='none';
+  document.getElementById('ekran2').style.display='block';
+  window.scrollTo(0,0);
 }
 
-function fmtFin(el) {
-  var raw = parseTL(el.value);
-  if (raw > 0) el.value = formatTL(raw);
+function duzelt(){
+  document.getElementById('ekran2').style.display='none';
+  document.getElementById('ekran1').style.display='block';
+  window.scrollTo(0,0);
 }
-
-function updateToplam() {
-  var aktif = parseTL(document.getElementById('aktif-amt').value);
-  var toplam = SABIT_GIDER + aktif;
-  document.getElementById('toplam-gider').textContent = formatTL(toplam);
-  document.getElementById('tahmini-toplam').value = formatTL(toplam);
-}
-
-// İlk yüklemede toplamı hesapla
-updateToplam();
 </script>
 </body>
 </html>

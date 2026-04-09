@@ -2,7 +2,7 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "claude/create-document-panel-Z5a6e"]
   workflow_dispatch:
 
 permissions:

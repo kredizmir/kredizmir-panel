@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>KREDİZMİR İlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --bg:#060d18;
+  --card:#0b1525;
+  --border:#1a2e45;
+  --accent:#F5C518;
+  --accent-dim:rgba(245,197,24,0.15);
+  --text:#eef2f7;
+  --muted:#5a8aaa;
+  --input-bg:#0d1e30;
+  --radius:14px;
+}
+
+html,body{
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Oswald',sans-serif;
+  overscroll-behavior:none;
+}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#0d1f38,#0f2a50);
+  border-bottom:2px solid var(--accent);
+  padding:14px 16px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+  flex-shrink:0;
+}
+.header-brand{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:22px;
+  letter-spacing:3px;color:var(--accent);
+}
+.header-sub{
+  font-size:9px;color:var(--muted);
+  letter-spacing:2px;margin-top:1px;
+}
+.back-btn{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  color:#aac;padding:8px 14px;
+  border-radius:8px;cursor:pointer;
+  font-family:'Oswald',sans-serif;
+  font-size:13px;letter-spacing:1px;
+}
+
+/* ── FORM BODY ── */
+.form-body{
+  flex:1;
+  padding:14px 14px 120px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-width:560px;
+  width:100%;
+  margin:0 auto;
+}
+
+/* ── PHOTO ZONE ── */
+#photo-drop-zone{
+  background:var(--card);
+  border:2px dashed #2a5a9a;
+  border-radius:var(--radius);
+  padding:20px 14px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  min-height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#photo-drop-zone:active{border-color:var(--accent);background:#0d2035;}
+#photo-drop-zone.has-photo{border-style:solid;border-color:#2a6a3a;padding:8px;}
+#photo-thumb{width:100%;border-radius:10px;max-height:180px;object-fit:cover;display:block;}
+.photo-ph-icon{font-size:38px;margin-bottom:8px;}
+.photo-ph-txt{
+  color:#4a9add;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:15px;letter-spacing:1px;
+}
+.photo-ph-sub{color:#3a5a7a;font-size:11px;margin-top:4px;font-family:Arial,sans-serif;}
+
+/* ── CARD ── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+}
+
+/* ── FIELD ── */
+.field{display:flex;flex-direction:column;gap:5px;}
+.field+.field{margin-top:10px;}
+
+.qlabel{
+  font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);font-family:'Oswald',sans-serif;
+}
+.qlabel em{
+  color:var(--accent);font-style:normal;
+  font-size:8px;margin-left:6px;
+}
+
+.qinput{
+  width:100%;
+  background:var(--input-bg);
+  border:1.5px solid var(--border);
+  color:var(--text);
+  padding:13px 14px;
+  border-radius:10px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;font-weight:700;
+  outline:none;
+  -webkit-appearance:none;appearance:none;
+  transition:border-color .2s;
+}
+.qinput:focus{border-color:var(--accent);}
+.qinput-price{
+  font-size:22px;color:var(--accent);
+  border-color:rgba(245,197,24,0.35);
+  padding:14px;letter-spacing:.5px;
+}
+
+select.qinput{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C518' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:36px;
+}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* ── THEME CHIPS ── */
+.theme-chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.theme-chip{
+  border-radius:10px;padding:10px 4px;
+  text-align:center;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:12px;letter-spacing:1px;
+  color:rgba(255,255,255,0.5);
+  border:2px solid transparent;
+  transition:all .2s;
+  display:flex;align-items:center;
+  justify-content:center;gap:5px;
+}
+.theme-chip.active{border-color:var(--accent);color:#fff;box-shadow:0 0 0 3px var(--accent-dim);}
+.tc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ── TOGGLE ROW ── */
+.toggle-row{
+  display:flex;align-items:center;
+  justify-content:space-between;padding:6px 0;
+}
+.toggle-row label:first-child{
+  font-size:13px;color:var(--muted);
+  font-family:'Oswald',sans-serif;
+}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;inset:0;
+  background:#1c2a3f;border-radius:99px;
+  cursor:pointer;transition:background .25s;
+}
+.toggle-slider::before{
+  content:'';position:absolute;
+  width:16px;height:16px;left:3px;top:3px;
+  background:#4a6a8a;border-radius:50%;
+  transition:all .25s;
+}
+.toggle input:checked+.toggle-slider{background:var(--accent);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#000;}
+
+/* ── ADV TOGGLE ── */
+.adv-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;
+}
+.adv-toggle span:first-child{
+  color:var(--muted);font-size:11px;
+  font-family:'Oswald',sans-serif;letter-spacing:1px;
+}
+
+/* ── LOGO UPLOAD ── */
+.upload-btn{
+  width:100%;
+  background:#0a1e35;
+  border:2px dashed #1e4a7a;
+  color:#4a9add;padding:11px;
+  border-radius:8px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:13px;
+  letter-spacing:1px;text-transform:uppercase;
+  transition:all .2s;text-align:center;
+  display:flex;align-items:center;
+  justify-content:center;gap:6px;
+}
+.upload-btn.has-file{border-color:#2a6a2a;color:#6add6a;border-style:solid;}
+
+/* ── STICKY FOOTER ── */
+.form-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,#060d18 30%);
+  padding:20px 14px 24px;
+  z-index:20;
+}
+.btn-generate{
+  width:100%;max-width:560px;margin:0 auto;display:block;
+  background:linear-gradient(135deg,#F5C518,#e6a800);
+  color:#000;border:none;padding:18px;
+  border-radius:14px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:18px;
+  letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(245,197,24,0.35);
+  transition:all .15s;
+}
+.btn-generate:active{transform:scale(0.98);box-shadow:0 3px 12px rgba(245,197,24,0.25);}
+
+/* ── RESULT SCREEN ── */
+#screen-result .form-body{padding:14px 14px 30px;align-items:center;}
+
+.result-img-wrap{
+  width:100%;max-width:520px;
+  border:3px solid var(--accent);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 12px 50px rgba(0,0,0,0.8);
+}
+#result-img{width:100%;display:block;}
+
+.save-hint{
+  background:#0d2210;
+  border:1px solid #2a5a2a;
+  border-radius:10px;
+  padding:14px 16px;
+  text-align:center;
+  max-width:520px;width:100%;
+}
+.save-hint-title{color:#6ddd6d;font-weight:700;font-size:14px;margin-bottom:4px;}
+.save-hint-sub{color:#4a8a4a;font-size:12px;font-family:Arial,sans-serif;line-height:1.6;}
+
+canvas{display:none;}
+
+/* Sahibinden buton */
+#sahBtn:hover:not(:disabled){background:linear-gradient(135deg,#1a5dbf,#2a7adf);}
+#sahBtn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ── ŞABLON BUTONLARI ── */
+.tpl-btn {
+  background: #0d1e30;
+  border: 1.5px solid #1e3a5c;
+  color: #7aaadd;
+  padding: 10px 6px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .5px;
+  transition: all .18s;
+  text-align: center;
+  line-height: 1.3;
+}
+.tpl-btn:active, .tpl-btn.tpl-active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(0.97);
+}
+
+/* Sahibinden sekmeler */
+.sah-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 8px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .5px;
+  transition: all .2s;
+}
+.sah-tab.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(245,197,24,0.25);
+}
+</style>
+</head>
+<body>
+
+<!-- ════ EKRAN 1: FORM ════ -->
+<div class="screen active" id="screen-form">
+
+  <div class="header">
+    <div>
+      <div class="header-brand">KREDİZMİR</div>
+      <div class="header-sub">TAKSİTLE ARABA SAHİBİ</div>
+    </div>
+  </div>
+
+  <div class="form-body">
+
+    <!-- OTOMATİK DOLDUR -->
+    <div class="card" id="sah-card">
+
+      <!-- Sekme başlıkları -->
+      <div style="display:flex;gap:0;margin-bottom:12px;background:#060e1a;border-radius:8px;padding:3px;">
+        <button class="sah-tab active" id="tab-text" onclick="switchTab('text')">
+          📋 Metin Yapıştır
+        </button>
+        <button class="sah-tab" id="tab-link" onclick="switchTab('link')">
+          🔗 Link ile Çek
+        </button>
+      </div>
+
+      <!-- Metin sekmesi -->
+      <div id="pane-text">
+        <label class="qlabel">Sahibinden sayfasından metni kopyala → buraya yapıştır</label>
+        <textarea id="pasteText" class="qinput"
+          placeholder="Sahibinden ilanını aç → tüm metni seç (Ctrl+A veya uzun bas → Tümünü Seç) → kopyala → buraya yapıştır"
+          style="height:100px;resize:vertical;font-size:12px;font-weight:600;line-height:1.5;
+                 font-family:Arial,sans-serif;margin-top:6px;"></textarea>
+        <button onclick="parseText()"
+          style="width:100%;margin-top:8px;background:linear-gradient(135deg,#145a14,#1e8a1e);
+                 border:1.5px solid #2ab82a;color:#fff;padding:12px;border-radius:10px;
+                 cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+                 font-size:15px;letter-spacing:1.5px;">
+          ✅ BİLGİLERİ OKUDU, DOLDUR
+        </button>
+      </div>
+
+      <!-- Link sekmesi -->
+      <div id="pane-link" style="display:none;">
+        <label class="qlabel">Sahibinden Linki <em>— Yapıştır, otomatik doldursun</em></label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="text" id="sahLink" class="qinput"
+            placeholder="https://www.sahibinden.com/ilan/..."
+            style="flex:1;font-size:13px;font-weight:600;">
+          <button id="sahBtn" onclick="fetchWithAI()"
+            style="flex-shrink:0;background:linear-gradient(135deg,#0f3d80,#1a5dbf);
+                   border:1.5px solid #2a6adf;color:#fff;padding:0 16px;
+                   border-radius:10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+                   font-weight:700;font-size:14px;letter-spacing:1px;white-space:nowrap;">
+            <span id="sahBtnTxt">⚡ Çek</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="sahStatus" style="display:none;margin-top:8px;padding:8px 10px;border-radius:8px;
+           font-family:Arial,sans-serif;font-size:12px;line-height:1.5;"></div>
+    </div>
+
+    <!-- HIZLI ŞABLONLAR -->
+    <div class="card" id="templates-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <label class="qlabel" style="margin:0;">⚡ HIZLI ŞABLON</label>
+        <span style="color:var(--muted);font-size:10px;font-family:Arial,sans-serif;">1 dokunuşta doldur</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;" id="tpl-grid">
+        <button class="tpl-btn" data-yakit="Dizel"     data-vites="Otomatik">⛽ Dizel Otomatik</button>
+        <button class="tpl-btn" data-yakit="Dizel"     data-vites="Manuel">⛽ Dizel Manuel</button>
+        <button class="tpl-btn" data-yakit="Benzin"    data-vites="Otomatik">🟡 Benzin Otomatik</button>
+        <button class="tpl-btn" data-yakit="Benzin"    data-vites="Manuel">🟡 Benzin Manuel</button>
+        <button class="tpl-btn" data-yakit="LPG"       data-vites="Manuel">🔵 LPG Manuel</button>
+        <button class="tpl-btn" data-yakit="Benzin &amp; LPG" data-vites="Manuel">🔵 Benzin+LPG</button>
+        <button class="tpl-btn" data-yakit="Hibrit"    data-vites="Otomatik">🌿 Hibrit Otomatik</button>
+        <button class="tpl-btn" data-yakit="Elektrik"  data-vites="Otomatik">⚡ Elektrik</button>
+      </div>
+    </div>
+
+    <!-- FOTOĞRAF -->
+    <div id="photo-drop-zone" onclick="document.getElementById('carFile').click()">
+      <div id="photo-placeholder">
+        <div class="photo-ph-icon">📷</div>
+        <div class="photo-ph-txt">ARAÇ FOTOĞRAFI EKLE</div>
+        <div class="photo-ph-sub">Dokunarak seç</div>
+      </div>
+      <div id="photo-preview" style="display:none;width:100%;">
+        <img id="photo-thumb" alt="araç">
+        <div style="text-align:center;color:#6add6a;font-size:11px;
+                    font-family:Arial,sans-serif;margin-top:6px;">
+          ✓ Fotoğraf seçildi — değiştirmek için dokun
+        </div>
+      </div>
+    </div>
+    <input type="file" id="carFile" accept="image/*" style="display:none">
+
+    <!-- İÇ / EKSPERTİZ FOTOĞRAFI — sadece Vergi Özel temasında görünür -->
+    <div id="inner-photo-card" class="card" style="display:none;">
+      <label class="qlabel">📷 İç / Ekspertiz Fotoğrafı</label>
+      <div id="inner-drop-zone" onclick="document.getElementById('innerFile').click()"
+           style="border:2px dashed rgba(255,255,255,0.25);border-radius:12px;
+                  padding:20px;text-align:center;cursor:pointer;margin-top:8px;
+                  background:rgba(255,255,255,0.04);">
+        <div id="inner-placeholder">
+          <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;
+                      font-size:14px;letter-spacing:1px;color:var(--muted);">İÇ / EKSPERTİZ FOTOĞRAFI EKLE</div>
+          <div style="font-size:11px;color:var(--muted);font-family:Arial,sans-serif;
+                      margin-top:4px;">Dokunarak seç</div>
+        </div>
+        <div id="inner-preview" style="display:none;">
+          <img id="inner-thumb" alt="iç" style="max-width:100%;max-height:140px;
+               border-radius:8px;object-fit:cover;">
+          <div style="text-align:center;color:#6add6a;font-size:11px;
+                      font-family:Arial,sans-serif;margin-top:6px;">
+            ✓ İç fotoğraf seçildi — değiştirmek için dokun
+          </div>
+        </div>
+      </div>
+      <input type="file" id="innerFile" accept="image/*" style="display:none">
+    </div>
+
+    <!-- MODEL -->
+    <div class="card">
+      <div class="field">
+        <label class="qlabel">🚗 Marka / Model / Yıl</label>
+        <input type="text" id="model" class="qinput"
+          value="HYUNDAİ ACCENT BLUE 1.6 CRDİ 2015"
+          placeholder="örn: OPEL ASTRA 1.6 EDITION 2013">
+      </div>
+    </div>
+
+    <!-- KM + YAKIT + VİTES -->
+    <div class="card">
+      <div class="field">
+        <label class="qlabel">📍 Kilometre</label>
+        <input type="text" id="km" class="qinput" value="198.000 KM" placeholder="örn: 95.000 KM">
+      </div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label class="qlabel">⛽ Yakıt</label>
+          <select id="yakit" class="qinput">
+            <option>Dizel</option>
+            <option>Benzin</option>
+            <option>LPG</option>
+            <option>Hibrit</option>
+            <option>Elektrik</option>
+            <option>Benzin &amp; LPG</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="qlabel">⚙️ Vites</label>
+          <select id="vites" class="qinput">
+            <option>Otomatik</option>
+            <option>Manuel</option>
+            <option>Yarı Otomatik</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- FİYAT -->
+    <div class="card">
+      <div class="field">
+        <label class="qlabel">💰 Peşin Fiyat <em>→ %30 PEŞİNAT OTOMATİK</em></label>
+        <input type="text" id="pesin" class="qinput qinput-price"
+          value="775.000" placeholder="örn: 645000"
+          inputmode="numeric">
+        <input type="text" id="pesinat" style="display:none" readonly tabindex="-1">
+      </div>
+    </div>
+
+    <!-- TAKSİT — sadece Vergi Özel temasında görünür -->
+    <div id="taksit-card" class="card" style="display:none;">
+      <div class="field">
+        <label class="qlabel">📅 Aylık Taksit Tutarı</label>
+        <input type="text" id="taksit" class="qinput"
+          placeholder="örn: 42.500"
+          inputmode="numeric"
+          style="font-size:20px;font-weight:700;letter-spacing:1px;">
+      </div>
+    </div>
+
+    <!-- TEMA -->
+    <div class="card">
+      <div class="field">
+        <label class="qlabel">🎨 Tema</label>
+        <div class="theme-chips" id="themeGroup" style="grid-template-columns:1fr 1fr;">
+          <div class="theme-chip active" data-val="blue"
+               style="background:linear-gradient(135deg,#0450B8,#1a70e0);">
+            <div class="tc-dot" style="background:#F5C518;"></div>Mavi
+          </div>
+          <div class="theme-chip" data-val="blackgold"
+               style="background:linear-gradient(135deg,#111,#2a2a2a);">
+            <div class="tc-dot" style="background:#F5C518;"></div>Siyah
+          </div>
+          <div class="theme-chip" data-val="navy"
+               style="background:linear-gradient(135deg,#0a1628,#1a3060);">
+            <div class="tc-dot" style="background:#F5C518;"></div>Lacivert
+          </div>
+          <div class="theme-chip" data-val="vergi"
+               style="background:linear-gradient(135deg,#0A1A2F,#1a3060);border:1px solid rgba(255,255,255,0.25);">
+            <div class="tc-dot" style="background:#FFFFFF;"></div>Vergi Özel
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GELİŞMİŞ AYARLAR -->
+    <div class="adv-toggle" onclick="toggleAdv()">
+      <span>⚙️ GELİŞMİŞ AYARLAR</span>
+      <span id="adv-arrow">▼</span>
+    </div>
+    <div id="adv-panel" style="display:none;">
+      <div class="card" style="border-top-left-radius:0;border-top-right-radius:0;border-top:none;">
+        <div class="toggle-row">
+          <label>Bilgi Barı</label>
+          <label class="toggle"><input type="checkbox" id="showBar" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>Sarı Çerçeve</label>
+          <label class="toggle"><input type="checkbox" id="showFrame" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="field" style="margin-top:8px;">
+          <label class="qlabel">Logo Pozisyonu</label>
+          <div style="display:flex;gap:6px;" id="logoPosGroup">
+            <div class="theme-chip active" data-val="topright"
+                 style="flex:1;background:#0f1e30;font-size:11px;">Sağ Üst</div>
+            <div class="theme-chip" data-val="topleft"
+                 style="flex:1;background:#0f1e30;font-size:11px;">Sol Üst</div>
+            <div class="theme-chip" data-val="hidden"
+                 style="flex:1;background:#0f1e30;font-size:11px;">Gizle</div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:8px;">
+          <label class="qlabel">Fiyat Pozisyonu</label>
+          <select id="pricePos" class="qinput" style="font-size:13px;">
+            <option value="0">Varsayılan</option>
+            <option value="-30">Biraz Yukarı</option>
+            <option value="-60">Daha Yukarı</option>
+            <option value="30">Biraz Aşağı</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:8px;">
+          <label class="qlabel">Logo</label>
+          <button class="upload-btn" id="logoBtn"
+            onclick="document.getElementById('logoFile').click()">
+            <span>🔵</span><span>Logo Yükle</span>
+          </button>
+          <input type="file" id="logoFile" accept="image/*" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <!-- BOŞLUK (sticky footer için) -->
+    <div style="height:10px;"></div>
+
+  </div><!-- /form-body -->
+
+  <div class="form-footer">
+    <button class="btn-generate" onclick="generateAndShow()">
+      ✨ İLAN GÖRSELİ OLUŞTUR
+    </button>
+  </div>
+
+</div><!-- /screen-form -->
+
+
+<!-- ════ EKRAN 2: SONUÇ ════ -->
+<div class="screen" id="screen-result">
+
+  <div class="header">
+    <div>
+      <div class="header-brand">KREDİZMİR</div>
+      <div class="header-sub">HAZIRLANAN İLAN</div>
+    </div>
+    <button class="back-btn" onclick="goBack()">← Düzenle</button>
+  </div>
+
+  <div class="form-body">
+
+    <div class="result-img-wrap">
+      <img id="result-img" alt="KREDİZMİR İlan">
+    </div>
+
+    <div class="save-hint">
+      <div class="save-hint-title">📲 Görseli kaydetmek için:</div>
+      <div class="save-hint-sub">
+        Görsele <strong>uzun bas</strong> → <strong>"Fotoğrafı Kaydet"</strong> veya
+        <strong>"Resmi Kaydet"</strong> seç
+      </div>
+    </div>
+
+    <button onclick="goBack()" style="
+      width:100%;max-width:520px;
+      background:var(--card);border:1px solid var(--border);
+      color:var(--muted);padding:14px;border-radius:12px;
+      font-family:'Oswald',sans-serif;font-size:14px;
+      letter-spacing:1px;cursor:pointer;">
+      ← Yeni İlan Oluştur
+    </button>
+
+  </div>
+
+</div><!-- /screen-result -->
+
+<!-- Hidden canvas -->
+<canvas id="canvas" width="1080" height="1080"></canvas>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+const S = {
+  carImg:   null,
+  innerImg: null,
+  taksit:   '',
+  logoImg:  null,
+  theme:    'blue',
+  logoPos:  'topright',
+  modelPos: 'bottom',
+  showBar:  true,
+  showFrame: true,
+  priceOffset: 0,
+};
+
+/* ══════════════════════════════════════════════════════
+   THEMES
+══════════════════════════════════════════════════════ */
+const THEMES = {
+  blue: {
+    bg:       '#0450B8',
+    bar:      '#9AAEC8',
+    barText:  '#FFFFFF',
+    barLine:  '#0348a4',
+    dot:      '#F5C518',
+    frame:    '#F5C518',
+    logoRing: '#C0D4E8',
+    logoInner:'#FFFFFF',
+    overlayFrom: 'rgba(2,20,60,0)',
+    overlayTo:   'rgba(1,12,40,0.92)',
+    modelText:'#FFFFFF',
+    priceWhite:'#FFFFFF',
+    priceYellow:'#F4EB4D',
+    shadowColor:'rgba(0,10,40,0.7)',
+  },
+  blackgold: {
+    bg:       '#111111',
+    bar:      '#2a2a2a',
+    barText:  '#F5C518',
+    barLine:  '#000000',
+    dot:      '#F5C518',
+    frame:    '#F5C518',
+    logoRing: '#3a3a3a',
+    logoInner:'#1a1a1a',
+    overlayFrom: 'rgba(0,0,0,0)',
+    overlayTo:   'rgba(0,0,0,0.9)',
+    modelText:'#F5C518',
+    priceWhite:'#FFFFFF',
+    priceYellow:'#F5C518',
+    shadowColor:'rgba(0,0,0,0.85)',
+  },
+  navy: {
+    bg:       '#0a1628',
+    bar:      '#152340',
+    barText:  '#FFFFFF',
+    barLine:  '#081020',
+    dot:      '#F5C518',
+    frame:    '#F5C518',
+    logoRing: '#1e3258',
+    logoInner:'#FFFFFF',
+    overlayFrom: 'rgba(5,10,25,0)',
+    overlayTo:   'rgba(2,6,18,0.94)',
+    modelText:'#FFFFFF',
+    priceWhite:'#FFFFFF',
+    priceYellow:'#F4EB4D',
+    shadowColor:'rgba(0,5,20,0.75)',
+  },
+  vergi: {
+    bg:          '#0A1A2F',
+    headerBg:    '#0D2040',
+    bottomBg:    '#0D2040',
+    border:      'rgba(255,255,255,0.85)',
+    title:       '#FFFFFF',
+    titleSub:    'rgba(255,255,255,0.65)',
+    pesinat:     '#FFFFFF',
+    model:       '#FFFFFF',
+    km:          'rgba(255,255,255,0.72)',
+    taksit:      '#FFFFFF',
+    taksitLabel: 'rgba(255,255,255,0.65)',
+    logoRing:    '#1e3a5f',
+    logoInner:   '#FFFFFF',
+    divider:     'rgba(255,255,255,0.25)',
+  },
+};
+
+/* ══════════════════════════════════════════════════════
+   CANVAS & CTX
+══════════════════════════════════════════════════════ */
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+const W = 1080, H = 1080;
+
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+function roundRect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);   ctx.quadraticCurveTo(x + w, y,     x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);   ctx.quadraticCurveTo(x, y + h,     x, y + h - r);
+  ctx.lineTo(x, y + r);       ctx.quadraticCurveTo(x, y,         x + r, y);
+  ctx.closePath();
+}
+
+// Auto-fit font size to a max width
+function fitFont(ctx, text, maxW, baseSize, fontStr) {
+  let size = baseSize;
+  while (size > 18) {
+    ctx.font = fontStr(size);
+    if (ctx.measureText(text).width <= maxW) break;
+    size -= 2;
+  }
+  return size;
+}
+
+// Draw text with shadow
+function shadowText(ctx, text, x, y, color, shadow) {
+  ctx.save();
+  if (shadow) {
+    ctx.shadowColor   = shadow.color || 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur    = shadow.blur  || 12;
+    ctx.shadowOffsetY = shadow.oy    || 4;
+  }
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+/* ══════════════════════════════════════════════════════
+   DRAW FUNCTIONS
+══════════════════════════════════════════════════════ */
+
+function drawBackground(T) {
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawInfoBar(T) {
+  if (!S.showBar) return;
+
+  // Exact positions: bar y=45 h=92
+  const barY = 47, barH = 122;
+
+  ctx.fillStyle = T.bar;
+  ctx.fillRect(0, barY, W, barH);
+
+  ctx.fillStyle = T.barLine;
+  ctx.fillRect(0, barY + barH - 4, W, 4);
+
+  const km    = $('km').value    || '198.000 KM';
+  const yakit = $('yakit').value || 'Dizel';
+  const vites = $('vites').value || 'Otomatik';
+  const items = [km, yakit, vites];
+
+  // Logo is at x=876, so reserve 204px on right (1080-876)
+  const rightReserve = S.logoPos === 'topright' ? 194 : 30;
+  const leftReserve  = S.logoPos === 'topleft'  ? 204 : 30;
+  const usableW = W - rightReserve - leftReserve;
+  const colW    = usableW / 3;
+  const barMid  = barY + barH / 2;
+  const dotR    = 20;
+  const maxColW = colW - 10;
+
+  items.forEach((txt, i) => {
+    const colCx = leftReserve + colW * i + colW * 0.5;
+
+    let fontSize = 56;
+    while (fontSize > 26) {
+      ctx.font = `700 ${fontSize}px 'Barlow Condensed', sans-serif`;
+      if (dotR * 2 + 12 + ctx.measureText(txt).width <= maxColW) break;
+      fontSize -= 2;
+    }
+
+    const tw     = ctx.measureText(txt).width;
+    const totalW = dotR * 2 + 12 + tw;
+    const startX = colCx - totalW / 2;
+
+    // Dot
+    ctx.beginPath();
+    ctx.arc(startX + dotR, barMid, dotR, 0, Math.PI * 2);
+    ctx.fillStyle = T.dot;
+    ctx.fill();
+
+    // Shine
+    ctx.beginPath();
+    ctx.arc(startX + dotR - 4, barMid - 4, 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fill();
+
+    // Text
+    ctx.font = `700 ${fontSize}px 'Barlow Condensed', sans-serif`;
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    shadowText(ctx, txt, startX + dotR * 2 + 12, barMid, T.barText, { color: 'rgba(0,0,0,0.3)', blur: 6, oy: 2 });
+  });
+}
+
+function drawLogo(T) {
+  if (S.logoPos === 'hidden') return;
+
+  // Exact: x=876 y=12 w=190 h=190  → cx=971 cy=107 r=95
+  const isLeft  = S.logoPos === 'topleft';
+  const logoCx  = isLeft ? 107 : 979;
+  const logoCy  = 106;
+  const outerR  = 92;
+  const innerR  = 82;
+
+  // Outer ring
+  ctx.beginPath();
+  ctx.arc(logoCx, logoCy, outerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoRing;
+  ctx.fill();
+
+  // Inner white circle with shadow
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur  = 14;
+  ctx.beginPath();
+  ctx.arc(logoCx, logoCy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoInner;
+  ctx.fill();
+  ctx.restore();
+
+  if (S.logoImg) {
+    const ls = innerR * 2 - 4;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(logoCx, logoCy, innerR - 1, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(S.logoImg, logoCx - ls / 2, logoCy - ls / 2, ls, ls);
+    ctx.restore();
+  } else {
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    const cx = logoCx, cy = logoCy - 10, s = 24;
+    ctx.fillStyle = '#0450B8';
+    ctx.beginPath();
+    ctx.moveTo(cx - s*1.1, cy + s*0.4);
+    ctx.lineTo(cx - s*0.9, cy - s*0.2);
+    ctx.lineTo(cx - s*0.3, cy - s*0.9);
+    ctx.lineTo(cx + s*0.3, cy - s*0.9);
+    ctx.lineTo(cx + s*0.9, cy - s*0.2);
+    ctx.lineTo(cx + s*1.1, cy + s*0.4);
+    ctx.closePath();
+    ctx.fill();
+    [cx - s*0.55, cx + s*0.55].forEach(wx => {
+      ctx.beginPath(); ctx.arc(wx, cy + s*0.5, s*0.38, 0, Math.PI*2);
+      ctx.fillStyle = '#2a2a2a'; ctx.fill();
+      ctx.beginPath(); ctx.arc(wx, cy + s*0.5, s*0.18, 0, Math.PI*2);
+      ctx.fillStyle = '#d0d0d0'; ctx.fill();
+    });
+    ctx.font = 'bold 14px Oswald, sans-serif';
+    ctx.fillStyle = '#0450B8';
+    ctx.textBaseline = 'top';
+    ctx.fillText('KREDİZMİR', logoCx, logoCy + 24);
+    ctx.font = '9px Oswald, sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText('TAKSİTLE ARABA SAHİBİ', logoCx, logoCy + 41);
+  }
+}
+
+function drawPhotoFrame(T) {
+  // Exact positions
+  const fX = 90,  fY = 234, fW = 920, fH = 638;
+  const iX = 107, iY = 251, iW = 886, iH = 604;
+  const cR = 8;
+
+  if (S.showFrame) {
+    ctx.save();
+    ctx.shadowColor   = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur    = 20;
+    ctx.shadowOffsetY = 6;
+    roundRect(ctx, fX, fY, fW, fH, cR + 2);
+    ctx.fillStyle = T.frame;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Inner image clip
+  ctx.save();
+  roundRect(ctx, iX, iY, iW, iH, S.showFrame ? cR : 4);
+  ctx.clip();
+
+  if (S.carImg) {
+    const sc = Math.max(iW / S.carImg.width, iH / S.carImg.height);
+    const dw = S.carImg.width * sc;
+    const dh = S.carImg.height * sc;
+    ctx.drawImage(S.carImg, iX + (iW - dw) / 2, iY + (iH - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = '#7a9ab5';
+    ctx.fillRect(iX, iY, iW, iH);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = 'bold 28px Oswald, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillText('Araç Fotoğrafı Yükleyin', iX + iW / 2, iY + iH / 2 - 16);
+    ctx.font = '14px Oswald, sans-serif';
+    ctx.fillText('Soldaki panelden veya sürükle-bırak', iX + iW / 2, iY + iH / 2 + 16);
+  }
+  ctx.restore();
+
+  // Model text overlay (bottom of inner image)
+  drawModelText(T, iX, iY, iW, iH, cR);
+
+  return { fX, fY, fW, fH };
+}
+
+function drawModelText(T, iX, iY, iW, iH, cR) {
+  const model   = ($('model').value || 'MODEL ADI YIL').toUpperCase();
+  const titleCY = 820;
+  const maxW    = iW - 60;
+  const fontFn  = (sz) => `400 ${sz}px 'Abril Fatface', Georgia, serif`;
+  const size    = fitFont(ctx, model, maxW, 46, fontFn);
+
+  ctx.font         = fontFn(size);
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  // Gölgesiz, saf beyaz yazı
+  ctx.fillStyle = T.modelText;
+  ctx.fillText(model, iX + iW / 2, titleCY);
+}
+
+function drawPrices(T) {
+  const offset  = parseInt($('pricePos').value) || 0;
+
+  // Peşin fiyattan %30 hesapla → peşinat
+  const pesinRaw = $('pesin').value || '';
+  const pesinNum = parseFloat(pesinRaw.replace(/[^0-9,]/g,'').replace(',','.'));
+  let pesinat;
+  if (!isNaN(pesinNum) && pesinNum > 0) {
+    const down = Math.round(pesinNum * 0.30);
+    // Türk formatı: 231.000
+    const downFmt = down.toLocaleString('tr-TR').replace(/,/g,'.');
+    pesinat = downFmt + ' PEŞİNAT';
+  } else {
+    pesinat = ($('pesinat').value || '0 PEŞİNAT').toUpperCase();
+  }
+  // PEŞİN: kullanıcı sayı girer, " PEŞİN" otomatik eklenir
+  let pesin;
+  if (!isNaN(pesinNum) && pesinNum > 0) {
+    const fmt = Math.round(pesinNum).toLocaleString('tr-TR').replace(/,/g,'.');
+    pesin = fmt + ' PEŞİN';
+  } else {
+    // Zaten tam yazılmışsa (eski format) olduğu gibi kullan
+    pesin = pesinRaw ? pesinRaw.toUpperCase() : '775.000 PEŞİN';
+  }
+
+  const maxW   = W - 80;
+  const fontFn = (sz) => `italic 900 ${sz}px 'Barlow Condensed', Impact, sans-serif`;
+
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+
+  // PEŞİNAT — center y = 924
+  const sz1 = fitFont(ctx, pesinat, maxW, 96, fontFn);
+  ctx.font  = fontFn(sz1);
+  shadowText(ctx, pesinat, W / 2, 924 + offset, T.priceWhite, { color: T.shadowColor, blur: 16, oy: 5 });
+
+  // PEŞİN — center y = 1016
+  const sz2 = fitFont(ctx, pesin, maxW, 102, fontFn);
+  ctx.font  = fontFn(sz2);
+  shadowText(ctx, pesin, W / 2, 1016 + offset, T.priceYellow, { color: T.shadowColor, blur: 16, oy: 5 });
+}
+
+/* ══════════════════════════════════════════════════════
+   VERGİ LEVHASI ÖZEL — LAYOUT
+══════════════════════════════════════════════════════ */
+
+function drawVergiPhoto(T, img, fx, fy, fw, fh, placeholder) {
+  const pad = 6, cr = 10;
+  const ix = fx + pad, iy = fy + pad, iw = fw - pad * 2, ih = fh - pad * 2;
+  ctx.save();
+  roundRect(ctx, ix, iy, iw, ih, cr);
+  ctx.clip();
+  if (img) {
+    const sc = Math.max(iw / img.width, ih / img.height);
+    const dw = img.width * sc, dh = img.height * sc;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, ix + (iw - dw) / 2, iy + (ih - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = '#0D2040';
+    ctx.fillRect(ix, iy, iw, ih);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = "600 20px 'Barlow Condensed', sans-serif";
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillText(placeholder, ix + iw / 2, iy + ih / 2);
+  }
+  ctx.restore();
+}
+
+function drawVergiLogo(T, cx, cy) {
+  const outerR = 68, innerR = 58;
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoRing;
+  ctx.fill();
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur  = 10;
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = T.logoInner;
+  ctx.fill();
+  ctx.restore();
+  if (S.logoImg) {
+    const ls = innerR * 2 - 4;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR - 1, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(S.logoImg, cx - ls / 2, cy - ls / 2, ls, ls);
+    ctx.restore();
+  } else {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 12px Oswald, sans-serif';
+    ctx.fillStyle = '#0450B8';
+    ctx.fillText('KREDİZMİR', cx, cy + 20);
+    ctx.font = '9px Oswald, sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText('TAKSİTLE ARABA', cx, cy + 36);
+  }
+}
+
+function drawVergiLayout(T) {
+  // 1. Arka plan
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Header bar (y=0 h=158)
+  ctx.fillStyle = T.headerBg;
+  ctx.fillRect(0, 0, W, 158);
+  // Alt çizgi (ince, soluk)
+  ctx.fillStyle = T.divider;
+  ctx.fillRect(0, 155, W, 1);
+
+  // 3. Logo (sol üst, cx=80 cy=79)
+  drawVergiLogo(T, 80, 79);
+
+  // 4. "VERGİ LEVHASI ÖZEL" etiketi
+  ctx.save();
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font         = "italic 700 36px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle    = T.titleSub;
+  ctx.fillText('VERGİ LEVHASI ÖZEL', 178, 55);
+  ctx.restore();
+
+  // 5. "0 PEŞİNAT" büyük (header sağ bölgesi)
+  ctx.save();
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  const pFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
+  const pSz = fitFont(ctx, '0 PEŞİNAT', 840, 112, pFn);
+  ctx.font         = pFn(pSz);
+  ctx.fillStyle    = T.pesinat;
+  ctx.shadowColor  = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur   = 14;
+  ctx.fillText('0 PEŞİNAT', 590, 107);
+  ctx.restore();
+
+  // 6. Ana fotoğraf (sol: x=15 y=163 w=695 h=640)
+  drawVergiPhoto(T, S.carImg, 15, 163, 695, 640, 'Ana Fotoğraf');
+
+  // 7. İç / ekspertiz fotoğrafı (sağ üst: x=725 y=163 w=340 h=305)
+  drawVergiPhoto(T, S.innerImg, 725, 163, 340, 305, 'İç / Ekspertiz');
+
+  // 8. Bilgi paneli — sağ alt (x=725 y=475 w=340 h=330)
+  const model = ($('model').value || 'MODEL ADI YIL').toUpperCase();
+  const km    = ($('km').value    || 'KM').toUpperCase();
+
+  // İnce divider
+  ctx.fillStyle = T.divider;
+  ctx.fillRect(725, 476, 340, 1);
+
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'top';
+  // Model (büyük italic)
+  const mFn = sz => `italic 800 ${sz}px 'Barlow Condensed', sans-serif`;
+  const mSz = fitFont(ctx, model, 315, 54, mFn);
+  ctx.font      = mFn(mSz);
+  ctx.fillStyle = T.model;
+  ctx.fillText(model, 895, 496);
+  // KM (daha küçük)
+  ctx.font      = "italic 700 34px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle = T.km;
+  ctx.fillText(km, 895, 496 + mSz + 12);
+
+  // 9. Alt bar (y=813 h=267)
+  ctx.fillStyle = T.bottomBg;
+  ctx.fillRect(0, 813, W, 267);
+  ctx.fillStyle = T.divider;
+  ctx.fillRect(0, 813, W, 1);
+
+  const taksitVal = (S.taksit || '').trim() || '---';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  // Küçük etiket
+  ctx.font      = "italic 600 30px 'Barlow Condensed', sans-serif";
+  ctx.fillStyle = T.taksitLabel;
+  ctx.fillText('AYLIK TAKSİT', W / 2, 852);
+  // Büyük tutar
+  const tFn = sz => `italic 900 ${sz}px 'Barlow Condensed', sans-serif`;
+  const tSz = fitFont(ctx, taksitVal + ' ₺', W - 80, 132, tFn);
+  ctx.font         = tFn(tSz);
+  ctx.fillStyle    = T.taksit;
+  ctx.shadowColor  = 'rgba(0,0,0,0.55)';
+  ctx.shadowBlur   = 18;
+  ctx.fillText(taksitVal + ' ₺', W / 2, 957);
+  ctx.shadowBlur = 0;
+
+  // 10. Watermark
+  ctx.save();
+  ctx.globalAlpha  = 0.07;
+  ctx.font         = '700 11px Oswald, sans-serif';
+  ctx.fillStyle    = '#ffffff';
+  ctx.textAlign    = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('kredizmir.com', W - 18, H - 12);
+  ctx.restore();
+}
+
+/* ══════════════════════════════════════════════════════
+   MAIN DRAW
+══════════════════════════════════════════════════════ */
+function draw() {
+  if (S.theme === 'vergi') { ctx.clearRect(0, 0, W, H); drawVergiLayout(THEMES.vergi); return; }
+  const T = THEMES[S.theme];
+  ctx.clearRect(0, 0, W, H);
+
+  // 1. Main blue background
+  drawBackground(T);
+
+  // 2. Top blue strip: y=0 h=45
+  ctx.fillStyle = T.bg;
+  ctx.fillRect(0, 0, W, 47);
+
+  // 3. Gray info bar: y=45 h=92
+  drawInfoBar(T);
+
+  // 4. Logo: x=876 y=12 w=190 h=190
+  drawLogo(T);
+
+  // 5. Yellow frame + inner image
+  drawPhotoFrame(T);
+
+  // 6. Prices: y=842 and y=940
+  drawPrices(T);
+
+  // Watermark
+  ctx.save();
+  ctx.globalAlpha = 0.07;
+  ctx.font = '700 11px Oswald, sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('kredizmir.com', W - 18, H - 12);
+  ctx.restore();
+}
+
+/* ══════════════════════════════════════════════════════
+   METIN PARSER — kopyala yapıştır
+══════════════════════════════════════════════════════ */
+
+function switchTab(tab) {
+  document.getElementById('pane-text').style.display = tab === 'text' ? 'block' : 'none';
+  document.getElementById('pane-link').style.display = tab === 'link' ? 'block' : 'none';
+  document.getElementById('tab-text').classList.toggle('active', tab === 'text');
+  document.getElementById('tab-link').classList.toggle('active', tab === 'link');
+}
+
+function parseText() {
+  const raw = (document.getElementById('pasteText').value || '').trim();
+  if (!raw || raw.length < 20) {
+    setSahStatus('error', 'Lütfen metin yapıştırın.');
+    return;
+  }
+
+  const G = id => document.getElementById(id);
+
+  /* Türkçe locale farkından bağımsız normalize (i→İ, ı→I) */
+  const txtNorm = raw.replace(/i/g,'İ').replace(/ı/g,'I').toUpperCase();
+  const textLow = raw.toLowerCase();
+
+  let foundYil = null, foundMarka = null, foundModel = null, foundMotor = null;
+  let kmVal = null, yakitFound = null, vitesFound = null, priceVal = null;
+  const filled = [];
+
+  /* ── YIL ── */
+  const yilM = raw.match(/\b(200[0-9]|201[0-9]|202[0-9])\b/);
+  if (yilM) foundYil = yilM[1];
+
+  /* ── KM — nokta/virgül/boşluk ayraçlı tüm formatlar ── */
+  const kmRx = [
+    /kilometre[:\s]+([\d.,\u00A0 ]+)/i,
+    /([\d.,\u00A0 ]+?)\s*km\b/i,
+  ];
+  for (const rx of kmRx) {
+    const m = raw.match(rx);
+    if (m) {
+      const num = m[1].replace(/[\s.,\u00A0]/g,'');
+      if (num && num.length >= 4) { kmVal = num; break; }
+    }
+  }
+
+  /* ── MARKA ── */
+  const MARKALAR = ['FİAT','FIAT','RENAULT','DACİA','DACIA','VOLKSWAGEN','VW','FORD','TOYOTA','HYUNDAİ','HYUNDAI','OPEL','CİTROEN','CITROEN'];
+  const MARKA_MAP = {'FIAT':'FİAT','DACIA':'DACİA','HYUNDAI':'HYUNDAİ','VW':'VOLKSWAGEN','CITROEN':'CİTROEN'};
+  for (const mk of MARKALAR) {
+    const mkN = mk.replace(/i/g,'İ').replace(/ı/g,'I').toUpperCase();
+    if (txtNorm.indexOf(mkN) !== -1) { foundMarka = MARKA_MAP[mk] || mk; break; }
+  }
+
+  /* ── MODEL ── */
+  const MODELLER = {
+    'FİAT':      ['Egea','Linea','Doblo','Fiorino','Punto','Bravo','Tipo','Panda'],
+    'RENAULT':   ['Clio','Megane','Symbol','Taliant','Fluence','Laguna','Kadjar','Captur','Scenic'],
+    'DACİA':     ['Sandero Stepway','Sandero','Duster','Logan','Lodgy','Dokker'],
+    'VOLKSWAGEN':['Polo','Golf','Passat','Jetta','Tiguan','Caddy','T-Roc'],
+    'FORD':      ['Tourneo Courier','Focus','Fiesta','Mondeo','Kuga','EcoSport','Fusion','C-Max'],
+    'TOYOTA':    ['Land Cruiser','Corolla','C-HR','Yaris','Auris','RAV4','Hilux','Camry'],
+    'HYUNDAİ':   ['Accent Blue','Santa Fe','Elantra','Tucson','Kona','i10','i20','i30'],
+    'OPEL':      ['Crossland','Insignia','Mokka','Vectra','Zafira','Corsa','Astra','Combo'],
+    'CİTROEN':   ['C-Elysée','Berlingo','Jumpy','C3','C4','C5'],
+  };
+  if (foundMarka && MODELLER[foundMarka]) {
+    let bestLen = 0;
+    for (const m of MODELLER[foundMarka]) {
+      const mN = m.replace(/i/g,'İ').replace(/ı/g,'I').toUpperCase();
+      if (txtNorm.indexOf(mN) !== -1 && mN.length > bestLen) {
+        foundModel = m; bestLen = mN.length;
+      }
+    }
+  }
+
+  /* ── MOTOR ── */
+  const motorM = raw.match(/\b(0\.9|1\.0|1\.2|1\.3|1\.4|1\.5|1\.6|1\.8|2\.0|2\.2)\b/);
+  if (motorM) foundMotor = motorM[1];
+
+  /* ── YAKIT ── */
+  const FUEL_WORDS = [
+    ['dizel','Dizel'],['diesel','Dizel'],
+    ['benzin & lpg','Benzin & LPG'],['benzin+lpg','Benzin & LPG'],
+    ['hibrit','Hibrit'],['hybrid','Hibrit'],
+    ['elektrik','Elektrik'],['electric','Elektrik'],
+    ['lpg','LPG'],
+    ['benzin','Benzin'],['gasoline','Benzin'],
+  ];
+  for (const [kw, val] of FUEL_WORDS) {
+    if (textLow.includes(kw)) { yakitFound = val; break; }
+  }
+
+  /* ── VİTES — "Düz Vites", "DSG", "PDK" de desteklenir ── */
+  const TRANS_WORDS = [
+    ['yarı otomatik','Yarı Otomatik'],
+    ['dsg','Otomatik'],['pdk','Otomatik'],
+    ['otomatik','Otomatik'],['automatic','Otomatik'],
+    ['manuel','Manuel'],['düz vites','Manuel'],['manual','Manuel'],
+  ];
+  for (const [kw, val] of TRANS_WORDS) {
+    if (textLow.includes(kw)) { vitesFound = val; break; }
+  }
+
+  /* ── FİYAT — "775.000,00 TL" formatı da dahil ── */
+  const fiyatM = raw.match(/([\d.]+)(?:,\d+)?\s*(?:TL|₺)/i);
+  if (fiyatM) {
+    const n = parseInt(fiyatM[1].replace(/\./g,''));
+    if (n > 10000) priceVal = n;
+  }
+  if (!priceVal) {
+    let maxP = 0;
+    for (const m of raw.matchAll(/([\d]{3}[.,][\d]{3,}(?:[.,]\d+)*)/g)) {
+      const n = parseInt(m[1].replace(/[.,]/g,''));
+      if (n > 50000 && n > maxP) maxP = n;
+    }
+    if (maxP > 0) priceVal = maxP;
+  }
+
+  /* ── UI GÜNCELLE ── */
+
+  /* Model alanı: MARKA + MODEL + MOTOR + YIL birleşik */
+  const modelParts = [];
+  if (foundMarka) modelParts.push(foundMarka);
+  if (foundModel) modelParts.push(foundModel.toUpperCase());
+  if (foundMotor) modelParts.push(foundMotor);
+  if (foundYil)   modelParts.push(foundYil);
+
+  if (modelParts.length > 0) {
+    G('model').value = modelParts.join(' ');
+    if (foundYil)   filled.push('Yıl: '   + foundYil);
+    if (foundMarka) filled.push('Marka: '  + foundMarka);
+    if (foundModel) filled.push('Model: '  + foundModel);
+    if (foundMotor) filled.push('Motor: '  + foundMotor);
+  } else {
+    /* Fallback: sahibinden başlığı (ilk anlamlı satır) */
+    const rawLines = raw.split(/[\n\r]+/).map(l => l.trim()).filter(l => l);
+    for (const line of rawLines) {
+      if (line.length > 8 && line.length < 80 && /[a-zA-ZğüşöçıĞÜŞÖÇİ]/.test(line)
+          && !/^\d[\d.,\s]*(tl|₺)?$/i.test(line)) {
+        G('model').value = line.toUpperCase();
+        filled.push('Model: ' + line.toUpperCase());
+        break;
+      }
+    }
+  }
+
+  if (kmVal) {
+    G('km').value = parseInt(kmVal).toLocaleString('tr-TR').replace(/,/g,'.') + ' KM';
+    filled.push('KM: ' + G('km').value);
+  }
+
+  if (yakitFound) { G('yakit').value = yakitFound; filled.push('Yakıt: ' + yakitFound); }
+  if (vitesFound) { G('vites').value = vitesFound; filled.push('Vites: ' + vitesFound); }
+
+  if (priceVal) {
+    G('pesin').value = priceVal.toLocaleString('tr-TR').replace(/,/g,'.');
+    filled.push('Fiyat: ' + G('pesin').value + ' ₺');
+  }
+
+  draw();
+  saveMemory();
+
+  const sahEl = document.getElementById('sahStatus');
+  if (filled.length === 0) {
+    setSahStatus('error', 'Bilgi bulunamadı. Sahibinden sayfasından daha fazla metin kopyalamayı deneyin.');
+  } else {
+    sahEl.style.display  = 'block';
+    sahEl.style.background = 'rgba(20,100,20,0.15)';
+    sahEl.style.border   = '1px solid rgba(40,160,40,0.3)';
+    sahEl.style.color    = '#6ddd6d';
+    sahEl.innerHTML = '<b>✅ Doldurulan alanlar:</b><br>' + filled.join('<br>');
+    G('pasteText').value = '';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SAHİBİNDEN PARSER — CORS proxy + DOM parse
+   API anahtarı gerektirmez, tamamen tarayıcıda çalışır
+══════════════════════════════════════════════════════ */
+
+function setSahStatus(type, msg) {
+  const el = document.getElementById('sahStatus');
+  el.style.display = 'block';
+  el.textContent   = msg;
+  const styles = {
+    loading: ['rgba(30,90,180,0.15)', 'rgba(50,120,220,0.3)', '#7aaaff'],
+    success: ['rgba(20,100,20,0.15)', 'rgba(40,160,40,0.3)', '#6ddd6d'],
+    error:   ['rgba(150,20,20,0.15)', 'rgba(200,40,40,0.3)', '#ff7a7a'],
+  };
+  const [bg, border, color] = styles[type] || styles.error;
+  Object.assign(el.style, {background:bg, border:'1px solid '+border, color});
+}
+
+// Sahibinden metin içinden değer çek
+function extractField(lines, keywords) {
+  for (let i = 0; i < lines.length; i++) {
+    const low = lines[i].toLowerCase();
+    if (keywords.some(k => low.includes(k))) {
+      // Değer genellikle bir sonraki satırda
+      const next = (lines[i+1] || '').trim();
+      if (next && next.length < 80 && next.length > 0) return next;
+    }
+  }
+  return '';
+}
+
+function parseListingHTML(html) {
+  const parser = new DOMParser();
+  const doc    = parser.parseFromString(html, 'text/html');
+  const result = {};
+
+  // ── BAŞLIK ──
+  const titleEl = doc.querySelector('h1.classifiedDetailTitle, h1[class*="title"], .classifiedDetailTitle, h1');
+  if (titleEl) result.title = titleEl.textContent.trim().toUpperCase();
+
+  // OG meta fallback
+  if (!result.title) {
+    const og = doc.querySelector('meta[property="og:title"], meta[name="title"]');
+    if (og) result.title = og.content.toUpperCase().replace(/\s*[-|].*sahibinden.*/i,'').trim();
+  }
+
+  // ── FİYAT ──
+  // Sahibinden fiyat sınıfları değişkendir, birden fazla seçici dene
+  const priceSelectors = [
+    '.classified-price-wrapper strong',
+    '[class*="price"] strong',
+    '[class*="Price"] strong',
+    '.fiyat strong',
+    'strong[class*="price"]',
+    '[class*="price-wrapper"]',
+    '[class*="priceValue"]',
+  ];
+  for (const sel of priceSelectors) {
+    const el = doc.querySelector(sel);
+    if (el) {
+      const raw = el.textContent.replace(/\s+/g,' ').trim();
+      if (/\d/.test(raw)) { result.price = raw; break; }
+    }
+  }
+
+  // ── ÖZELLİKLER (klasik tablo yapısı) ──
+  // Sahibinden özellikler genelde li>span+span ya da table td çiftleri şeklinde
+  const tds = Array.from(doc.querySelectorAll('td, li'));
+
+  for (let i = 0; i < tds.length - 1; i++) {
+    const label = tds[i].textContent.trim().toLowerCase();
+    const val   = tds[i+1].textContent.trim();
+    if (!val || val.length > 60) continue;
+
+    if (!result.km   && (label === 'kilometre' || label === 'km')) {
+      const num = val.replace(/[^\d]/g,'');
+      if (num) result.km = parseInt(num).toLocaleString('tr-TR').replace(/,/g,'.') + ' KM';
+    }
+    if (!result.fuel && (label.includes('yakıt') || label === 'yakıt tipi')) {
+      result.fuel = val;
+    }
+    if (!result.transmission && (label.includes('vites') || label === 'vites tipi')) {
+      result.transmission = val;
+    }
+  }
+
+  // ── METIN SATIRI TARAMA (fallback) ──
+  if (!result.km || !result.fuel || !result.transmission) {
+    doc.querySelectorAll('script,style,nav,header,footer').forEach(e => e.remove());
+    const lines = (doc.body?.textContent || '')
+      .split(/\n|\r|•/)
+      .map(l => l.trim())
+      .filter(l => l.length > 0 && l.length < 100);
+
+    if (!result.km) {
+      const r = extractField(lines, ['kilometre','km']);
+      if (r && /\d/.test(r)) {
+        const num = r.replace(/[^\d]/g,'');
+        if (num) result.km = parseInt(num).toLocaleString('tr-TR').replace(/,/g,'.') + ' KM';
+      }
+    }
+    if (!result.fuel)         result.fuel         = extractField(lines, ['yakıt tipi','yakıt']);
+    if (!result.transmission) result.transmission = extractField(lines, ['vites tipi','vites']);
+  }
+
+  // ── JSON-LD structured data ──
+  doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+    try {
+      const j = JSON.parse(s.textContent);
+      if (!result.title && j.name)          result.title = j.name.toUpperCase();
+      if (!result.price && j.offers?.price) result.price = String(j.offers.price);
+    } catch(e) {}
+  });
+
+  return result;
+}
+
+function applyToForm(data) {
+  const G = id => document.getElementById(id);
+
+  if (data.title) G('model').value = data.title;
+
+  if (data.km) G('km').value = data.km;
+
+  if (data.price) {
+    const num = parseInt(data.price.replace(/[^\d]/g,''));
+    if (!isNaN(num) && num > 0) {
+      G('pesin').value = num.toLocaleString('tr-TR').replace(/,/g,'.');
+    }
+  }
+
+  // Yakıt eşleştir
+  const FUEL_MAP = {
+    'dizel':'Dizel','diesel':'Dizel',
+    'benzin':'Benzin','gasoline':'Benzin',
+    'lpg':'LPG','lpg (otogaz)':'LPG',
+    'benzin & lpg':'Benzin & LPG','benzin+lpg':'Benzin & LPG',
+    'hibrit':'Hibrit','hybrid':'Hibrit',
+    'elektrik':'Elektrik','electric':'Elektrik',
+  };
+  if (data.fuel) {
+    const key = data.fuel.trim().toLowerCase();
+    const val = FUEL_MAP[key] || Object.entries(FUEL_MAP).find(([k])=>key.includes(k))?.[1];
+    if (val) G('yakit').value = val;
+  }
+
+  // Vites eşleştir
+  const TRANS_MAP = {
+    'otomatik':'Otomatik','automatic':'Otomatik',
+    'manuel':'Manuel','manual':'Manuel','düz':'Manuel',
+    'yarı otomatik':'Yarı Otomatik',
+  };
+  if (data.transmission) {
+    const key = data.transmission.trim().toLowerCase();
+    const val = TRANS_MAP[key] || Object.entries(TRANS_MAP).find(([k])=>key.includes(k))?.[1];
+    if (val) G('vites').value = val;
+  }
+
+  draw();
+}
+
+async function fetchWithAI() {
+  const url    = document.getElementById('sahLink').value.trim();
+  const btn    = document.getElementById('sahBtn');
+  const btnTxt = document.getElementById('sahBtnTxt');
+
+  if (!url) { setSahStatus('error','Lütfen bir Sahibinden linki girin.'); return; }
+  if (!url.includes('sahibinden.com')) { setSahStatus('error','Geçerli bir sahibinden.com linki girin.'); return; }
+
+  btn.disabled       = true;
+  btnTxt.textContent = '⏳';
+  setSahStatus('loading', 'Sayfa çekiliyor...');
+
+  // 3 farklı proxy dene
+  const proxies = [
+    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  ];
+
+  let html = null;
+
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy(url), { signal: (()=>{ const c=new AbortController(); setTimeout(()=>c.abort(),12000); return c.signal; })() });
+      if (!res.ok) continue;
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        const j = await res.json();
+        html = j.contents || j.body || null;
+      } else {
+        html = await res.text();
+      }
+      if (html && html.length > 500) break;
+      html = null;
+    } catch(e) { html = null; }
+  }
+
+  try {
+    if (!html) throw new Error('Sahibinden sayfasına erişilemedi (bot koruması aktif olabilir)');
+
+    setSahStatus('loading', 'Bilgiler okunuyor...');
+
+    const data = parseListingHTML(html);
+    const found = [data.title, data.km, data.fuel, data.transmission, data.price].filter(Boolean).length;
+
+    if (found === 0) throw new Error('Bilgi bulunamadı — Sahibinden sayfayı şifreli sunuyor olabilir');
+
+    applyToForm(data);
+
+    const summary = [
+      data.title        && '✓ Model',
+      data.km           && '✓ KM',
+      data.fuel         && '✓ Yakıt',
+      data.transmission && '✓ Vites',
+      data.price        && '✓ Fiyat',
+    ].filter(Boolean).join('  ');
+
+    setSahStatus('success', 'Aktarıldı: ' + summary);
+
+  } catch(err) {
+    console.error('[fetchWithAI]', err);
+    setSahStatus('error', err.message + ' — Bilgileri manuel girin.');
+  } finally {
+    btn.disabled       = false;
+    btnTxt.textContent = '⚡ Çek';
+  }
+}
+/* ══════════════════════════════════════════════════════
+   MOBILE SCREEN NAV
+══════════════════════════════════════════════════════ */
+function generateAndShow() {
+  draw();
+  const url = canvas.toDataURL('image/jpeg', 0.97);
+  document.getElementById('result-img').src = url;
+  document.getElementById('screen-form').classList.remove('active');
+  document.getElementById('screen-result').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goBack() {
+  document.getElementById('screen-result').classList.remove('active');
+  document.getElementById('screen-form').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════════════════════
+   EXPORT
+══════════════════════════════════════════════════════ */
+function slugify(str) {
+  return str.toLowerCase()
+    .replace(/[çÇ]/g,'c').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
+    .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[ıİ]/g,'i')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function showSaveModal() {
+  draw();
+  const url = canvas.toDataURL('image/jpeg', 0.97);
+  const modal = document.getElementById('saveModal');
+  const img   = document.getElementById('modalImg');
+  img.src = url;
+  modal.style.display = 'flex';
+  modal.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSaveModal() {
+  const modal = document.getElementById('saveModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function exportCanvas(format) {
+  showSaveModal();
+}
+
+function triggerDownload(url, filename) {
+  showSaveModal();
+}
+
+/* ══════════════════════════════════════════════════════
+   EVENT HELPERS
+══════════════════════════════════════════════════════ */
+function $(id) { return document.getElementById(id); }
+
+function loadImageFile(file, cb) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => cb(img);
+    img.src    = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Radio group helper
+function setupRadioGroup(groupId, stateKey, onChange) {
+  const btns = document.querySelectorAll(`#${groupId} .radio-btn, #${groupId} .theme-chip`);
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      S[stateKey] = btn.dataset.val;
+      if (onChange) onChange(S[stateKey]);
+      draw();
+    });
+  });
+}
+
+function toggleAdv() {
+  const p = document.getElementById('adv-panel');
+  const a = document.getElementById('adv-arrow');
+  const open = p.style.display === 'block';
+  p.style.display = open ? 'none' : 'block';
+  a.textContent = open ? '▼' : '▲';
+}
+
+/* ══════════════════════════════════════════════════════
+   SETUP EVENTS
+══════════════════════════════════════════════════════ */
+function setupEvents() {
+  // Inputs
+  ['km','yakit','vites','model','pesin','pricePos'].forEach(id => {
+    $(id).addEventListener('input', draw);
+    $(id).addEventListener('change', draw);
+  });
+
+  // Car image
+  $('carFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    loadImageFile(file, img => {
+      S.carImg = img;
+      draw();
+    });
+    // Show thumbnail in drop zone
+    const reader = new FileReader();
+    reader.onload = ev => {
+      $('photo-thumb').src = ev.target.result;
+      $('photo-preview').style.display = 'block';
+      $('photo-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Inner image (vergi teması)
+  $('innerFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    loadImageFile(file, img => { S.innerImg = img; draw(); });
+    const reader = new FileReader();
+    reader.onload = ev => {
+      $('inner-thumb').src = ev.target.result;
+      $('inner-preview').style.display = 'block';
+      $('inner-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Taksit (vergi teması)
+  $('taksit').addEventListener('input', e => { S.taksit = e.target.value; draw(); });
+
+  // Logo image
+  $('logoFile').addEventListener('change', e => {
+    loadImageFile(e.target.files[0], img => {
+      S.logoImg = img;
+      $('logoBtn').classList.add('has-file');
+      $('logoBtn').querySelector('span:last-child').textContent = '✓ Logo Yüklendi';
+      draw();
+    });
+  });
+
+  // Toggles
+  $('showBar').addEventListener('change', e => { S.showBar = e.target.checked; draw(); });
+  $('showFrame').addEventListener('change', e => { S.showFrame = e.target.checked; draw(); });
+
+  // Radio groups
+  setupRadioGroup('themeGroup', 'theme', val => {
+    const isVergi = val === 'vergi';
+    $('inner-photo-card').style.display = isVergi ? 'block' : 'none';
+    $('taksit-card').style.display      = isVergi ? 'block' : 'none';
+  });
+  setupRadioGroup('logoPosGroup',  'logoPos');
+  // modelPosGroup removed in streamlined UI
+
+  // Drag & drop — both drop zone and preview area
+  ['photo-drop-zone', 'preview-area'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      $('photo-drop-zone').classList.add('drag-active');
+    });
+    el.addEventListener('dragleave', () => {
+      $('photo-drop-zone').classList.remove('drag-active');
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      $('photo-drop-zone').classList.remove('drag-active');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        loadImageFile(file, img => { S.carImg = img; draw(); });
+        const reader = new FileReader();
+        reader.onload = ev => {
+          $('photo-thumb').src = ev.target.result;
+          $('photo-preview').style.display = 'block';
+          $('photo-placeholder').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+
+  // Mobile: canvas is hidden, result shown as <img>
+}
+
+
+/* ══════════════════════════════════════════════════════
+   HAFIZA — localStorage
+══════════════════════════════════════════════════════ */
+const MEM_KEY = 'kz_last_ilan';
+
+function saveMemory() {
+  try {
+    const data = {
+      model:  $('model').value,
+      km:     $('km').value,
+      yakit:  $('yakit').value,
+      vites:  $('vites').value,
+      pesin:  $('pesin').value,
+      theme:  S.theme,
+      logoPos: S.logoPos,
+      showBar:  S.showBar,
+      showFrame: S.showFrame,
+      ts: Date.now(),
+    };
+    localStorage.setItem(MEM_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadMemory() {
+  try {
+    const raw = localStorage.getItem(MEM_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+
+    // 7 günden eskiyse yükleme
+    if (Date.now() - (d.ts || 0) > 7 * 24 * 3600 * 1000) return;
+
+    if (d.model)  $('model').value = d.model;
+    if (d.km)     $('km').value    = d.km;
+    if (d.pesin)  $('pesin').value = d.pesin;
+    if (d.yakit)  $('yakit').value = d.yakit;
+    if (d.vites)  $('vites').value = d.vites;
+
+    if (d.theme) {
+      S.theme = d.theme;
+      document.querySelectorAll('#themeGroup .theme-chip').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === d.theme);
+      });
+    }
+    if (d.logoPos !== undefined) {
+      S.logoPos = d.logoPos;
+      document.querySelectorAll('#logoPosGroup .theme-chip').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === d.logoPos);
+      });
+    }
+    if (d.showBar  !== undefined) { S.showBar  = d.showBar;  $('showBar').checked  = d.showBar; }
+    if (d.showFrame!== undefined) { S.showFrame= d.showFrame;$('showFrame').checked= d.showFrame; }
+
+    // Hafıza yüklendi bildirimi (2sn sonra kaybol)
+    showMemBadge();
+  } catch(e) {}
+}
+
+function showMemBadge() {
+  const el = document.createElement('div');
+  el.textContent = '💾 Son ilan bilgileri yüklendi';
+  Object.assign(el.style, {
+    position:'fixed', bottom:'90px', left:'50%', transform:'translateX(-50%)',
+    background:'rgba(20,60,20,0.92)', color:'#6ddd6d',
+    padding:'8px 16px', borderRadius:'20px', fontSize:'12px',
+    fontFamily:'Arial,sans-serif', zIndex:'9999',
+    boxShadow:'0 4px 16px rgba(0,0,0,0.5)',
+    transition:'opacity .4s', opacity:'1',
+  });
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 400); }, 2500);
+}
+
+/* ══════════════════════════════════════════════════════
+   HIZLI ŞABLONLAR
+══════════════════════════════════════════════════════ */
+function setupTemplates() {
+  document.querySelectorAll('.tpl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const yakit = btn.dataset.yakit;
+      const vites = btn.dataset.vites;
+
+      $('yakit').value = yakit;
+      $('vites').value = vites;
+
+      // Aktif göster
+      document.querySelectorAll('.tpl-btn').forEach(b => b.classList.remove('tpl-active'));
+      btn.classList.add('tpl-active');
+      setTimeout(() => btn.classList.remove('tpl-active'), 600);
+
+      draw();
+      saveMemory();
+
+      // Kısa titreşim efekti (mobil)
+      if (navigator.vibrate) navigator.vibrate(30);
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+let _appInited = false;
+
+function initApp() {
+  if (_appInited) return;
+  _appInited = true;
+  try {
+    setupEvents();
+    setupTemplates();
+    loadMemory();
+    draw();
+    // Her değişiklikte hafızaya kaydet
+    ['model','km','yakit','vites','pesin'].forEach(id => {
+      const el = $(id);
+      if (el) {
+        el.addEventListener('input',  saveMemory);
+        el.addEventListener('change', saveMemory);
+      }
+    });
+    const sb = $('showBar'), sf = $('showFrame');
+    if (sb) sb.addEventListener('change', saveMemory);
+    if (sf) sf.addEventListener('change', saveMemory);
+  } catch(e) { console.error('initApp error:', e); }
+}
+
+// 1. Font yüklenince başlat
+document.fonts.ready.then(initApp);
+
+// 2. Garantili fallback: 1.5sn sonra başlat (fontlar gelmese bile)
+setTimeout(initApp, 1500);
+
+// 3. DOM hazır olunca da dene
+if (document.readyState === 'complete') {
+  setTimeout(initApp, 100);
+} else {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(initApp, 100));
+}
+</script>
+</body>
+</html>

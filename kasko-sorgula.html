@@ -218,14 +218,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 /* ── MOD A PANEL ── */
 .mod-a-panel{display:none;}
 .mod-a-panel.show{display:block;}
-.ma-two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.ma-field{margin-bottom:12px;}
-.ma-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
-.ma-field input{width:100%;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:var(--text);padding:12px 14px;outline:none;background:var(--white);transition:border-color .15s;}
-.ma-field input:focus{border-color:var(--navy);}
-.ma-field input::placeholder{color:var(--text3);font-weight:400;font-size:14px;}
-.ma-hesap{width:100%;margin-top:4px;padding:13px;background:var(--navy);border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;cursor:pointer;transition:.15s;}
-.ma-hesap:hover{background:var(--navy-mid);}
+#ma-res{margin-top:8px;}
 </style>
 </head>
 <body>
@@ -257,24 +250,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </button>
   </div>
 
-  <!-- MOD A: MANUEL GİRİŞ -->
+  <!-- MOD A: YAZARAK ARAMA -->
   <div class="mod-a-panel" id="mod-a-panel">
     <div class="search-panel">
-      <div class="ma-two">
-        <div class="ma-field">
-          <label>Araç Markası / Adı</label>
-          <input type="text" id="ma-arac" placeholder="Toyota Corolla" autocomplete="off">
-        </div>
-        <div class="ma-field">
-          <label>Model Yılı</label>
-          <input type="text" id="ma-yil" placeholder="2020" maxlength="4" inputmode="numeric">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <input type="text" id="ma-q" placeholder="Model yılı, model ve paket yazın… (örn: 2020 Egea Sedan 1.3)" autocomplete="off" autocorrect="off" spellcheck="false" oninput="doMA()">
+          <span class="search-icon">⌕</span>
         </div>
       </div>
-      <div class="ma-field">
-        <label>TSB Kasko Değeri (₺)</label>
-        <input type="text" id="ma-deger" placeholder="0" inputmode="numeric" oninput="fmtMa(this)">
-      </div>
-      <button class="ma-hesap" onclick="hesaplaManuel()">Hesapla →</button>
+      <div id="ma-res"></div>
     </div>
   </div>
 
@@ -708,28 +693,51 @@ function setMode(m){
   var dp=document.getElementById('dp');
   if(dp) dp.classList.remove('show');
   sel=null;
+  document.getElementById('ma-q').value='';
+  document.getElementById('ma-res').innerHTML='';
 }
 
-/* ── MOD A: MANUEL HESAP ── */
-function fmtMa(el){
-  var v=el.value.replace(/\D/g,'');
-  el.value=v?parseInt(v).toLocaleString('tr-TR'):'';
+/* ── MOD A: YAZARAK ARAMA ── */
+var _maResults=[];
+function doMA(){
+  var raw=document.getElementById('ma-q').value.trim();
+  var el=document.getElementById('ma-res');
+  if(!raw){el.innerHTML='';return;}
+  var tokens=tokenize(raw);
+  var textYear=extractYear(tokens);
+  var searchTokens=textYear?tokens.filter(function(t){return t!==textYear;}):tokens;
+  var pool=textYear?DATA.filter(function(r){return String(r[5])===textYear;}):DATA;
+  var results=[];
+  if(searchTokens.length){
+    var exact=pool.filter(function(r){return searchTokens.every(function(t){return (r[2]+' '+r[3]).toUpperCase().includes(t);});});
+    if(exact.length){
+      results=exact.slice(0,40);
+    } else if(textYear){
+      var scored=pool.map(function(r){return{r:r,s:score(r,searchTokens)};}).filter(function(x){return x.s>0;});
+      scored.sort(function(a,b){return b.s-a.s;});
+      results=scored.slice(0,40).map(function(x){return x.r;});
+    } else {
+      el.innerHTML='<div class="year-required">Yıl ekleyerek arama yapın (örn: <b>2020</b> Egea)</div>';
+      return;
+    }
+  } else {
+    results=pool.slice(0,40);
+  }
+  if(!results.length){
+    el.innerHTML='<div class="year-required">Sonuç bulunamadı.</div>';
+    return;
+  }
+  _maResults=results;
+  el.innerHTML=results.map(function(r,i){
+    return '<div class="res-item" onclick="selectMA('+i+')">'
+      +'<span class="ri-name">'+r[2]+' '+r[3]+'</span>'
+      +'<span class="ri-meta">'+r[5]+' · '+r[4].toLocaleString('tr-TR')+' ₺</span>'
+      +'</div>';
+  }).join('');
 }
-function hesaplaManuel(){
-  var arac=(document.getElementById('ma-arac').value||'').trim().toUpperCase();
-  var yilStr=document.getElementById('ma-yil').value.trim();
-  var yil=parseInt(yilStr)||0;
-  var degerStr=document.getElementById('ma-deger').value.replace(/\./g,'').replace(',','.');
-  var deger=parseFloat(degerStr)||0;
-  if(!arac){alert('Araç adını girin.');document.getElementById('ma-arac').focus();return;}
-  if(yil<1990||yil>CUR_YEAR){alert('Geçerli bir model yılı girin.');document.getElementById('ma-yil').focus();return;}
-  if(deger<=0){alert('TSB kasko değerini girin.');document.getElementById('ma-deger').focus();return;}
-  var r=['—','—',arac,'',deger,yil];
+function selectMA(i){
+  var r=_maResults[i];
   sel=r;
-  document.getElementById('dm').textContent=arac;
-  document.getElementById('dt').textContent='Manuel Giriş';
-  var age=CUR_YEAR-yil;
-  document.getElementById('dmeta').textContent=yil+' Model · '+age+' Yaş';
   buildDetail(r);
   var dp=document.getElementById('dp');
   dp.classList.add('show');

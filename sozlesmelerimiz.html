@@ -1,596 +1,352 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finansal Çözüm Teklifi — KREDİZMİR</title>
-  <style>
-    :root{
-      --navy:#0B1E3D;
-      --navy-dark:#060f20;
-      --navy-bg:#0d1b2a;
-      --gold:#C9A535;
-      --white:#fff;
-      --border:#dde3ed;
-      --text:#0B1E3D;
-      --text2:#3d4a5c;
-      --text3:#8a96a8;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Arial','Helvetica Neue',Helvetica,sans-serif;min-height:100vh;}
-
-    /* ═══════════════════════════════
-       EKRAN 1: FORM
-    ═══════════════════════════════ */
-    #ekran1{
-      background:var(--navy-bg);
-      color:#e8f0fe;
-      min-height:100vh;
-      padding:20px 16px 48px;
-    }
-    .form-header{
-      max-width:720px;margin:0 auto 24px;
-      display:flex;align-items:center;gap:14px;
-    }
-    .btn-back{
-      background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.18);
-      color:#e8f0fe;padding:8px 16px;
-      border-radius:8px;font-size:13px;font-weight:700;
-      cursor:pointer;text-decoration:none;
-      display:inline-flex;align-items:center;gap:6px;
-    }
-    .btn-back:hover{background:rgba(255,255,255,.16);}
-    .form-title{font-size:20px;font-weight:800;color:#e8f0fe;}
-
-    .form-wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
-
-    /* Kart */
-    .fcard{
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:12px;padding:20px;
-    }
-    .fcard-title{
-      font-size:10px;font-weight:800;letter-spacing:2px;
-      text-transform:uppercase;color:rgba(232,240,254,.5);
-      margin-bottom:14px;
-    }
-    .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    .frow.single{grid-template-columns:1fr;}
-    .fgroup{display:flex;flex-direction:column;gap:6px;}
-    .flabel{
-      font-size:10px;font-weight:700;letter-spacing:1px;
-      text-transform:uppercase;color:rgba(232,240,254,.5);
-    }
-    .finput{
-      background:rgba(255,255,255,.08);
-      border:1.5px solid rgba(255,255,255,.14);
-      border-radius:8px;
-      color:#e8f0fe;
-      font-family:inherit;font-size:15px;font-weight:600;
-      padding:11px 14px;outline:none;
-      transition:border-color .15s,background .15s;
-    }
-    .finput:focus{
-      border-color:rgba(201,165,53,.7);
-      background:rgba(255,255,255,.12);
-    }
-    .finput::placeholder{color:rgba(232,240,254,.25);font-weight:400;}
-
-    /* Toplam önizleme */
-    .toplam-preview{
-      background:rgba(201,165,53,.12);
-      border:1px solid rgba(201,165,53,.3);
-      border-radius:8px;padding:12px 16px;
-      font-size:13px;color:rgba(232,240,254,.8);
-      margin-top:10px;
-      display:flex;justify-content:space-between;align-items:center;
-    }
-    .toplam-preview span{font-weight:800;color:var(--gold);font-size:15px;}
-
-    /* Oluştur butonu */
-    .btn-olustur{
-      width:100%;padding:16px;
-      background:var(--gold);border:none;
-      border-radius:10px;
-      font-family:inherit;font-size:15px;font-weight:800;
-      color:#fff;letter-spacing:.5px;
-      cursor:pointer;transition:.15s;
-      margin-top:8px;
-    }
-    .btn-olustur:hover{background:#b8922e;}
-    .btn-olustur:active{transform:scale(.99);}
-
-    /* ═══════════════════════════════
-       EKRAN 2: BELGE
-    ═══════════════════════════════ */
-    #ekran2{
-      display:none;
-      background:#d8dde6;
-      min-height:100vh;
-      padding:20px 16px 40px;
-    }
-    .doc-nav{
-      max-width:800px;margin:0 auto 14px;
-      display:flex;gap:10px;align-items:center;
-    }
-    .btn-edit{
-      background:var(--navy);color:#fff;
-      border:none;border-radius:7px;
-      padding:8px 16px;font-family:inherit;
-      font-size:13px;font-weight:700;cursor:pointer;
-      display:inline-flex;align-items:center;gap:6px;
-    }
-    .btn-print{
-      background:var(--gold);color:#fff;
-      border:none;border-radius:7px;
-      padding:8px 16px;font-family:inherit;
-      font-size:13px;font-weight:700;cursor:pointer;
-      display:inline-flex;align-items:center;gap:6px;
-    }
-
-    /* KAĞIT */
-    .doc{
-      max-width:800px;margin:0 auto;
-      background:#fff;
-      border:3px solid var(--navy);
-      box-shadow:0 8px 40px rgba(0,0,0,.22);
-      position:relative;overflow:hidden;
-    }
-    .watermark{
-      position:absolute;
-      font-size:220px;font-weight:900;
-      color:rgba(11,30,61,.04);
-      top:28%;left:50%;
-      transform:translateX(-50%) rotate(-20deg);
-      pointer-events:none;z-index:0;
-      user-select:none;letter-spacing:-6px;white-space:nowrap;
-    }
-    .doc>*{position:relative;z-index:1;}
-
-    /* DOC HEADER */
-    .doc-header{
-      background:#fff;
-      padding:22px 28px 18px;
-      display:flex;justify-content:space-between;align-items:flex-start;
-      border-bottom:3px solid var(--gold);
-    }
-    .logo-text{font-size:38px;font-weight:900;color:var(--navy);letter-spacing:-1.5px;line-height:1;}
-    .logo-sub{font-size:11px;color:#7a8898;margin-top:5px;font-style:italic;}
-    .doc-title-right{text-align:right;}
-    .doc-title-right .main{font-size:17px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase;}
-    .doc-title-right .sub{font-size:11px;color:#7a8898;margin-top:4px;font-style:italic;}
-
-    /* SECTION HEADER */
-    .sh{
-      background:var(--navy);color:#fff;
-      font-size:10px;font-weight:800;
-      letter-spacing:2px;text-transform:uppercase;
-      padding:9px 28px;
-    }
-    .sc{padding:14px 28px 20px;}
-
-    /* MUSTERI INFO */
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;}
-    .ic{padding:12px 0;border-bottom:1px solid var(--border);}
-    .ic:nth-child(odd){padding-right:28px;border-right:1px solid var(--border);}
-    .ic:nth-child(even){padding-left:28px;}
-    .ic:nth-last-child(-n+2){border-bottom:none;}
-    .il{font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-    .iv{font-size:14px;font-weight:700;color:var(--text);min-height:22px;padding-bottom:2px;border-bottom:1.5px dashed #bcc;}
-    .iv.filled{border-bottom:none;}
-
-    /* FINANSMAN OZETI */
-    .fin-sec{background:var(--navy);padding:20px 28px;display:flex;gap:2px;}
-    .fc{flex:1;padding:10px 16px;border-right:1px solid rgba(255,255,255,.12);}
-    .fc:last-child{border-right:none;}
-    .fc.dark{background:var(--navy-dark);border-radius:4px;border-right:none;margin-left:6px;flex:0 0 115px;}
-    .fl{font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:2px;}
-    .fs{font-size:8px;color:rgba(255,255,255,.4);margin-bottom:10px;}
-    .fc.dark .fl{color:rgba(255,255,255,.8);}
-    .fc.dark .fs{color:rgba(255,255,255,.55);}
-    .fv{font-size:20px;font-weight:900;color:#fff;line-height:1.1;}
-    .fv.dim{color:rgba(255,255,255,.4);font-size:16px;letter-spacing:2px;}
-
-    /* GIDER */
-    .gl{padding:0 28px;background:#fff;}
-    .gr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
-    .gr:last-child{border-bottom:none;}
-    .gleft{display:flex;align-items:flex-start;gap:10px;}
-    .gdot{width:9px;height:9px;border-radius:50%;background:var(--navy);flex-shrink:0;margin-top:4px;}
-    .gname{font-size:13px;font-weight:700;color:var(--text);}
-    .gdesc{font-size:10px;color:var(--text3);margin-top:1px;}
-    .gamt{font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;}
-    .gtotal{display:flex;align-items:center;justify-content:space-between;background:var(--navy);padding:14px 28px;}
-    .gtlabel{font-size:13px;font-weight:900;color:#fff;letter-spacing:.5px;}
-    .gtamt{font-size:17px;font-weight:900;color:#fff;}
-
-    /* ONAY */
-    .onay-box{border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:24px;}
-    .onay-text{font-size:11.5px;line-height:1.75;color:var(--text2);font-style:italic;}
-    .imza-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:8px;}
-    .imza-field{border-top:1.5px solid #888;padding-top:6px;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);}
-
-    /* BILGILENDIRME */
-    .bilgi-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
-    .bilgi-list li{display:flex;gap:10px;font-size:10.5px;line-height:1.7;color:var(--text2);}
-    .bnum{font-weight:800;color:var(--navy);flex-shrink:0;width:16px;}
-
-    /* DOC FOOTER */
-    .doc-foot{background:#fff;padding:14px 28px;text-align:center;border-top:1px solid var(--border);}
-    .doc-foot p{font-size:10px;color:var(--gold);font-style:italic;font-weight:600;line-height:1.7;}
-
-    /* PRINT */
-    @media print{
-      body{background:#fff;}
-      #ekran1{display:none!important;}
-      #ekran2{display:block!important;background:#fff;padding:0;}
-      .doc-nav{display:none;}
-      .doc{box-shadow:none;border:2px solid var(--navy);max-width:100%;}
-    }
-
-    /* MOBILE */
-    @media(max-width:600px){
-      .frow{grid-template-columns:1fr;}
-      #ekran1{padding:14px 12px 40px;}
-      .form-title{font-size:16px;}
-      .fin-sec{flex-wrap:wrap;padding:14px;gap:6px;}
-      .fc{flex:1 1 calc(50% - 4px);border-right:none;padding:8px 10px;}
-      .fc.dark{flex:1 1 calc(50% - 4px);margin-left:0;}
-      .doc-header{padding:16px 14px 14px;}
-      .logo-text{font-size:26px;}
-      .sh{padding:8px 14px;}
-      .sc{padding:12px 14px 16px;}
-      .gl{padding:0 14px;}
-      .gtotal{padding:12px 14px;}
-      .info-grid{grid-template-columns:1fr;}
-      .ic:nth-child(odd){padding-right:0;border-right:none;}
-      .ic:nth-child(even){padding-left:0;}
-      .ic:nth-last-child(-n+2){border-bottom:1px solid var(--border);}
-      .ic:last-child{border-bottom:none;}
-      .imza-row{grid-template-columns:1fr;gap:20px;}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KREDİZMİR – Teklif Oluştur</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#08264A; --gold:#C8A23A; --bg:#F3F4F6;
+  --text:#233142; --sec:#7A8694; --line:#D6DCE3;
+  --alt:#E8ECF2; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Poppins',sans-serif;background:#1a2a3a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px 60px;}
+.wrap{width:100%;max-width:500px;}
+h1{color:var(--gold);font-size:18px;font-weight:700;letter-spacing:1px;margin-bottom:3px;}
+.sub{color:#5a7a9a;font-size:11px;margin-bottom:26px;}
+.fsec{margin-bottom:20px;}
+.fsec-title{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;border-bottom:1px solid #2a3f55;padding-bottom:6px;margin-bottom:11px;}
+.field{margin-bottom:10px;}
+.field label{display:block;font-size:10px;color:#5a7a9a;margin-bottom:4px;font-weight:500;}
+.field input{width:100%;background:#1a2d3f;border:1px solid #2a3f55;border-radius:6px;color:#e0eaf4;font-family:'Poppins',sans-serif;font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--gold);}
+.field input::placeholder{color:#3a5570;}
+.frow{display:flex;gap:10px;} .frow .field{flex:1;}
+.hint{font-size:9px;color:#4a6a85;margin-top:3px;font-style:italic;}
+.btn{width:100%;background:var(--gold);color:var(--navy);font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:8px;padding:14px;cursor:pointer;letter-spacing:.5px;margin-top:6px;transition:opacity .2s;}
+.btn:hover{opacity:.88;}
+canvas{display:none;}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <h1>KREDİZMİR</h1>
+  <p class="sub">Bilgileri girin → PNG olarak indirin</p>
 
-<!-- ══════════════════════════════
-     EKRAN 1: FORM
-══════════════════════════════ -->
-<div id="ekran1">
-  <div class="form-header">
-    <a href="index.html" class="btn-back">← Geri</a>
-    <span class="form-title">Finansal Çözüm Teklifi Oluştur</span>
+  <div class="fsec">
+    <div class="fsec-title">Müşteri Bilgileri</div>
+    <div class="field"><label>Müşteri Adı Soyadı</label><input id="f_ad" type="text" placeholder="Ad Soyad"></div>
+    <div class="field"><label>TC Kimlik No</label><input id="f_tc" type="text" placeholder="_ _ _ _ _ _ _ _ _ _ _"></div>
+    <div class="field"><label>Başvuru Tarihi</label><input id="f_tarih" type="text" placeholder="GG / AA / YYYY"></div>
   </div>
 
-  <div class="form-wrap">
-
-    <!-- Müşteri -->
-    <div class="fcard">
-      <div class="fcard-title">Müşteri Bilgileri</div>
-      <div class="frow">
-        <div class="fgroup">
-          <label class="flabel">Müşteri Adı Soyadı *</label>
-          <input class="finput" id="f-ad" type="text" placeholder="EREN KOYUNCU" autocomplete="off">
-        </div>
-        <div class="fgroup">
-          <label class="flabel">TC Kimlik No</label>
-          <input class="finput" id="f-tc" type="text" placeholder="— — — — — — — — — — —" maxlength="11" inputmode="numeric">
-        </div>
-      </div>
-    </div>
-
-    <!-- Araç -->
-    <div class="fcard">
-      <div class="fcard-title">Araç Bilgileri</div>
-      <div class="frow">
-        <div class="fgroup">
-          <label class="flabel">Araç Markası / Modeli</label>
-          <input class="finput" id="f-arac" type="text" placeholder="Toyota Corolla" autocomplete="off">
-        </div>
-        <div class="fgroup">
-          <label class="flabel">Model Yılı / Plaka</label>
-          <input class="finput" id="f-yil" type="text" placeholder="2020 / 34 ABC 123" autocomplete="off">
-        </div>
-      </div>
-    </div>
-
-    <!-- Finansman -->
-    <div class="fcard">
-      <div class="fcard-title">Finansman Bilgileri</div>
-      <div class="frow">
-        <div class="fgroup">
-          <label class="flabel">Kredi Tutarı (TL) *</label>
-          <input class="finput" id="f-kredi" type="text" placeholder="595.000" inputmode="numeric" oninput="fmtInput(this)">
-        </div>
-        <div class="fgroup">
-          <label class="flabel">Net Ele Geçen (TL)</label>
-          <input class="finput" id="f-net" type="text" placeholder="540.000" inputmode="numeric" oninput="fmtInput(this)">
-        </div>
-      </div>
-      <div class="frow" style="margin-top:12px;">
-        <div class="fgroup">
-          <label class="flabel">Vade (Ay)</label>
-          <input class="finput" id="f-vade" type="text" placeholder="36" inputmode="numeric" maxlength="3">
-        </div>
-        <div class="fgroup">
-          <label class="flabel">Faiz Oranı (% Aylık)</label>
-          <input class="finput" id="f-faiz" type="text" placeholder="% 4.75" autocomplete="off">
-        </div>
-      </div>
-    </div>
-
-    <!-- Gider -->
-    <div class="fcard">
-      <div class="fcard-title">Aktif Bank Bedeli</div>
-      <div class="frow single">
-        <div class="fgroup">
-          <label class="flabel">Aktif Bank Dosya ve Ekran Kullanım Bedeli (TL)</label>
-          <input class="finput" id="f-aktif" type="text" placeholder="23.382" inputmode="numeric" oninput="fmtInput(this);calcToplam();">
-        </div>
-      </div>
-      <div class="toplam-preview" id="toplam-preview">
-        <span>Sabit Giderler:</span> 32.250 TL &nbsp;+&nbsp; Aktif Bank: <span id="prev-aktif">0 TL</span> &nbsp;=&nbsp; Toplam: <span id="prev-toplam">32.250 TL</span>
-      </div>
-    </div>
-
-    <!-- Başvuru tarihi -->
-    <div class="fcard">
-      <div class="fcard-title">Başvuru Bilgisi</div>
-      <div class="frow single">
-        <div class="fgroup">
-          <label class="flabel">Başvuru Tarihi</label>
-          <input class="finput" id="f-tarih" type="text" placeholder="gg/aa/yyyy" autocomplete="off">
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-olustur" onclick="olustur()">Tablo Oluştur →</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════
-     EKRAN 2: BELGE
-══════════════════════════════ -->
-<div id="ekran2">
-  <div class="doc-nav">
-    <button class="btn-edit" onclick="duzelt()">← Düzenle</button>
-    <button class="btn-print" onclick="window.print()">🖨️ Yazdır</button>
+  <div class="fsec">
+    <div class="fsec-title">Finansman Özeti</div>
+    <div class="field"><label>Kredi Tutarı (TL)</label><input id="f_kredi" type="text" placeholder="595.000"></div>
+    <div class="field"><label>Net Ele Geçen (TL)</label><input id="f_net" type="text" placeholder="540.000"></div>
+    <div class="field"><label>Tahmini Toplam Gider (TL)</label><input id="f_gider" type="text" placeholder="55.632"></div>
   </div>
 
-  <div class="doc">
-    <div class="watermark">K</div>
-
-    <!-- HEADER -->
-    <div class="doc-header">
-      <div>
-        <div class="logo-text">KREDİZMİR</div>
-        <div class="logo-sub">Rotanız mutluluk olsun.</div>
-      </div>
-      <div class="doc-title-right">
-        <div class="main">Finansal Çözüm Teklifi</div>
-        <div class="sub">Ön Onay ve Bilgilendirme Formu</div>
-      </div>
+  <div class="fsec">
+    <div class="fsec-title">Aktif Bank Kalemi</div>
+    <div class="field">
+      <label>Kalem Adı (boş bırakırsan sabit kalır)</label>
+      <input id="f_aktif_ad" type="text" placeholder="Aktif Bank dosya ve ekran kullanım bedeli">
     </div>
-
-    <!-- 1. MÜŞTERİ VE ARAÇ BİLGİLERİ -->
-    <div class="sh">Müşteri ve Araç Bilgileri</div>
-    <div class="sc">
-      <div class="info-grid">
-        <div class="ic">
-          <div class="il">Müşteri Adı Soyadı</div>
-          <div class="iv filled" id="d-ad"></div>
-        </div>
-        <div class="ic">
-          <div class="il">TC Kimlik No</div>
-          <div class="iv" id="d-tc"></div>
-        </div>
-        <div class="ic">
-          <div class="il">Araç Markası / Modeli</div>
-          <div class="iv" id="d-arac"></div>
-        </div>
-        <div class="ic">
-          <div class="il">Model Yılı / Plaka</div>
-          <div class="iv" id="d-yil"></div>
-        </div>
-        <div class="ic">
-          <div class="il">Finansman Sağlayıcı</div>
-          <div class="iv filled">KREDİZMİR Vadelendirilen</div>
-        </div>
-        <div class="ic">
-          <div class="il">Başvuru Tarihi</div>
-          <div class="iv filled" id="d-tarih"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. FİNANSMAN ÖZETİ -->
-    <div class="sh">Finansman Özeti</div>
-    <div class="fin-sec">
-      <div class="fc">
-        <div class="fl">Kredi Tutarı</div>
-        <div class="fs">Onaylanan finansman</div>
-        <div class="fv" id="d-kredi"></div>
-      </div>
-      <div class="fc">
-        <div class="fl">Net Ele Geçen</div>
-        <div class="fs">Müşteriye kalan net tutar</div>
-        <div class="fv" id="d-net"></div>
-      </div>
-      <div class="fc">
-        <div class="fl">Tahmini Toplam Gider</div>
-        <div class="fs">Masraf ve kesintiler dahil</div>
-        <div class="fv" id="d-toplam-fin"></div>
-      </div>
-      <div class="fc">
-        <div class="fl">Vade</div>
-        <div class="fs">Ay</div>
-        <div class="fv dim" id="d-vade"></div>
-      </div>
-      <div class="fc dark">
-        <div class="fl">Faiz Oranı</div>
-        <div class="fs">Aylık</div>
-        <div class="fv dim" id="d-faiz"></div>
-      </div>
-    </div>
-
-    <!-- 3. KESİNTİ VE GİDER KALEMLERİ -->
-    <div class="sh">Kesinti ve Gider Kalemleri</div>
-    <div class="gl">
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin tesis bedeli</div><div class="gdesc">Araç üzerine rehin konulması işlemi</div></div></div>
-        <div class="gamt">6.250 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Taşıt rehin fek bedeli</div><div class="gdesc">Kredi bitiminde rehin kaldırma işlemi</div></div></div>
-        <div class="gamt">6.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Dosya masrafı / yol / üst alım</div><div class="gdesc">Sözleşme ve işlem giderleri</div></div></div>
-        <div class="gamt">3.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Kredi koordinasyon ve vekalet gideri</div><div class="gdesc">Operasyon ve vekalet süreç gideri</div></div></div>
-        <div class="gamt">4.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">KKS bedeli</div><div class="gdesc">Kredinin kullanıma açılış işlemi</div></div></div>
-        <div class="gamt">3.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Finansal koruma sigortası</div><div class="gdesc">Kredi ödeme güvence hizmeti</div></div></div>
-        <div class="gamt">4.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Zorunlu vergi ve fon kesintileri</div><div class="gdesc">BSMV, KKDF ve yasal yükümlülükler</div></div></div>
-        <div class="gamt">6.000 TL</div>
-      </div>
-      <div class="gr">
-        <div class="gleft"><div class="gdot"></div><div><div class="gname">Aktif Bank dosya ve ekran kullanım bedeli</div><div class="gdesc">Banka sistem ve işlem gideri</div></div></div>
-        <div class="gamt" id="d-aktif"></div>
-      </div>
-    </div>
-    <div class="gtotal">
-      <div class="gtlabel">TOPLAM GİDER TUTARI</div>
-      <div class="gtamt" id="d-toplam"></div>
-    </div>
-
-    <!-- 4. ONAY VE İMZA -->
-    <div class="sh">Onay ve İmza</div>
-    <div class="sc">
-      <div class="onay-box">
-        <p class="onay-text">İşbu belgede yer alan finansman tutarı, net ele geçen tutar, vade, oran ve gider kalemlerine ilişkin bilgilendirmeyi okuduğumu, anladığımı ve tarafıma sözlü/yazılı olarak açıklandığını kabul ederim. Kişisel verilerimin ilgili mevzuat kapsamında finansman sürecinin yürütülmesi amacıyla işlenmesine onay verdiğimi beyan ederim.</p>
-      </div>
-      <div class="imza-row">
-        <div class="imza-field">Ad Soyad</div>
-        <div class="imza-field">İmza</div>
-        <div class="imza-field">Tarih</div>
-      </div>
-    </div>
-
-    <!-- 5. BİLGİLENDİRME -->
-    <div class="sh">Bilgilendirme ve Koruyucu Hükümler</div>
-    <div class="sc">
-      <ol class="bilgi-list">
-        <li><span class="bnum">1.</span><span>Bu belgede yer alan tutar, oran, masraf ve vade bilgileri ön değerlendirme niteliğinde olup; nihai onay ilgili banka veya finans kuruluşunun sistem, skor, ekspertiz ve evrak incelemesi sonucunda kesinleşir.</span></li>
-        <li><span class="bnum">2.</span><span>KREDİZMİR, finansman sürecinde danışmanlık, bilgilendirme ve organizasyon desteği sunmakta olup; kredi tahsisi, nihai faiz oranı, kesin ödeme planı ve kullandırım şartları ilgili finans kuruluşunun onayına tabidir.</span></li>
-        <li><span class="bnum">3.</span><span>Araç durumu, kasko değeri, ekspertiz sonucu, müşteri kredi profili, yasal kesintiler ve güncel finansman politikalarına bağlı olarak bu belgede yer alan verilerde değişiklik oluşabilir; KREDİZMİR bu değişikliklerden kaynaklı nihai kurum kararından sorumlu tutulamaz.</span></li>
-      </ol>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="doc-foot">
-      <p>Bu belge müşteri bilgilendirme ve ön değerlendirme amaçlı düzenlenmiştir.</p>
-      <p>Kesin onay, ilgili kurum değerlendirmesi ve evrak incelemesi sonrası netleşir.</p>
-    </div>
+    <div class="field"><label>Tutar (TL)</label><input id="f_aktif_tutar" type="text" placeholder="23.382"></div>
   </div>
+
+<button class="btn" onclick="olustur()">📥 PNG Olarak İndir</button>
+<canvas id="cv"></canvas>
+
 </div>
 
 <script>
-var SABIT = 32250;
+// ── helpers ──────────────────────────────────────────────────────────────────
+function val(id){ return document.getElementById(id).value.trim(); }
+function tl(v,fb){ if(!v) return fb||'—'; return v.includes('TL')?v:v+' TL'; }
 
-function parseTL(v){
-  return parseInt((v||'').replace(/[^\d]/g,''))||0;
-}
-function formatTL(n){
-  return n.toLocaleString('tr-TR')+' TL';
-}
-function fmtInput(el){
-  var n=parseTL(el.value);
-  if(n>0) el.value=n.toLocaleString('tr-TR');
-}
-function calcToplam(){
-  var aktif=parseTL(document.getElementById('f-aktif').value);
-  var toplam=SABIT+aktif;
-  document.getElementById('prev-aktif').textContent=formatTL(aktif);
-  document.getElementById('prev-toplam').textContent=formatTL(toplam);
+// Draw rounded rect
+function rr(ctx,x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke.c;ctx.lineWidth=stroke.w||1;ctx.stroke();}
 }
 
-// Bugünün tarihi
-(function(){
-  var d=new Date();
-  var dd=String(d.getDate()).padStart(2,'0');
-  var mm=String(d.getMonth()+1).padStart(2,'0');
-  var yy=d.getFullYear();
-  document.getElementById('f-tarih').value=dd+'/'+mm+'/'+yy;
-})();
+// Wrap text
+function wrapText(ctx,text,maxW){
+  const words=text.split(' '), lines=[];
+  let cur='';
+  for(const w of words){
+    const t=cur?cur+' '+w:w;
+    if(ctx.measureText(t).width<=maxW){cur=t;}
+    else{if(cur)lines.push(cur);cur=w;}
+  }
+  if(cur)lines.push(cur);
+  return lines;
+}
 
 function olustur(){
-  var ad=document.getElementById('f-ad').value.trim();
-  var kredi=document.getElementById('f-kredi').value.trim();
-  if(!ad){
-    document.getElementById('f-ad').focus();
-    document.getElementById('f-ad').style.borderColor='#e05c5c';
-    setTimeout(function(){document.getElementById('f-ad').style.borderColor='';},1500);
-    return;
+  const SCALE=2; // retina
+  const W=595, H=890;
+  const cv=document.getElementById('cv');
+  cv.width=W*SCALE; cv.height=H*SCALE;
+  const ctx=cv.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+
+  const NAVY='#08264A', GOLD='#C8A23A', BG='#F3F4F6',
+        TEXT='#233142', SEC='#7A8694', LINE='#D6DCE3',
+        ALT='#E8ECF2', WHITE='#fff', NAVY2='#1A4A7A';
+
+  // ── background ──
+  ctx.fillStyle=WHITE; ctx.fillRect(0,0,W,H);
+
+  // ── watermark ──
+  ctx.save();
+  ctx.globalAlpha=0.22;
+  ctx.fillStyle=NAVY;
+  ctx.font='bold 180px Poppins,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('OKİ', W/2, H/2+30);
+  ctx.restore();
+
+  // ── outer frame (navy) ──
+  ctx.strokeStyle=NAVY; ctx.lineWidth=2;
+  ctx.strokeRect(21,21,W-42,H-42);
+  // inner frame (gold)
+  ctx.strokeStyle=GOLD; ctx.lineWidth=0.8;
+  ctx.strokeRect(26,26,W-52,H-52);
+  // corner marks
+  const cs=12, cm=21;
+  ctx.strokeStyle=NAVY; ctx.lineWidth=2;
+  [[cm,cm,1,0],[cm,cm,0,1],[W-cm,cm,-1,0],[W-cm,cm,0,1],
+   [cm,H-cm,1,0],[cm,H-cm,0,-1],[W-cm,H-cm,-1,0],[W-cm,H-cm,0,-1]]
+  .forEach(([x,y,dx,dy])=>{
+    ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+dx*cs,y+dy*cs); ctx.stroke();
+  });
+
+  // ── header ──
+  ctx.fillStyle=NAVY; ctx.fillRect(28,28,W-56,88);
+  ctx.fillStyle=GOLD; ctx.fillRect(28,28+88-2,W-56,2); // bottom gold line
+
+  // brand
+  ctx.fillStyle=WHITE; ctx.font='bold 22px Poppins,sans-serif';
+  ctx.textAlign='left'; ctx.fillText('KREDİZMİR',46,28+42);
+  ctx.fillStyle='#A8BCCF'; ctx.font='italic 9px Poppins,sans-serif';
+  ctx.fillText('Rotanız mutluluk olsun.',46,28+57);
+
+  // right title
+  ctx.textAlign='right';
+  ctx.fillStyle=WHITE; ctx.font='bold 12px Poppins,sans-serif';
+  ctx.fillText('FİNANSAL ÇÖZÜM TEKLİFİ',W-46,28+38);
+  ctx.fillStyle='#A8BCCF'; ctx.font='italic 8px Poppins,sans-serif';
+  ctx.fillText('Ön Onay ve Bilgilendirme Formu',W-46,28+52);
+
+  let y=28+88+4;
+  ctx.textAlign='left';
+
+  // ── section bar helper ──
+  function secBar(label){
+    ctx.fillStyle=NAVY; ctx.fillRect(28,y,W-56,19);
+    ctx.fillStyle=NAVY2; ctx.fillRect(28,y,4,19);
+    ctx.fillStyle=WHITE; ctx.font='bold 8px Poppins,sans-serif';
+    ctx.fillText(label,40,y+13);
+    y+=22;
   }
-  if(!kredi){
-    document.getElementById('f-kredi').focus();
-    document.getElementById('f-kredi').style.borderColor='#e05c5c';
-    setTimeout(function(){document.getElementById('f-kredi').style.borderColor='';},1500);
-    return;
+
+  // ── info field helper ──
+  function infoField(label,value,x,fy,w){
+    ctx.fillStyle=SEC; ctx.font='6px Poppins,sans-serif';
+    ctx.fillText(label,x,fy+13);
+    ctx.fillStyle=TEXT; ctx.font='500 8px Poppins,sans-serif';
+    ctx.fillText(value,x,fy+24);
+    ctx.strokeStyle=LINE; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(x,fy+27); ctx.lineTo(x+w,fy+27); ctx.stroke();
   }
 
-  var aktif=parseTL(document.getElementById('f-aktif').value);
-  var toplam=SABIT+aktif;
-  var vadeVal=document.getElementById('f-vade').value.trim();
-  var faizVal=document.getElementById('f-faiz').value.trim();
+  // ── 1. MÜŞTERİ ──────────────────────────────────────────────────────────
+  secBar('MÜŞTERİ VE ARAÇ BİLGİLERİ');
+  const cx=38, iw=W-76, cw=(iw-14)/2;
 
-  // Belgeyi doldur
-  document.getElementById('d-ad').textContent=ad.toUpperCase();
-  document.getElementById('d-tc').textContent=document.getElementById('f-tc').value.trim()||'— — — — — — — — — — —';
-  document.getElementById('d-arac').textContent=document.getElementById('f-arac').value.trim()||'................................';
-  document.getElementById('d-yil').textContent=document.getElementById('f-yil').value.trim()||'............ / ............';
-  document.getElementById('d-tarih').textContent=document.getElementById('f-tarih').value.trim();
-  document.getElementById('d-kredi').textContent=formatTL(parseTL(kredi));
+  infoField('Müşteri Adı Soyadı', val('f_ad')||'—',        cx,     y, cw);
+  infoField('TC Kimlik No',       val('f_tc')||'_ _ _ _ _ _ _ _ _ _ _', cx+cw+14, y, cw);
+  y+=38;
+  infoField('Araç Markası / Modeli','………………………………………',           cx,     y, cw);
+  infoField('Model Yılı / Plaka',   '…………  /  …………',                  cx+cw+14, y, cw);
+  y+=38;
+  infoField('Finansman Sağlayıcı','KREDİZMİR Vadelendirilen',cx,    y, cw);
+  infoField('Başvuru Tarihi',      val('f_tarih')||'—',     cx+cw+14,y, cw);
+  y+=44;
 
-  var net=parseTL(document.getElementById('f-net').value);
-  document.getElementById('d-net').textContent=net>0?formatTL(net):'— — — — —';
-  document.getElementById('d-toplam-fin').textContent=formatTL(toplam);
+  // ── 2. FİNANSMAN ────────────────────────────────────────────────────────
+  secBar('FİNANSMAN ÖZETİ');
+  const boxes=[
+    ['Kredi Tutarı','Onaylanan finansman', tl(val('f_kredi')), false],
+    ['Net Ele Geçen','Müşteriye kalan net tutar', tl(val('f_net')), false],
+    ['Tahmini Toplam Gider','Masraf ve kesintiler dahil', tl(val('f_gider')), false],
+    ['Vade','Ay','........', false],
+    ['Faiz Oranı','Aylık','% ......', true],
+  ];
+  const bw=(iw-16)/5, bh=52;
+  boxes.forEach(([t,s,v,hi],i)=>{
+    const bx=cx+i*(bw+4), by=y;
+    if(hi){
+      rr(ctx,bx,by,bw,bh,5,NAVY,{c:GOLD,w:1});
+      ctx.fillStyle='#A8BCCF';
+    } else {
+      rr(ctx,bx,by,bw,bh,5,BG,{c:LINE,w:0.5});
+      ctx.fillStyle=SEC;
+    }
+    ctx.font='500 6px Poppins,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(t,bx+bw/2,by+14);
+    ctx.fillStyle=hi?'#7A9AB8':SEC;
+    ctx.font='5px Poppins,sans-serif';
+    ctx.fillText(s,bx+bw/2,by+23);
+    ctx.fillStyle=hi?WHITE:NAVY;
+    ctx.font='bold 10px Poppins,sans-serif';
+    ctx.fillText(v,bx+bw/2,by+42);
+    ctx.textAlign='left';
+  });
+  y+=bh+14;
 
-  var dVade=document.getElementById('d-vade');
-  dVade.textContent=vadeVal?vadeVal+' Ay':'........';
-  dVade.className='fv'+(vadeVal?'':' dim');
+  // ── 3. GİDER KALEMLERİ ──────────────────────────────────────────────────
+  secBar('KESİNTİ VE GİDER KALEMLERİ');
 
-  var dFaiz=document.getElementById('d-faiz');
-  dFaiz.textContent=faizVal?faizVal:'% ......';
-  dFaiz.className='fv'+(faizVal?'':' dim');
+  const aktifAd    = val('f_aktif_ad')    || 'Aktif Bank dosya ve ekran kullanım bedeli';
+  const aktifTutar = tl(val('f_aktif_tutar'),'23.382 TL');
 
-  document.getElementById('d-aktif').textContent=aktif>0?formatTL(aktif):'— — —';
-  document.getElementById('d-toplam').textContent=formatTL(toplam);
+  const items=[
+    ['Taşıt rehin tesis bedeli','Araç üzerine rehin konulması işlemi','6.250 TL'],
+    ['Taşıt rehin fek bedeli','Kredi bitiminde rehin kaldırma işlemi','6.000 TL'],
+    ['Dosya masrafı / yol / üst alım','Sözleşme ve işlem giderleri','3.000 TL'],
+    ['Kredi koordinasyon ve vekalet gideri','Operasyon ve vekalet süreç gideri','4.000 TL'],
+    ['KKS bedeli','Kredinin kullanıma açılış işlemi','3.000 TL'],
+    ['Finansal koruma sigortası','Kredi ödeme güvence hizmeti','4.000 TL'],
+    ['Zorunlu vergi ve fon kesintileri','BSMV, KKDF ve yasal yükümlülükler','6.000 TL'],
+    [aktifAd,'Banka sistem ve işlem gideri',aktifTutar],
+  ];
+  const rh=22;
+  items.forEach(([name,detail,amt],i)=>{
+    ctx.fillStyle=i%2===1?ALT:WHITE;
+    ctx.fillRect(28,y,W-56,rh);
+    ctx.strokeStyle=LINE; ctx.lineWidth=0.3;
+    ctx.strokeRect(28,y,W-56,rh);
+    // dot
+    ctx.fillStyle=NAVY; ctx.beginPath();
+    ctx.arc(38,y+rh/2,2.2,0,Math.PI*2); ctx.fill();
+    // name
+    ctx.fillStyle=TEXT; ctx.font='500 7px Poppins,sans-serif';
+    ctx.fillText(name,46,y+13);
+    // detail
+    ctx.fillStyle=SEC; ctx.font='6px Poppins,sans-serif';
+    ctx.fillText(detail,46,y+21);
+    // amount
+    ctx.fillStyle=TEXT; ctx.font='bold 8.5px Poppins,sans-serif';
+    ctx.textAlign='right'; ctx.fillText(amt,W-36,y+15);
+    ctx.textAlign='left';
+    y+=rh;
+  });
 
-  // Geçiş
-  document.getElementById('ekran1').style.display='none';
-  document.getElementById('ekran2').style.display='block';
-  window.scrollTo(0,0);
-}
+  // total band
+  ctx.fillStyle=NAVY; ctx.fillRect(28,y,W-56,22);
+  ctx.fillStyle=WHITE; ctx.font='bold 9px Poppins,sans-serif';
+  ctx.fillText('TOPLAM GİDER TUTARI',40,y+15);
+  ctx.textAlign='right'; ctx.fillText(tl(val('f_gider'),'—'),W-36,y+15);
+  ctx.textAlign='left';
+  y+=32;
 
-function duzelt(){
-  document.getElementById('ekran2').style.display='none';
-  document.getElementById('ekran1').style.display='block';
-  window.scrollTo(0,0);
+  // ── 4. ONAY VE İMZA ─────────────────────────────────────────────────────
+  secBar('ONAY VE İMZA');
+  const disc='İşbu belgede yer alan finansman tutarı, net ele geçen tutar, vade, oran ve gider kalemlerine ilişkin bilgilendirmeyi okuduğumu, anladığımı ve tarafıma sözlü/yazılı olarak açıklandığını kabul ederim. Kişisel verilerimin ilgili mevzuat kapsamında finansman sürecinin yürütülmesi amacıyla işlenmesine onay verdiğimi beyan ederim.';
+  ctx.font='italic 7px Poppins,sans-serif';
+  const dlines=wrapText(ctx,disc,iw-18);
+  const dh=dlines.length*11+12;
+  rr(ctx,cx,y,iw,dh,4,BG,{c:LINE,w:0.6});
+  ctx.fillStyle=TEXT;
+  dlines.forEach((ln,i)=>ctx.fillText(ln,cx+8,y+12+i*11));
+  y+=dh+12;
+
+  // sig lines
+  const sw=(iw-20)/3;
+  ['Ad Soyad','İmza','Tarih'].forEach((lbl,i)=>{
+    const sx=cx+i*(sw+10);
+    ctx.strokeStyle=NAVY; ctx.lineWidth=0.7;
+    ctx.beginPath(); ctx.moveTo(sx,y+14); ctx.lineTo(sx+sw,y+14); ctx.stroke();
+    ctx.fillStyle=SEC; ctx.font='6.5px Poppins,sans-serif';
+    ctx.fillText(lbl,sx,y+24);
+  });
+  y+=34;
+
+  // ── 5. KORUYUCU HÜKÜMLER ────────────────────────────────────────────────
+  secBar('BİLGİLENDİRME VE KORUYUCU HÜKÜMLER');
+  const clauses=[
+    '1. Bu belgede yer alan tutar, oran, masraf ve vade bilgileri ön değerlendirme niteliğinde olup; nihai onay ilgili banka veya finans kuruluşunun sistem, skor, ekspertiz ve evrak incelemesi sonucunda kesinleşir.',
+    '2. KREDİZMİR, finansman sürecinde danışmanlık, bilgilendirme ve organizasyon desteği sunmakta olup; kredi tahsisi, nihai faiz oranı, kesin ödeme planı ve kullandırım şartları ilgili finans kuruluşunun onayına tabidir.',
+    '3. Araç durumu, kasko değeri, ekspertiz sonucu, müşteri kredi profili, yasal kesintiler ve güncel finansman politikalarına bağlı olarak bu belgede yer alan verilerde değişiklik oluşabilir; KREDİZMİR bu değişikliklerden kaynaklı nihai kurum kararından sorumlu tutulamaz.',
+  ];
+  ctx.font='6.5px Poppins,sans-serif';
+  clauses.forEach(cl=>{
+    const lines=wrapText(ctx,cl,iw-16);
+    lines.forEach((ln,i)=>{
+      ctx.fillStyle=i===0?TEXT:TEXT;
+      if(i===0){
+        ctx.fillStyle=NAVY; ctx.font='bold 7px Poppins,sans-serif';
+        ctx.fillText(ln.slice(0,2),cx,y+9);
+        ctx.fillStyle=TEXT; ctx.font='6.5px Poppins,sans-serif';
+        ctx.fillText(ln.slice(2),cx+13,y+9);
+      } else {
+        ctx.fillStyle=TEXT; ctx.font='6.5px Poppins,sans-serif';
+        ctx.fillText(ln,cx+13,y+9);
+      }
+      y+=10;
+    });
+    ctx.strokeStyle=LINE; ctx.lineWidth=0.3;
+    ctx.beginPath(); ctx.moveTo(cx,y+3); ctx.lineTo(cx+iw,y+3); ctx.stroke();
+    y+=9;
+  });
+
+  // ── footer ───────────────────────────────────────────────────────────────
+  ctx.strokeStyle=NAVY; ctx.lineWidth=0.8;
+  ctx.beginPath(); ctx.moveTo(28,y+6); ctx.lineTo(W-28,y+6); ctx.stroke();
+  ctx.fillStyle=SEC; ctx.font='italic 6px Poppins,sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('Bu belge müşteri bilgilendirme ve ön değerlendirme amacıyla düzenlenmiştir.',W/2,y+18);
+  ctx.fillText('Kesin onay, ilgili kurum değerlendirmesi ve evrak incelemesi sonrası netleşir.',W/2,y+28);
+  ctx.textAlign='left';
+
+  // ── iOS uyumlu: img olarak göster, long-press ile kaydet ──────────────
+  const dataUrl = cv.toDataURL('image/png');
+  let overlay = document.getElementById('img-overlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'img-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 12px 50px;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <div style="color:#C8A23A;font-family:Poppins,sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;">✅ Belge hazır</div>
+    <div style="color:#7A9AB8;font-family:Poppins,sans-serif;font-size:11px;margin-bottom:16px;text-align:center;line-height:1.7;">
+      iPhone: Görsele <strong style="color:#fff;">uzun bas</strong> → "Fotoğrafa Kaydet"<br>
+      Android / PC: Görsele sağ tıkla → "Resmi Kaydet"
+    </div>
+    <img src="${dataUrl}" style="width:100%;max-width:560px;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,.6);display:block;" />
+    <button onclick="document.getElementById('img-overlay').remove()"
+      style="margin-top:20px;background:#08264A;color:#C8A23A;border:1px solid #C8A23A;border-radius:8px;padding:12px 36px;font-family:Poppins,sans-serif;font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+      ✕ Kapat
+    </button>
+  `;
 }
 </script>
+
 </body>
 </html>

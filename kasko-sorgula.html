@@ -340,7 +340,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div class="footer">Mart 2026 · TSB Kasko Değer Listesi · KREDİZMİR Panel · Taksit tutarı tahminidir, bağlayıcı değildir</div>
 
 <script>
-<script>
 let DATA = [], MARKA_MODELS = {};
 let sel = null, listData = [], isFuzzy = false, activeRate = 4.75;
 
@@ -378,9 +377,6 @@ fetch('kasko-data.json')
   });
 
 const CUR_YEAR = 2026;
-
-
-let sel = null, listData = [], isFuzzy = false, activeRate = 4.75;
 function fmt(n){return Number(n).toLocaleString('tr-TR');}
 
 function getAgeInfo(yr){

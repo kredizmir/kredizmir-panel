@@ -151,14 +151,6 @@ function olustur(){
   // ── background ──
   ctx.fillStyle=WHITE; ctx.fillRect(0,0,W,H);
 
-  // ── watermark ──
-  ctx.save();
-  ctx.globalAlpha=0.18;
-  ctx.fillStyle=NAVY;
-  ctx.font='bold 200px Poppins,sans-serif';
-  ctx.textAlign='center';
-  ctx.fillText('OKİ', W/2, H/2+40);
-  ctx.restore();
 
   // ── outer frame (navy) ──
   ctx.strokeStyle=NAVY; ctx.lineWidth=2.5;
@@ -358,6 +350,25 @@ function olustur(){
   ctx.fillText('Bu belge müşteri bilgilendirme ve ön değerlendirme amacıyla düzenlenmiştir.',W/2,y+18);
   ctx.fillText('Kesin onay, ilgili kurum değerlendirmesi ve evrak incelemesi sonrası netleşir.',W/2,y+28);
   ctx.textAlign='left';
+
+  // ── K monogram watermark (foreground) ────────────────────────────────────
+  ctx.save();
+  ctx.translate(W/2, H/2+30);
+  ctx.rotate(-0.15);
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  // fill: very faint navy
+  ctx.globalAlpha=0.055;
+  ctx.fillStyle=NAVY;
+  ctx.font='bold 310px Georgia,serif';
+  ctx.fillText('K',0,0);
+  // stroke: thin gold outline slightly more visible
+  ctx.globalAlpha=0.10;
+  ctx.strokeStyle=GOLD;
+  ctx.lineWidth=1.2;
+  ctx.strokeText('K',0,0);
+  ctx.restore();
+  ctx.textBaseline='alphabetic';
 
   // ── iOS uyumlu: img olarak göster, long-press ile kaydet ──────────────
   _dataUrl = cv.toDataURL('image/png');

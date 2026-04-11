@@ -130,8 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
         formSection.classList.add('hidden');
         resultSection.classList.remove('hidden');
 
-        // SKOR
-        document.getElementById('scoreValue').textContent = data.score;
+        // SKOR (dahili 0-100 × 15 = 0-1500 gösterim)
+        const displayScore = Math.round(data.score * 15);
+        document.getElementById('scoreValue').textContent = displayScore.toLocaleString('tr-TR');
 
         // DURUM ETİKETİ
         const statusBadge = document.getElementById('statusBadge');
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const message = template
             .replace('{name}', data.customerName)
             .replace('{phone}', data.customerPhone)
-            .replace('{score}', data.score)
+            .replace('{score}', Math.round(data.score * 15).toLocaleString('tr-TR'))
             .replace('{status}', data.result.label + ' ' + data.result.icon)
             .replace('{findeks_band}', `${data.findeksBand.label} (${data.findeksBand.min}-${data.findeksBand.max})`)
             .replace('{debt_ratio}', data.debtRatio)

@@ -57,11 +57,9 @@ class KKBEngine {
   }
 
   _getResult(score) {
-    if (this.doubleAutoFail) return CONFIG.results.cikmaz;
-    if (this.autoFail)       return CONFIG.results.zor;
-    if (score >= CONFIG.results.uygun.min)     return CONFIG.results.uygun;
+    if (this.autoFail) return CONFIG.results.alternatif;
+    if (score >= CONFIG.results.cikar.min)     return CONFIG.results.cikar;
     if (score >= CONFIG.results.sinirda.min)   return CONFIG.results.sinirda;
-    if (score >= CONFIG.results.alternatif.min) return CONFIG.results.alternatif;
-    return CONFIG.results.zor;
+    return CONFIG.results.alternatif;
   }
 }

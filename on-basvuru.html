@@ -474,19 +474,20 @@ select option { background: var(--navy-mid); color: var(--white); }
         Bilgileri kontrol edin. <strong>Gönder</strong>'e basınca hem e-posta hem WhatsApp'a iletilecek.
       </div>
       <div class="form-error" id="formError">Bir hata oluştu. Lütfen tekrar deneyin.</div>
-      <div style="display:flex;align-items:center;gap:12px;background:#0d1e2e;border:1px solid #1e3a55;border-left:3px solid #C8A23A;border-radius:8px;padding:12px 14px;margin:12px 0;">
-        <span style="font-size:22px;flex-shrink:0;">🤖</span>
-        <div>
-          <div style="font-size:12px;font-weight:600;color:#e0eaf4;line-height:1.5;">
-            6 anketimize katılarak tahmini KKB puanınızı
-            <strong style="color:#C8A23A;">yapay zeka desteği</strong> ile öğrenebilirsiniz.
+      <a href="kredizmir-kkb/kkb-formu.html" target="_blank" style="display:block;text-decoration:none;margin:14px 0;">
+        <div style="background:linear-gradient(135deg,#0d1e2e,#0a2540);border:1.5px solid #C8A23A;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 18px rgba(200,162,58,.18);">
+          <div style="font-size:32px;flex-shrink:0;line-height:1;">🤖</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:4px;">
+              6 soruluk anketimize katılarak tahmini KKB puanınızı
+              <span style="color:#C8A23A;">yapay zeka desteği</span> ile öğrenebilirsiniz.
+            </div>
+            <div style="display:inline-block;background:#C8A23A;color:#08264A;font-size:11px;font-weight:700;border-radius:20px;padding:4px 14px;letter-spacing:.3px;">
+              Ankete Katıl →
+            </div>
           </div>
-          <a href="kredizmir-kkb/kkb-formu.html" target="_blank"
-             style="display:inline-block;margin-top:6px;font-size:11px;color:#C8A23A;text-decoration:underline;font-weight:600;">
-            Ankete katıl →
-          </a>
         </div>
-      </div>
+      </a>
       <div class="brow">
         <button type="button" class="btn-back" onclick="goTo(2)">← Geri</button>
         <button type="button" class="btn-send" id="btnSend" onclick="submitForm()">✓ Gönder</button>

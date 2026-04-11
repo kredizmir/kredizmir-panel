@@ -31,7 +31,7 @@ h1{color:var(--gold);font-size:18px;font-weight:700;letter-spacing:1px;margin-bo
 canvas{display:none;}
 .kesinti-wrap{margin:8px 0 4px;}
 .kesinti-lbl{font-size:9px;color:#5a7a9a;margin-bottom:7px;font-weight:500;}
-.kesinti-row{display:flex;gap:6px;}
+.kesinti-row{display:flex;gap:6px;flex-wrap:wrap;}
 .kbtn{flex:1;background:#1a2d3f;border:1px solid #2a3f55;border-radius:6px;color:#7a9ab8;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;padding:8px 2px;cursor:pointer;transition:.2s;text-align:center;}
 .kbtn:hover{border-color:var(--gold);color:var(--gold);}
 .kbtn.sel{background:rgba(200,162,58,.15);border-color:var(--gold);color:var(--gold);}
@@ -60,6 +60,7 @@ canvas{display:none;}
         <button class="kbtn" onclick="secKesinti(this,70000)">70.000</button>
         <button class="kbtn" onclick="secKesinti(this,80000)">80.000</button>
         <button class="kbtn" onclick="secKesinti(this,90000)">90.000</button>
+        <button class="kbtn" onclick="secKesinti(this,130000)">130.000</button>
       </div>
     </div>
     <div class="field"><label>Net Ele Geçen (TL)</label><input id="f_net" type="text" placeholder="Otomatik hesaplanır" readonly style="opacity:.7;cursor:default;"></div>
@@ -67,12 +68,22 @@ canvas{display:none;}
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">En Büyük Kalem</div>
+    <div class="fsec-title">Finansman Sağlayıcı</div>
     <div class="field">
-      <label>Banka / Hizmet Adı</label>
-      <input id="f_aktif_ad" type="text" placeholder="örn: Otovadeli Senetlendirme, OtoRehin…">
+      <label>Banka / Kurum Seçin <span style="color:#C8A23A;">*</span></label>
+      <select id="f_aktif_ad" onchange="autoAktif()" required
+        style="width:100%;background:#1a2d3f;border:1px solid #2a3f55;border-radius:6px;color:#e0eaf4;font-family:'Poppins',sans-serif;font-size:13px;padding:9px 12px;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;">
+        <option value="" disabled selected style="color:#3a5570;">— Seçiniz —</option>
+        <option value="Aktif Bank">Aktif Bank</option>
+        <option value="Otovadeli">Otovadeli</option>
+        <option value="Vakıf Katılım">Vakıf Katılım</option>
+        <option value="ALJ Finansman">ALJ Finansman</option>
+        <option value="Otosor">Otosor</option>
+        <option value="Quickfinans">Quickfinans</option>
+        <option value="Financell">Financell</option>
+      </select>
     </div>
-    <div class="field"><label>Tutar (TL)</label><input id="f_aktif_tutar" type="text" placeholder="23.382"></div>
+    <input id="f_aktif_tutar" type="hidden" value="">
   </div>
 
 <button class="btn" onclick="olustur()">📥 PNG Olarak İndir</button>
@@ -104,6 +115,7 @@ function parseTLv(v){ return parseInt((v||'').replace(/[^\d]/g,''))||0; }
 
 var _dataUrl='';
 var _secilenKesinti=0;
+var SABIT_GIDER=32250; // 6250+6000+3000+4000+3000+4000+6000
 
 function secKesinti(btn,amount){
   document.querySelectorAll('.kbtn').forEach(b=>b.classList.remove('sel'));
@@ -111,6 +123,14 @@ function secKesinti(btn,amount){
   _secilenKesinti=amount;
   document.getElementById('f_gider').value=amount.toLocaleString('tr-TR');
   autoNet();
+  autoAktif();
+}
+function autoAktif(){
+  if(!_secilenKesinti) return;
+  var banka=document.getElementById('f_aktif_ad').value;
+  if(!banka) return;
+  var bedel=_secilenKesinti-SABIT_GIDER;
+  document.getElementById('f_aktif_tutar').value=bedel>0?bedel.toLocaleString('tr-TR'):'0';
 }
 function autoNet(){
   if(!_secilenKesinti) return;

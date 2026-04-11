@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKB Kredi Analizi | KREDİZMİR</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>KREDİZMİR</h1>
+                <p>Taşıt Kredisi & OKİ Araç Eşleştirme</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- FORM SECTION -->
+            <section id="formSection" class="form-section">
+                <div class="form-header">
+                    <h2>KKB Kredi Değerlendirme</h2>
+                    <p>Taşıt kredisi uygunluğunuzu 7 kritere göre değerlendiriyoruz</p>
+                </div>
+
+                <form id="kkbForm" class="kkb-form">
+                    
+                    <!-- MÜŞTERİ BİLGİLERİ (Ön başvurudan gelecek) -->
+                    <div class="form-group">
+                        <label>Ad Soyad</label>
+                        <input type="text" id="customerName" required placeholder="Mehmet Yılmaz">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="tel" id="customerPhone" required placeholder="0555 123 4567">
+                    </div>
+
+                    <!-- 1. FINDEKS SKORU -->
+                    <div class="form-group">
+                        <label>1. Findeks Skorunuz <span class="required">*</span></label>
+                        <input type="number" id="findeks" required min="0" max="1900" placeholder="1450">
+                        <small>Findeks raporunuzdan öğrenebilirsiniz</small>
+                    </div>
+
+                    <!-- 2. KANUNI TAKİP -->
+                    <div class="form-group">
+                        <label>2. Kanuni Takip Durumunuz <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="legalAction" value="none" required>
+                                <span>Hiç yok ✓</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="legalAction" value="old_closed">
+                                <span>1-2 adet (3+ yıl önce, KAPALI)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="legalAction" value="active">
+                                <span>3+ adet VEYA Aktif takip var</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 3. GECİKME DURUMU -->
+                    <div class="form-group">
+                        <label>3. Ödeme Gecikme Durumunuz <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="delay" value="no_delay" required>
+                                <span>Hiç gecikme yok (son 12 ay) ✓</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="delay" value="old_delay">
+                                <span>1-30 gün gecikme oldu (6+ ay önce)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="delay" value="active_delay">
+                                <span>Aktif gecikme VAR</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 4. BORÇ/LİMİT -->
+                    <div class="form-group">
+                        <label>4. Toplam Kredi Kartı + KMH Limitiniz (TL) <span class="required">*</span></label>
+                        <input type="number" id="totalLimit" required min="0" placeholder="150000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Toplam Borç Tutarınız (TL) <span class="required">*</span></label>
+                        <input type="number" id="totalDebt" required min="0" placeholder="45000">
+                        <small id="debtRatioPreview" class="ratio-preview"></small>
+                    </div>
+
+                    <!-- 5. NET GELİR VE TAKSİT YÜKÜ -->
+                    <div class="form-group">
+                        <label>5. Net Aylık Geliriniz (TL) <span class="required">*</span></label>
+                        <input type="number" id="income" required min="0" placeholder="25000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Aylık Toplam Taksit/Ödeme Yükünüz (TL) <span class="required">*</span></label>
+                        <input type="number" id="monthlyPayment" required min="0" placeholder="8000">
+                        <small id="dtiPreview" class="ratio-preview"></small>
+                    </div>
+
+                    <!-- 6. GEÇMİŞ KREDİ SİCİLİ -->
+                    <div class="form-group">
+                        <label>6. Geçmiş Kredi Sicili <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="creditHistory" value="excellent" required>
+                                <span>3+ krediyi başarıyla kapattım ✓</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="creditHistory" value="good">
+                                <span>1-2 krediyi kapattım</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="creditHistory" value="none">
+                                <span>Kredi kapatmadım / İlk kredim</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 7. ÇOK BANKALI ÇALIŞMA -->
+                    <div class="form-group">
+                        <label>7. Kaç Bankadan Limit/Kredi Aldınız? <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="multiBank" value="excellent" required>
+                                <span>4+ banka ✓</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="multiBank" value="good">
+                                <span>2-3 banka</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="multiBank" value="single">
+                                <span>1 banka</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <button type="submit" class="btn-submit">
+                        Analiz Et
+                    </button>
+                </form>
+            </section>
+
+            <!-- RESULT SECTION (Hidden by default) -->
+            <section id="resultSection" class="result-section hidden">
+                <div class="result-header">
+                    <h2>Kredi Değerlendirme Sonucu</h2>
+                </div>
+
+                <div class="result-score-card">
+                    <div class="score-circle">
+                        <div class="score-value" id="scoreValue">0</div>
+                        <div class="score-max">/100</div>
+                    </div>
+                    <div class="score-status">
+                        <div class="status-badge" id="statusBadge">
+                            <span id="statusIcon"></span>
+                            <span id="statusLabel"></span>
+                        </div>
+                        <p id="statusMessage"></p>
+                    </div>
+                </div>
+
+                <div class="result-details">
+                    <h3>Detaylı Değerlendirme</h3>
+                    <div id="detailsList" class="details-list"></div>
+                </div>
+
+                <div class="result-actions">
+                    <button id="btnWhatsApp" class="btn-whatsapp">
+                        📱 WhatsApp'tan İletişime Geç
+                    </button>
+                    <button id="btnNewAnalysis" class="btn-secondary">
+                        🔄 Yeni Analiz
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 KREDİZMİR - Taşıt Kredisi & OKİ Araç Eşleştirme</p>
+            <p>WhatsApp: 0530 725 87 89</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/config.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

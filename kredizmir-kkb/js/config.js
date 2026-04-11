@@ -78,10 +78,10 @@ const CONFIG = {
     },
     rejected: {
       min: 0,
-      label: "ÇIKMAZ",
-      icon: "❌",
-      color: "#dc3545",
-      message: "Alternatif yol ara veya profili güçlendir."
+      label: "ALTERNATİF YOL",
+      icon: "💡",
+      color: "#e68a00",
+      message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
     }
   },
 

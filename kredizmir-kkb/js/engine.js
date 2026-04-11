@@ -50,16 +50,27 @@ class KKBEngine {
 
   // 1. FINDEKS DEĞERLENDİRME
   evaluateFindeks(score) {
+    // Opsiyonel alan — boşsa değerlendirme yapma
+    if (!score || score === 0) {
+      this.details.push({
+        factor: "Findeks Skoru",
+        value: "—",
+        status: "neutral",
+        message: "ℹ️ Girilmedi"
+      });
+      return;
+    }
+
     const band = getFindeksBand(score);
-    
+
     if (score < CONFIG.findeks.critical) {
-      this.blockers.push(`Findeks skoru ${CONFIG.findeks.critical}'ün altında (${score})`);
-      this.totalScore -= 50;
+      // Blocker koyma, sadece düşük puan ver — müşteri alternatif yola yönlendirilecek
+      this.totalScore -= 20;
       this.details.push({
         factor: "Findeks Skoru",
         value: score,
-        status: "critical",
-        message: `❌ Kritik eşiğin altında (min ${CONFIG.findeks.critical})`
+        status: "low",
+        message: `⚠️ Düşük skor (${score}) — alternatif yöntemler mevcut`
       });
     } else if (score >= CONFIG.findeks.excellent) {
       this.totalScore += 30;

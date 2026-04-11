@@ -26,133 +26,94 @@
             <section id="formSection" class="form-section">
                 <div class="form-header">
                     <h2>KKB Kredi Değerlendirme</h2>
-                    <p>Taşıt kredisi uygunluğunuzu 7 kritere göre değerlendiriyoruz</p>
+                    <p>Taşıt kredisi uygunluğunuzu 6 kritere göre değerlendiriyoruz</p>
                 </div>
 
                 <form id="kkbForm" class="kkb-form">
-                    
-                    <!-- MÜŞTERİ BİLGİLERİ (Ön başvurudan gelecek) -->
+
+                    <!-- MÜŞTERİ BİLGİLERİ -->
                     <div class="form-group">
-                        <label>Ad Soyad</label>
+                        <label>Ad Soyad <span class="required">*</span></label>
                         <input type="text" id="customerName" required placeholder="Mehmet Yılmaz">
                     </div>
-
                     <div class="form-group">
-                        <label>Telefon</label>
+                        <label>Telefon <span class="required">*</span></label>
                         <input type="tel" id="customerPhone" required placeholder="0555 123 4567">
                     </div>
 
-                    <!-- 1. FINDEKS SKORU -->
+                    <!-- S1 — Kanuni Takip -->
                     <div class="form-group">
-                        <label>1. Findeks Skorunuz <span style="color:#7a9ab8;font-size:11px;font-weight:400;">(opsiyonel)</span></label>
-                        <input type="number" id="findeks" min="0" max="1900" placeholder="1450">
-                        <small>Bilmiyorsanız boş bırakabilirsiniz</small>
-                    </div>
-
-                    <!-- 2. KANUNI TAKİP -->
-                    <div class="form-group">
-                        <label>2. Kanuni Takip Durumunuz <span class="required">*</span></label>
+                        <label>1. Kanuni Takip / İcra / Varlık Şirketi <span class="required">*</span></label>
                         <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="legalAction" value="none" required>
-                                <span>Hiç yok ✓</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="legalAction" value="old_closed">
-                                <span>1-2 adet (3+ yıl önce, KAPALI)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="legalAction" value="active">
-                                <span>3+ adet VEYA Aktif takip var</span>
-                            </label>
+                            <label class="radio-label"><input type="radio" name="s1" value="A" required><span>Hiç yok</span></label>
+                            <label class="radio-label"><input type="radio" name="s1" value="B"><span>1 tane var, kapalı</span></label>
+                            <label class="radio-label"><input type="radio" name="s1" value="C"><span>2–3 tane var, kapalı</span></label>
+                            <label class="radio-label"><input type="radio" name="s1" value="D"><span>4+ tane var, kapalı da olsa</span></label>
+                            <label class="radio-label"><input type="radio" name="s1" value="E"><span>1+ tane aktif</span></label>
                         </div>
                     </div>
 
-                    <!-- 3. GECİKME DURUMU -->
+                    <!-- S2 — Son 12 Ay Gecikme -->
                     <div class="form-group">
-                        <label>3. Ödeme Gecikme Durumunuz <span class="required">*</span></label>
+                        <label>2. Son 12 Ay Gecikme <span class="required">*</span></label>
                         <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="delay" value="no_delay" required>
-                                <span>Hiç gecikme yok (son 12 ay) ✓</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="delay" value="old_delay">
-                                <span>1-30 gün gecikme oldu (6+ ay önce)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="delay" value="active_delay">
-                                <span>Aktif gecikme VAR</span>
-                            </label>
+                            <label class="radio-label"><input type="radio" name="s2" value="A" required><span>Hiç gecikme yok</span></label>
+                            <label class="radio-label"><input type="radio" name="s2" value="B"><span>1–2 kez, max 15 gün</span></label>
+                            <label class="radio-label"><input type="radio" name="s2" value="C"><span>3–5 kez, max 30 gün</span></label>
+                            <label class="radio-label"><input type="radio" name="s2" value="D"><span>30+ gün gecikme var (kapalı)</span></label>
+                            <label class="radio-label"><input type="radio" name="s2" value="E"><span>Aktif gecikme var</span></label>
                         </div>
                     </div>
 
-                    <!-- 4. BORÇ/LİMİT -->
+                    <!-- S3 — Borç/Limit Oranı -->
                     <div class="form-group">
-                        <label>4. Toplam Kredi Kartı + KMH Limitiniz (TL) <span class="required">*</span></label>
-                        <input type="number" id="totalLimit" required min="0" placeholder="150000">
+                        <label>3. Borç / Limit Oranı (Kart + KMH) <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="s3" value="A" required><span>%0 – %30</span></label>
+                            <label class="radio-label"><input type="radio" name="s3" value="B"><span>%31 – %60</span></label>
+                            <label class="radio-label"><input type="radio" name="s3" value="C"><span>%61 – %80</span></label>
+                            <label class="radio-label"><input type="radio" name="s3" value="D"><span>%81 – %90</span></label>
+                            <label class="radio-label"><input type="radio" name="s3" value="E"><span>%91 ve üzeri</span></label>
+                        </div>
                     </div>
 
+                    <!-- S4 — Aylık Taksit Yükü -->
                     <div class="form-group">
-                        <label>Toplam Borç Tutarınız (TL) <span class="required">*</span></label>
-                        <input type="number" id="totalDebt" required min="0" placeholder="45000">
-                        <small id="debtRatioPreview" class="ratio-preview"></small>
+                        <label>4. Aylık Taksit Yükü <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="s4" value="A" required><span>Hiç aktif kredi/taksit yok</span></label>
+                            <label class="radio-label"><input type="radio" name="s4" value="B"><span>15.000 TL altı</span></label>
+                            <label class="radio-label"><input type="radio" name="s4" value="C"><span>15.000 – 40.000 TL</span></label>
+                            <label class="radio-label"><input type="radio" name="s4" value="D"><span>40.000 – 80.000 TL</span></label>
+                            <label class="radio-label"><input type="radio" name="s4" value="E"><span>80.000 TL üzeri</span></label>
+                        </div>
                     </div>
 
-                    <!-- 5. NET GELİR VE TAKSİT YÜKÜ -->
+                    <!-- S5 — Net Aylık Gelir -->
                     <div class="form-group">
-                        <label>5. Net Aylık Geliriniz (TL) <span class="required">*</span></label>
-                        <input type="number" id="income" required min="0" placeholder="25000">
+                        <label>5. Net Aylık Gelir <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="s5" value="A" required><span>200.000 TL+</span></label>
+                            <label class="radio-label"><input type="radio" name="s5" value="B"><span>100.000 – 200.000 TL</span></label>
+                            <label class="radio-label"><input type="radio" name="s5" value="C"><span>50.000 – 100.000 TL</span></label>
+                            <label class="radio-label"><input type="radio" name="s5" value="D"><span>25.000 – 50.000 TL</span></label>
+                            <label class="radio-label"><input type="radio" name="s5" value="E"><span>25.000 TL altı</span></label>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Aylık Toplam Taksit/Ödeme Yükünüz (TL) <span class="required">*</span></label>
-                        <input type="number" id="monthlyPayment" required min="0" placeholder="8000">
-                        <small id="dtiPreview" class="ratio-preview"></small>
-                    </div>
-
-                    <!-- 6. GEÇMİŞ KREDİ SİCİLİ -->
+                    <!-- S6 — Geçmiş Kredi Sicili -->
                     <div class="form-group">
                         <label>6. Geçmiş Kredi Sicili <span class="required">*</span></label>
                         <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="creditHistory" value="excellent" required>
-                                <span>3+ krediyi başarıyla kapattım ✓</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="creditHistory" value="good">
-                                <span>1-2 krediyi kapattım</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="creditHistory" value="none">
-                                <span>Kredi kapatmadım / İlk kredim</span>
-                            </label>
+                            <label class="radio-label"><input type="radio" name="s6" value="A" required><span>Birden fazla kredi/leasing, düzenli kapatıldı</span></label>
+                            <label class="radio-label"><input type="radio" name="s6" value="B"><span>1 kredi, düzenli kapatıldı</span></label>
+                            <label class="radio-label"><input type="radio" name="s6" value="C"><span>Hiç kredi kullanmadı (temiz ama geçmişsiz)</span></label>
+                            <label class="radio-label"><input type="radio" name="s6" value="D"><span>Kredi kullandı, gecikmeyle/sorunlu kapandı</span></label>
+                            <label class="radio-label"><input type="radio" name="s6" value="E"><span>Kredi kullandı, hâlâ sorunlu/devam ediyor</span></label>
                         </div>
                     </div>
 
-                    <!-- 7. ÇOK BANKALI ÇALIŞMA -->
-                    <div class="form-group">
-                        <label>7. Kaç Bankadan Limit/Kredi Aldınız? <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="multiBank" value="excellent" required>
-                                <span>4+ banka ✓</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="multiBank" value="good">
-                                <span>2-3 banka</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="multiBank" value="single">
-                                <span>1 banka</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- SUBMIT BUTTON -->
-                    <button type="submit" class="btn-submit">
-                        Analiz Et
-                    </button>
+                    <button type="submit" class="btn-submit">Analiz Et</button>
                 </form>
             </section>
 

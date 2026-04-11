@@ -60,21 +60,21 @@ const CONFIG = {
     single: { score: 0, label: "1 Banka" }
   },
 
-  // SONUÇ ETİKETLERİ
+  // SONUÇ ETİKETLERİ  (dahili skor ×15 = gösterilen PUAN)
   results: {
     approved: {
-      min: 80,
+      min: 90,           // 90 × 15 = 1.350 PUAN
       label: "ÇIKAR",
       icon: "✅",
       color: "#28a745",
-      message: "Yüksek onay olasılığı. Başvurabilirsin!"
+      message: "Yüksek onay olasılığı. Başvurabilirsiniz!"
     },
     borderline: {
-      min: 50,
+      min: 67,           // 67 × 15 ≈ 1.000 PUAN
       label: "SINIRDA",
       icon: "⚠️",
       color: "#ffc107",
-      message: "2-3 ay iyileştirme sonrası tekrar değerlendir."
+      message: "Profil iyileştirme önerilir. Danışmanımızla görüşün."
     },
     rejected: {
       min: 0,

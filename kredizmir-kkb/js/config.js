@@ -61,39 +61,25 @@ const CONFIG = {
 
   // SONUÇ BANTLARI
   results: {
-    uygun: {
-      min: 1550,
-      label: "UYGUN",
+    cikar: {
+      min: 1350,
+      label: "ÇIKAR",
       icon: "✅",
       color: "#28a745",
       message: "Yüksek onay olasılığı. Başvurabilirsiniz!"
     },
     sinirda: {
-      min: 1300,
+      min: 1000,
       label: "SINIRDA",
       icon: "🟡",
       color: "#ffc107",
       message: "Profil iyileştirme önerilir. Danışmanımızla görüşün."
     },
     alternatif: {
-      min: 1100,
+      min: 0,
       label: "ALTERNATİF YOL",
-      icon: "🟠",
+      icon: "💡",
       color: "#e68a00",
-      message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
-    },
-    zor: {
-      min: 0,
-      label: "ZOR",
-      icon: "🔴",
-      color: "#dc3545",
-      message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
-    },
-    cikmaz: {
-      min: 0,
-      label: "ZOR",
-      icon: "🔴",
-      color: "#dc3545",
       message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
     }
   },

@@ -1,0 +1,490 @@
+/* KREDİZMİR - KKB Formu Stil Dosyası */
+/* Lacivert + Beyaz Tema - Sade & Şık */
+
+:root {
+    --primary-color: #1a365d;      /* Lacivert */
+    --primary-light: #2d4a7c;
+    --primary-dark: #0f2342;
+    --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* HEADER */
+.header {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 2rem 0;
+    box-shadow: var(--shadow-md);
+}
+
+.logo h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.logo p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    padding: 3rem 0;
+}
+
+/* FORM SECTION */
+.form-section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 2rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--gray-100);
+}
+
+.form-header h2 {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: var(--gray-600);
+    font-size: 0.95rem;
+}
+
+/* FORM GROUPS */
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.required {
+    color: var(--danger);
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+/* RADIO GROUPS */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--white);
+}
+
+.radio-label:hover {
+    border-color: var(--primary-light);
+    background: var(--gray-50);
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 0.75rem;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"]:checked + span {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.radio-label span {
+    font-size: 0.95rem;
+    color: var(--gray-800);
+}
+
+/* RATIO PREVIEW */
+.ratio-preview {
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.ratio-preview.excellent {
+    color: var(--success);
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.ratio-preview.good {
+    color: #17a2b8;
+    background: rgba(23, 162, 184, 0.1);
+}
+
+.ratio-preview.warning {
+    color: var(--warning);
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.ratio-preview.danger {
+    color: var(--danger);
+    background: rgba(220, 53, 69, 0.1);
+}
+
+/* SUBMIT BUTTON */
+.btn-submit {
+    width: 100%;
+    padding: 1.125rem;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-submit:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* RESULT SECTION */
+.result-section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.result-section.hidden {
+    display: none;
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.result-header h2 {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+}
+
+/* SCORE CARD */
+.result-score-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.score-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 8px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.score-max {
+    font-size: 1rem;
+    color: var(--gray-600);
+}
+
+.score-status {
+    text-align: left;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 24px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.status-badge.approved {
+    background: var(--success);
+    color: var(--white);
+}
+
+.status-badge.borderline {
+    background: var(--warning);
+    color: var(--gray-800);
+}
+
+.status-badge.rejected {
+    background: var(--danger);
+    color: var(--white);
+}
+
+#statusMessage {
+    font-size: 0.95rem;
+    color: var(--gray-600);
+    max-width: 300px;
+}
+
+/* DETAILS LIST */
+.result-details {
+    margin-bottom: 2rem;
+}
+
+.result-details h3 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-left: 4px solid var(--gray-300);
+    background: var(--gray-50);
+    border-radius: 8px;
+}
+
+.detail-item.excellent {
+    border-left-color: var(--success);
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.detail-item.good {
+    border-left-color: #17a2b8;
+    background: rgba(23, 162, 184, 0.05);
+}
+
+.detail-item.acceptable {
+    border-left-color: var(--warning);
+    background: rgba(255, 193, 7, 0.05);
+}
+
+.detail-item.warning {
+    border-left-color: #fd7e14;
+    background: rgba(253, 126, 20, 0.05);
+}
+
+.detail-item.critical {
+    border-left-color: var(--danger);
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.detail-factor {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.detail-value {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.detail-message {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+/* ACTION BUTTONS */
+.result-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-whatsapp {
+    flex: 1;
+    padding: 1.125rem;
+    background: #25D366;
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-whatsapp:hover {
+    background: #1fb855;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 1.125rem;
+    background: var(--white);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+/* FOOTER */
+.footer {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 4rem;
+}
+
+.footer p {
+    margin: 0.25rem 0;
+    opacity: 0.9;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .form-section,
+    .result-section {
+        padding: 1.5rem;
+    }
+
+    .result-score-card {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .score-status {
+        text-align: center;
+    }
+
+    #statusMessage {
+        max-width: 100%;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .logo p {
+        font-size: 0.85rem;
+    }
+}

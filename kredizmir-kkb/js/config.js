@@ -1,86 +1,99 @@
-// KREDİZMİR - KKB Kredi Değerlendirme Motoru
-// Yapıkredi 2. El Taşıt Kredisi Kriterleri
+// KREDİZMİR - KKB Puanlama Sistemi
+// Temel skor: 1000 + S1 + S2 + S3 + S4 + S5 + S6
 
 const CONFIG = {
-  
-  // FINDEKS EŞİKLERİ
-  findeks: {
-    critical: 1400,      // Minimum onay skoru
-    strong: 1450,        // Güçlü profil
-    excellent: 1500,     // Mükemmel profil
-    bands: [
-      { min: 0, max: 949, label: "Çok Düşük", color: "#dc3545" },
-      { min: 950, max: 1249, label: "Düşük", color: "#fd7e14" },
-      { min: 1250, max: 1499, label: "Orta", color: "#ffc107" },
-      { min: 1500, max: 1749, label: "İyi", color: "#28a745" },
-      { min: 1750, max: 1900, label: "Mükemmel", color: "#007bff" }
-    ]
+
+  BASE_SCORE: 1000,
+
+  // S1 — Kanuni Takip / İcra / Varlık Şirketi
+  s1: {
+    A: { score: +200, label: "Hiç yok" },
+    B: { score:  +30, label: "1 tane var, kapalı" },
+    C: { score:  -80, label: "2–3 tane var, kapalı" },
+    D: { score: -250, label: "4+ tane var, kapalı da olsa", autoFail: true },
+    E: { score: -350, label: "1+ tane aktif",               autoFail: true }
   },
 
-  // KANUNI TAKİP KURALLARI
-  legalAction: {
-    none: { score: 30, label: "Temiz Sicil ✓" },
-    old_closed: { score: 10, label: "Eski Takip (Kapalı)" },
-    recent_or_active: { score: -100, label: "Aktif/Yakın Takip ❌" }
+  // S2 — Son 12 Ay Gecikme
+  s2: {
+    A: { score: +150, label: "Hiç gecikme yok" },
+    B: { score:  +40, label: "1–2 kez, max 15 gün" },
+    C: { score:  -40, label: "3–5 kez, max 30 gün" },
+    D: { score: -120, label: "30+ gün gecikme var (kapalı)" },
+    E: { score: -280, label: "Aktif gecikme var", autoFail: true }
   },
 
-  // GECİKME KURALLARI
-  delay: {
-    no_delay: { score: 25, label: "Hiç Gecikme Yok ✓" },
-    old_delay: { score: 10, label: "Eski Gecikme (6+ ay önce)" },
-    active_delay: { score: -100, label: "Aktif Gecikme ❌" }
+  // S3 — Borç / Limit Oranı (Kart + KMH)
+  s3: {
+    A: { score: +100, label: "%0 – %30" },
+    B: { score:  +50, label: "%31 – %60" },
+    C: { score:  +10, label: "%61 – %80" },
+    D: { score:  -15, label: "%81 – %90" },
+    E: { score:  -35, label: "%91 ve üzeri" }
   },
 
-  // BORÇ/LİMİT ORANLARI
-  debtRatio: {
-    excellent: { max: 30, score: 20, label: "Mükemmel" },
-    good: { max: 50, score: 10, label: "İyi" },
-    acceptable: { max: 60, score: 0, label: "Kabul Edilebilir" },
-    risky: { max: 100, score: -20, label: "Riskli" }
+  // S4 — Aylık Taksit Yükü
+  s4: {
+    A: { score: +100, label: "Hiç aktif kredi/taksit yok" },
+    B: { score:  +50, label: "15.000 TL altı" },
+    C: { score:  -10, label: "15.000 – 40.000 TL" },
+    D: { score:  -90, label: "40.000 – 80.000 TL" },
+    E: { score: -160, label: "80.000 TL üzeri" }
   },
 
-  // DTI (Debt-to-Income) ORANLARI
-  dti: {
-    excellent: { max: 40, score: 15, label: "Düşük Borç Yükü" },
-    good: { max: 50, score: 5, label: "Orta Borç Yükü" },
-    risky: { max: 100, score: -15, label: "Yüksek Borç Yükü" }
+  // S5 — Net Aylık Gelir
+  s5: {
+    A: { score: +130, label: "200.000 TL+" },
+    B: { score:  +80, label: "100.000 – 200.000 TL" },
+    C: { score:  +25, label: "50.000 – 100.000 TL" },
+    D: { score:  -35, label: "25.000 – 50.000 TL" },
+    E: { score:  -90, label: "25.000 TL altı" }
   },
 
-  // GEÇMİŞ KREDİ SİCİLİ
-  creditHistory: {
-    excellent: { score: 10, label: "3+ Kredi Kapattı" },
-    good: { score: 5, label: "1-2 Kredi Kapattı" },
-    none: { score: 0, label: "Kredi Geçmişi Yok" }
+  // S6 — Geçmiş Kredi Sicili
+  s6: {
+    A: { score: +130, label: "Birden fazla kredi/leasing, düzenli kapatıldı" },
+    B: { score:  +75, label: "1 kredi, düzenli kapatıldı" },
+    C: { score:  +25, label: "Hiç kredi kullanmadı (temiz ama geçmişsiz)" },
+    D: { score:  -40, label: "Kredi kullandı, gecikmeyle/sorunlu kapandı" },
+    E: { score:  -90, label: "Kredi kullandı, hâlâ sorunlu/devam ediyor" }
   },
 
-  // ÇOK BANKALI ÇALIŞMA
-  multiBank: {
-    excellent: { score: 10, label: "4+ Banka" },
-    good: { score: 5, label: "2-3 Banka" },
-    single: { score: 0, label: "1 Banka" }
-  },
-
-  // SONUÇ ETİKETLERİ  (dahili skor ×15 = gösterilen PUAN)
+  // SONUÇ BANTLARI
   results: {
-    approved: {
-      min: 90,           // 90 × 15 = 1.350 PUAN
-      label: "ÇIKAR",
+    uygun: {
+      min: 1550,
+      label: "UYGUN",
       icon: "✅",
       color: "#28a745",
       message: "Yüksek onay olasılığı. Başvurabilirsiniz!"
     },
-    borderline: {
-      min: 67,           // 67 × 15 ≈ 1.000 PUAN
+    sinirda: {
+      min: 1300,
       label: "SINIRDA",
-      icon: "⚠️",
+      icon: "🟡",
       color: "#ffc107",
       message: "Profil iyileştirme önerilir. Danışmanımızla görüşün."
     },
-    rejected: {
-      min: 0,
+    alternatif: {
+      min: 1100,
       label: "ALTERNATİF YOL",
-      icon: "💡",
+      icon: "🟠",
       color: "#e68a00",
+      message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
+    },
+    zor: {
+      min: 0,
+      label: "ZOR",
+      icon: "🔴",
+      color: "#dc3545",
+      message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
+    },
+    cikmaz: {
+      min: 0,
+      label: "ZOR",
+      icon: "🔴",
+      color: "#dc3545",
       message: "Dijital senet yöntemi ile devam ederseniz finansman sağlanabilir."
     }
   },
@@ -93,37 +106,11 @@ const CONFIG = {
 👤 Müşteri: {name}
 📱 Telefon: {phone}
 
-🎯 SKOR: {score}/100
+🎯 SKOR: {score} PUAN
 🏷️ DURUM: {status}
-
-📍 Tahmini Findeks: {findeks_band}
-📊 Borç/Limit: {debt_ratio}%
-💰 DTI: {dti}%
 
 💡 Öneri: {recommendation}
 
 Süreci başlatmak istiyorum.`
   }
 };
-
-// HESAPLAMA FONKSİYONLARI
-function calculateDebtRatio(debt, limit) {
-  if (limit === 0) return 0;
-  return Math.round((debt / limit) * 100);
-}
-
-function calculateDTI(monthlyPayment, income) {
-  if (income === 0) return 0;
-  return Math.round((monthlyPayment / income) * 100);
-}
-
-function getFindeksBand(score) {
-  const band = CONFIG.findeks.bands.find(b => score >= b.min && score <= b.max);
-  return band || CONFIG.findeks.bands[0];
-}
-
-function getResultCategory(score) {
-  if (score >= CONFIG.results.approved.min) return CONFIG.results.approved;
-  if (score >= CONFIG.results.borderline.min) return CONFIG.results.borderline;
-  return CONFIG.results.rejected;
-}

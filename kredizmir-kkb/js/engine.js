@@ -1,328 +1,67 @@
-// KREDİZMİR - KKB Hesaplama Motoru
+// KREDİZMİR - KKB Hesaplama Motoru v2
 
 class KKBEngine {
   constructor() {
     this.totalScore = 0;
     this.details = [];
-    this.blockers = [];
+    this.autoFail = false;
+    this.doubleAutoFail = false;
   }
 
-  // ANA HESAPLAMA FONKSİYONU
   calculate(formData) {
-    this.totalScore = 0;
+    this.totalScore = CONFIG.BASE_SCORE;
     this.details = [];
-    this.blockers = [];
+    this.autoFail = false;
+    this.doubleAutoFail = false;
 
-    // 1. FINDEKS SKORU KONTROLÜ
-    this.evaluateFindeks(formData.findeks);
+    const s1 = this._eval('s1', formData.s1, 'Kanuni Takip / İcra');
+    const s2 = this._eval('s2', formData.s2, 'Son 12 Ay Gecikme');
 
-    // 2. KANUNI TAKİP KONTROLÜ (Kapı Sorusu)
-    this.evaluateLegalAction(formData.legalAction);
+    // Özel kural: S1=D/E VE S2=E → ÇIKMAZ mesajı
+    const s1Fail = formData.s1 === 'D' || formData.s1 === 'E';
+    const s2Fail = formData.s2 === 'E';
+    if (s1Fail && s2Fail) this.doubleAutoFail = true;
+    if (s1Fail || s2Fail) this.autoFail = true;
 
-    // 3. GECİKME KONTROLÜ (Kapı Sorusu)
-    this.evaluateDelay(formData.delay);
+    this._eval('s3', formData.s3, 'Borç / Limit Oranı');
+    this._eval('s4', formData.s4, 'Aylık Taksit Yükü');
+    this._eval('s5', formData.s5, 'Net Aylık Gelir');
+    this._eval('s6', formData.s6, 'Geçmiş Kredi Sicili');
 
-    // 4. BORÇ/LİMİT ORANI
-    const debtRatio = calculateDebtRatio(formData.totalDebt, formData.totalLimit);
-    this.evaluateDebtRatio(debtRatio);
+    const finalScore = Math.max(0, this.totalScore);
 
-    // 5. DTI (Debt-to-Income)
-    const dti = calculateDTI(formData.monthlyPayment, formData.income);
-    this.evaluateDTI(dti);
-
-    // 6. GEÇMİŞ KREDİ SİCİLİ
-    this.evaluateCreditHistory(formData.creditHistory);
-
-    // 7. ÇOK BANKALI ÇALIŞMA
-    this.evaluateMultiBank(formData.multiBank);
-
-    // SONUÇ HESAPLA
     return {
-      score: Math.max(0, Math.min(100, this.totalScore)),
+      score: finalScore,
       details: this.details,
-      blockers: this.blockers,
-      debtRatio: debtRatio,
-      dti: dti,
-      findeksBand: getFindeksBand(formData.findeks),
-      result: this.getResult()
+      autoFail: this.autoFail,
+      doubleAutoFail: this.doubleAutoFail,
+      result: this._getResult(finalScore)
     };
   }
 
-  // 1. FINDEKS DEĞERLENDİRME
-  evaluateFindeks(score) {
-    // Opsiyonel alan — boşsa değerlendirme yapma
-    if (!score || score === 0) {
-      this.details.push({
-        factor: "Findeks Skoru",
-        value: "—",
-        status: "neutral",
-        message: "ℹ️ Girilmedi"
-      });
+  _eval(sKey, choice, label) {
+    const rule = CONFIG[sKey][choice];
+    if (!rule) {
+      this.details.push({ factor: label, value: '—', status: 'neutral', message: 'ℹ️ Seçilmedi' });
       return;
     }
-
-    const band = getFindeksBand(score);
-
-    if (score < CONFIG.findeks.critical) {
-      // Blocker koyma, sadece düşük puan ver — müşteri alternatif yola yönlendirilecek
-      this.totalScore -= 20;
-      this.details.push({
-        factor: "Findeks Skoru",
-        value: score,
-        status: "low",
-        message: `⚠️ Düşük skor (${score}) — alternatif yöntemler mevcut`
-      });
-    } else if (score >= CONFIG.findeks.excellent) {
-      this.totalScore += 30;
-      this.details.push({
-        factor: "Findeks Skoru",
-        value: score,
-        status: "excellent",
-        message: "✅ Mükemmel seviye (1500+)"
-      });
-    } else if (score >= CONFIG.findeks.strong) {
-      this.totalScore += 20;
-      this.details.push({
-        factor: "Findeks Skoru",
-        value: score,
-        status: "good",
-        message: "✅ Güçlü profil (1450+)"
-      });
-    } else {
-      this.totalScore += 10;
-      this.details.push({
-        factor: "Findeks Skoru",
-        value: score,
-        status: "acceptable",
-        message: "⚠️ Minimum eşikte (1400-1449)"
-      });
-    }
+    this.totalScore += rule.score;
+    const sign = rule.score > 0 ? '+' : '';
+    const status = rule.score > 0 ? 'excellent' : rule.score === 0 ? 'neutral' : 'low';
+    this.details.push({
+      factor: label,
+      value: sign + rule.score,
+      status,
+      message: rule.label
+    });
   }
 
-  // 2. KANUNI TAKİP DEĞERLENDİRME
-  evaluateLegalAction(type) {
-    const rules = CONFIG.legalAction;
-    let rule;
-
-    if (type === 'none') {
-      rule = rules.none;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Kanuni Takip",
-        value: "Yok",
-        status: "excellent",
-        message: `✅ ${rule.label}`
-      });
-    } else if (type === 'old_closed') {
-      rule = rules.old_closed;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Kanuni Takip",
-        value: "Eski (Kapalı)",
-        status: "acceptable",
-        message: `⚠️ ${rule.label}`
-      });
-    } else {
-      rule = rules.recent_or_active;
-      this.blockers.push("Aktif veya yakın tarihli kanuni takip var");
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Kanuni Takip",
-        value: "Aktif/Yakın",
-        status: "critical",
-        message: `❌ ${rule.label}`
-      });
-    }
-  }
-
-  // 3. GECİKME DEĞERLENDİRME
-  evaluateDelay(type) {
-    const rules = CONFIG.delay;
-    let rule;
-
-    if (type === 'no_delay') {
-      rule = rules.no_delay;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Ödeme Gecikmesi",
-        value: "Yok",
-        status: "excellent",
-        message: `✅ ${rule.label}`
-      });
-    } else if (type === 'old_delay') {
-      rule = rules.old_delay;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Ödeme Gecikmesi",
-        value: "Eski (6+ ay)",
-        status: "acceptable",
-        message: `⚠️ ${rule.label}`
-      });
-    } else {
-      rule = rules.active_delay;
-      this.blockers.push("Aktif ödeme gecikmesi var");
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Ödeme Gecikmesi",
-        value: "Aktif",
-        status: "critical",
-        message: `❌ ${rule.label}`
-      });
-    }
-  }
-
-  // 4. BORÇ/LİMİT DEĞERLENDİRME
-  evaluateDebtRatio(ratio) {
-    const rules = CONFIG.debtRatio;
-    let rule;
-
-    if (ratio <= rules.excellent.max) {
-      rule = rules.excellent;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç/Limit Oranı",
-        value: `%${ratio}`,
-        status: "excellent",
-        message: `✅ ${rule.label} (0-30%)`
-      });
-    } else if (ratio <= rules.good.max) {
-      rule = rules.good;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç/Limit Oranı",
-        value: `%${ratio}`,
-        status: "good",
-        message: `✅ ${rule.label} (30-50%)`
-      });
-    } else if (ratio <= rules.acceptable.max) {
-      rule = rules.acceptable;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç/Limit Oranı",
-        value: `%${ratio}`,
-        status: "acceptable",
-        message: `⚠️ ${rule.label} (50-60%)`
-      });
-    } else {
-      rule = rules.risky;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç/Limit Oranı",
-        value: `%${ratio}`,
-        status: "warning",
-        message: `⚠️ ${rule.label} (60%+)`
-      });
-    }
-  }
-
-  // 5. DTI DEĞERLENDİRME
-  evaluateDTI(dti) {
-    const rules = CONFIG.dti;
-    let rule;
-
-    if (dti <= rules.excellent.max) {
-      rule = rules.excellent;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç Yükü (DTI)",
-        value: `%${dti}`,
-        status: "excellent",
-        message: `✅ ${rule.label} (0-40%)`
-      });
-    } else if (dti <= rules.good.max) {
-      rule = rules.good;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç Yükü (DTI)",
-        value: `%${dti}`,
-        status: "good",
-        message: `✅ ${rule.label} (40-50%)`
-      });
-    } else {
-      rule = rules.risky;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Borç Yükü (DTI)",
-        value: `%${dti}`,
-        status: "warning",
-        message: `⚠️ ${rule.label} (50%+)`
-      });
-    }
-  }
-
-  // 6. GEÇMİŞ KREDİ SİCİLİ
-  evaluateCreditHistory(type) {
-    const rules = CONFIG.creditHistory;
-    let rule;
-
-    if (type === 'excellent') {
-      rule = rules.excellent;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Kredi Geçmişi",
-        value: "3+ Kredi",
-        status: "excellent",
-        message: `✅ ${rule.label}`
-      });
-    } else if (type === 'good') {
-      rule = rules.good;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Kredi Geçmişi",
-        value: "1-2 Kredi",
-        status: "good",
-        message: `✅ ${rule.label}`
-      });
-    } else {
-      rule = rules.none;
-      this.details.push({
-        factor: "Kredi Geçmişi",
-        value: "Yok",
-        status: "neutral",
-        message: `ℹ️ ${rule.label}`
-      });
-    }
-  }
-
-  // 7. ÇOK BANKALI ÇALIŞMA
-  evaluateMultiBank(type) {
-    const rules = CONFIG.multiBank;
-    let rule;
-
-    if (type === 'excellent') {
-      rule = rules.excellent;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Çok Bankalı",
-        value: "4+ Banka",
-        status: "excellent",
-        message: `✅ ${rule.label}`
-      });
-    } else if (type === 'good') {
-      rule = rules.good;
-      this.totalScore += rule.score;
-      this.details.push({
-        factor: "Çok Bankalı",
-        value: "2-3 Banka",
-        status: "good",
-        message: `✅ ${rule.label}`
-      });
-    } else {
-      rule = rules.single;
-      this.details.push({
-        factor: "Çok Bankalı",
-        value: "1 Banka",
-        status: "neutral",
-        message: `ℹ️ ${rule.label}`
-      });
-    }
-  }
-
-  // SONUÇ BELİRLE
-  getResult() {
-    if (this.blockers.length > 0) {
-      return CONFIG.results.rejected;
-    }
-    return getResultCategory(this.totalScore);
+  _getResult(score) {
+    if (this.doubleAutoFail) return CONFIG.results.cikmaz;
+    if (this.autoFail)       return CONFIG.results.zor;
+    if (score >= CONFIG.results.uygun.min)     return CONFIG.results.uygun;
+    if (score >= CONFIG.results.sinirda.min)   return CONFIG.results.sinirda;
+    if (score >= CONFIG.results.alternatif.min) return CONFIG.results.alternatif;
+    return CONFIG.results.zor;
   }
 }

@@ -528,7 +528,7 @@ function formuKopyala(btn){
   if(navigator.clipboard){ navigator.clipboard.writeText(FORM_URL).then(copy).catch(function(){ fb(); copy(); }); } else { fb(); copy(); }
 }
 function fb(){ var t=document.createElement('textarea'); t.value=FORM_URL; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
-function formuWp(){ window.open('https://wa.me/?text='+encodeURIComponent('Kredi ön başvuru formunu doldurmak için linke tıklayın:\n'+FORM_URL),'_blank'); }
+function formuWp(){ window.open('https://wa.me/?text='+encodeURIComponent('Merhaba , Ödeme tablosu içinde başvuru formumuza ulaşabiliyor aynı zamanda hiç bir KKB puanı etkilenmeden yapay zeka destekli ön sorgu gerçekleştirebiliyorsunuz. Dilerseniz daha sonrasında süreç hakkında sizleri bilgilendirebilirim.\n\n'+FORM_URL),'_blank'); }
 </script>
 </body>
 </html>

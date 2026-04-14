@@ -219,6 +219,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .mod-a-panel{display:none;}
 .mod-a-panel.show{display:block;}
 #ma-res{margin-top:8px;}
+/* ── HIZLI MARKA BUTONLARI ── */
+.brand-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.brand-pill{padding:7px 13px;background:#0a1a2e;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:.15s;letter-spacing:.5px;}
+.brand-pill:hover{border-color:var(--gold);color:var(--gold);}
+.brand-pill.sel{background:rgba(200,162,58,.15);border-color:var(--gold);color:var(--gold);}
 </style>
 </head>
 <body>
@@ -236,8 +241,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="page">
   <div class="quick-section">
-    <div class="quick-title">⚡ Hızlı Seçenekler</div>
-    <div class="quick-placeholder">Yakında eklenecek — sık kullanılan araç modelleri burada listelenecek</div>
+    <div class="quick-title">⚡ Hızlı Marka Seç</div>
+    <div class="brand-grid" id="brandGrid">
+      <button class="brand-pill" onclick="quickBrand('FİAT')">FİAT</button>
+      <button class="brand-pill" onclick="quickBrand('RENAULT')">RENAULT</button>
+      <button class="brand-pill" onclick="quickBrand('VOLKSWAGEN')">VW</button>
+      <button class="brand-pill" onclick="quickBrand('FORD')">FORD</button>
+      <button class="brand-pill" onclick="quickBrand('TOYOTA')">TOYOTA</button>
+      <button class="brand-pill" onclick="quickBrand('DACİA')">DACİA</button>
+      <button class="brand-pill" onclick="quickBrand('HYUNDAİ')">HYUNDAİ</button>
+      <button class="brand-pill" onclick="quickBrand('OPEL')">OPEL</button>
+      <button class="brand-pill" onclick="quickBrand('PEUGEOT')">PEUGEOT</button>
+      <button class="brand-pill" onclick="quickBrand('BMW')">BMW</button>
+      <button class="brand-pill" onclick="quickBrand('MERCEDES-BENZ')">MERCEDES</button>
+      <button class="brand-pill" onclick="quickBrand('KIA')">KIA</button>
+    </div>
   </div>
 
   <!-- MOD SEÇİCİ -->
@@ -356,7 +374,7 @@ fetch('kasko-data.json')
     const markas = Object.keys(MARKA_MODELS).sort();
     mf.innerHTML = '<option value="">Tüm Markalar</option>' + markas.map(m=>`<option value="${m}">${m}</option>`).join('');
     // Reset res
-    document.getElementById('res').innerHTML = '<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Model yılını seçerek başlayın</div><div class="yr-sub">Yukarıdan model yılı seçin veya arama kutusuna yıl dahil yazın</div></div>';
+    document.getElementById('res').innerHTML = '<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Marka veya yıl seçerek başlayın</div><div class="yr-sub">Yukarıdan hızlı marka seçin ya da yıl/model yazın</div></div>';
   })
   .catch(() => {
     document.getElementById('res').innerHTML = '<div class="year-required"><div class="yr-icon">❌</div><div class="yr-title">Veri yüklenemedi</div><div class="yr-sub">Sayfayı yenileyin</div></div>';
@@ -404,26 +422,35 @@ document.getElementById('modelf').addEventListener('change',onS);
 document.getElementById('yf').addEventListener('change',onS);
 document.getElementById('q').addEventListener('input',onS);
 
-/* Year gate — Marka ve Model kilitli, yıl seçilince ya da yazınca açılır */
+/* Yıl gate kaldırıldı — marka her zaman seçilebilir */
 (function(){
-  var yf=document.getElementById('yf');
+  var mf=document.getElementById('mf');
+  mf.disabled=false;
+})();
+
+/* Hızlı marka seçimi */
+function quickBrand(marka){
+  // Tüm pill seçimlerini sıfırla
+  document.querySelectorAll('.brand-pill').forEach(function(p){p.classList.remove('sel');});
+  // Aktif pill
+  var pills=document.querySelectorAll('.brand-pill');
+  pills.forEach(function(p){ if(p.textContent.trim()===marka||p.getAttribute('onclick').includes("'"+marka+"'")){ p.classList.add('sel'); } });
+
   var mf=document.getElementById('mf');
   var modelf=document.getElementById('modelf');
-  var q=document.getElementById('q');
-  function checkGate(){
-    var typing=q.value.trim().length>0;
-    if(typing||yf.value){
-      mf.disabled=false;
-    } else {
-      mf.value='';
-      mf.disabled=true;
-      modelf.innerHTML='<option value="">Tüm Modeller</option>';
-      modelf.disabled=true;
-    }
-  }
-  yf.addEventListener('change',checkGate);
-  q.addEventListener('input',checkGate);
-})();
+  // Eğer veri henüz yüklenmemişse bekle
+  if(!DATA.length){ setTimeout(function(){quickBrand(marka);},400); return; }
+  // Markayı seç
+  mf.value=marka;
+  mf.disabled=false;
+  // Model dropdown doldur
+  var models=[...new Set(DATA.filter(function(r){return r[2]===marka;}).map(function(r){return r[3];}))].sort();
+  modelf.innerHTML='<option value="">Tüm Modeller</option>';
+  models.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;modelf.appendChild(o);});
+  modelf.disabled=models.length===0;
+  // Aramayı tetikle
+  onS();
+}
 
 function clearFilters(){
   document.getElementById('q').value='';
@@ -432,7 +459,7 @@ function clearFilters(){
   var modelf=document.getElementById('modelf');
   mf.value='';mf.disabled=true;
   modelf.innerHTML='<option value="">Tüm Modeller</option>';modelf.disabled=true;
-  document.getElementById('res').innerHTML='<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Model yılını seçerek başlayın</div><div class="yr-sub">Yukarıdan model yılı seçin veya arama kutusuna yıl dahil yazın</div></div>';
+  document.getElementById('res').innerHTML='<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Marka veya yıl seçerek başlayın</div><div class="yr-sub">Yukarıdan hızlı marka seçin ya da yıl/model yazın</div></div>';
   document.getElementById('st').textContent='';
   document.getElementById('fuzzyNote').classList.remove('show');
   var dp=document.getElementById('dp');
@@ -478,7 +505,7 @@ function doS(){
 
   // If no year at all and no text search → show prompt
   if(!effectiveYear && !raw && !mf && !modelf){
-    document.getElementById('res').innerHTML=`<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Model yılını seçerek başlayın</div><div class="yr-sub">Yukarıdan model yılı seçin veya arama kutusuna yıl dahil yazın</div></div>`;
+    document.getElementById('res').innerHTML=`<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Marka veya yıl seçerek başlayın</div><div class="yr-sub">Yukarıdan hızlı marka seçin ya da yıl/model yazın</div></div>`;
     document.getElementById('st').textContent='';
     document.getElementById('fuzzyNote').classList.remove('show');
     return;
@@ -517,7 +544,7 @@ function doS(){
 
   const total=results.length;
   if(total===0&&!effectiveYear){
-    document.getElementById('res').innerHTML=`<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Model yılını seçerek başlayın</div><div class="yr-sub">Yukarıdan model yılı seçin veya arama kutusuna yıl dahil yazın</div></div>`;
+    document.getElementById('res').innerHTML=`<div class="year-required"><div class="yr-icon">📅</div><div class="yr-title">Marka veya yıl seçerek başlayın</div><div class="yr-sub">Yukarıdan hızlı marka seçin ya da yıl/model yazın</div></div>`;
     document.getElementById('st').textContent='';
     document.getElementById('fuzzyNote').classList.remove('show');
     return;

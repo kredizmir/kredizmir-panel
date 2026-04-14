@@ -700,7 +700,8 @@ function buildSummary() {
 
 /* WhatsApp mesaj metni */
 function buildWAText() {
-  return `Merhaba , Ödeme tablosu içinde başvuru formumuza ulaşabiliyor aynı zamanda hiç bir KKB puanı etkilenmeden yapay zeka destekli ön sorgu gerçekleştirebiliyorsunuz. Dilerseniz daha sonrasında süreç hakkında sizleri bilgilendirebilirim.`;
+  var link = location.origin + location.pathname;
+  return `Merhaba , Ödeme tablosu içinde başvuru formumuza ulaşabiliyor aynı zamanda hiç bir KKB puanı etkilenmeden yapay zeka destekli ön sorgu gerçekleştirebiliyorsunuz. Dilerseniz daha sonrasında süreç hakkında sizleri bilgilendirebilirim.\n\n` + link;
 }
 
 /* Formspree payload */

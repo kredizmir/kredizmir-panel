@@ -700,8 +700,24 @@ function buildSummary() {
 
 /* WhatsApp mesaj metni */
 function buildWAText() {
-  var link = location.origin + location.pathname;
-  return `Merhaba , Ödeme tablosu içinde başvuru formumuza ulaşabiliyor aynı zamanda hiç bir KKB puanı etkilenmeden yapay zeka destekli ön sorgu gerçekleştirebiliyorsunuz. Dilerseniz daha sonrasında süreç hakkında sizleri bilgilendirebilirim.\n\n` + link;
+  return [
+    `🚗 *KREDİZMİR – Kredi Ön Başvurusu*`, ``,
+    `*Ad Soyad:* ${v('adSoyad')}`,
+    gender              ? `*Cinsiyet:* ${gender}` : '',
+    `*TC Kimlik:* ${v('tcKimlik')}`,
+    `*Kimlik Seri No:* ${v('kimlikSeri')}`,
+    `*Doğum Tarihi:* ${dateFmt(v('dogumTarihi'))}`,
+    (v('il')||v('ilce'))? `*İkametgah:* ${[v('il'),v('ilce')].filter(Boolean).join(' / ')}` : '',
+    `*Telefon:* ${v('telefon')}`, ``,
+    `*Başvuru Tipi:* ${basvuruTip}`,
+    `*Çalışma Durumu:* ${v('calisma')}`,
+    `*Meslek:* ${v('meslek')}`,
+    v('isYeri')         ? `*İş Yeri:* ${v('isYeri')}`                    : '',
+    v('ilanNo')         ? `*İlan / Ruhsat:* ${v('ilanNo')}`               : '',
+    v('krediMiktar')    ? `*İstenen Miktar:* ${numFmt(v('krediMiktar'))}` : '',
+    v('pesinat')        ? `*Peşinat:* ${numFmt(v('pesinat'))}`            : '', ``,
+    `📅 ${new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}`,
+  ].filter(l => l !== '').join('\n');
 }
 
 /* Formspree payload */

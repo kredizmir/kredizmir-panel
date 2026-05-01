@@ -46,6 +46,24 @@ h1 span{color:#e8c47a}
 .bar-btns{display:flex;gap:8px;flex-shrink:0}
 .btn-copy-all{background:rgba(255,255,255,.08);color:#c0d4ee;border:1px solid rgba(255,255,255,.15);padding:10px 16px;font-size:13px}
 .btn-wa{background:#1a7a47;color:#d4ffea;border:1px solid rgba(0,200,100,.3);padding:10px 16px;font-size:13px}
+.upload-section{margin:0 0 80px;padding:18px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(201,151,58,.3);border-radius:14px}
+.upload-title{font-size:13px;font-weight:700;letter-spacing:1px;color:#c9973a;text-transform:uppercase;margin-bottom:4px}
+.upload-desc{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:12px}
+.upload-inputs{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.upload-inputs input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#e8e4d8;font-size:13px;font-family:inherit;outline:none}
+.upload-inputs input:focus{border-color:rgba(201,151,58,.5)}
+.upload-zone{border:1.5px dashed rgba(201,151,58,.4);border-radius:10px;padding:22px 16px;text-align:center;cursor:pointer;transition:.2s;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:8px}
+.upload-zone:hover,.upload-zone.drag-over{border-color:#c9973a;background:rgba(201,151,58,.06);color:#c9973a}
+.file-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.file-item{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);border-radius:7px;padding:7px 10px;font-size:12px;color:#b8d4ee}
+.file-item span{color:rgba(255,255,255,.35);font-size:11px}
+.btn-upload{width:100%;padding:12px;background:#c9973a;border:none;border-radius:9px;color:#0d1b2e;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-upload:hover{background:#e0a840}
+.btn-upload:disabled{opacity:.5;cursor:default}
+.upload-status{margin-top:10px;font-size:13px;font-weight:600;text-align:center;display:none}
+.upload-status.ok{color:#4caf50;display:block}
+.upload-status.err{color:#e05050;display:block}
+.size-warn{font-size:11px;color:#e08050;margin-bottom:8px;display:none}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:#1a3a6e;color:#a8d4ff;border:1px solid rgba(58,123,213,.4);padding:9px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -197,6 +215,26 @@ h1 span{color:#e8c47a}
 
 </div>
 
+<div class="upload-section">
+  <div class="upload-title">📎 Evrak Yükle</div>
+  <p class="upload-desc">PDF veya fotoğraf yükleyin — e-posta ile danışmanımıza iletilir</p>
+  <form id="uploadForm">
+    <div class="upload-inputs">
+      <input id="u_ad"  type="text" placeholder="Ad Soyad *" required autocomplete="name">
+      <input id="u_tel" type="tel"  placeholder="Telefon *"  required autocomplete="tel">
+    </div>
+    <div class="upload-zone" id="uploadZone">
+      📁 Dosyaları buraya sürükleyin veya tıklayın<br>
+      <small style="font-size:11px;opacity:.6">(PDF, JPG, PNG — toplam max 5 MB)</small>
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" hidden>
+    </div>
+    <div class="size-warn" id="sizeWarn">⚠ Toplam dosya boyutu 5 MB'ı aşıyor, lütfen daha az dosya seçin.</div>
+    <div class="file-list" id="fileList"></div>
+    <button type="submit" class="btn-upload" id="btnUpload" disabled>Evrakları Gönder</button>
+    <div class="upload-status" id="uploadStatus"></div>
+  </form>
+</div>
+
 <div class="bar">
   <div class="bar-inner">
     <div class="bar-note">
@@ -244,6 +282,88 @@ function mesajiKopyala(){
     toast("Mesaj kopyalandı ✅");
   }
 }
+
+// ── EVRAK YÜKLEME ──────────────────────────────────────────
+(function(){
+  var ENDPOINT = 'https://formspree.io/f/xbdpjavp';
+  var MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+  var zone     = document.getElementById('uploadZone');
+  var input    = document.getElementById('fileInput');
+  var list     = document.getElementById('fileList');
+  var btn      = document.getElementById('btnUpload');
+  var status   = document.getElementById('uploadStatus');
+  var sizeWarn = document.getElementById('sizeWarn');
+  var files    = [];
+
+  zone.addEventListener('click', function(){ input.click(); });
+  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', function(){ zone.classList.remove('drag-over'); });
+  zone.addEventListener('drop', function(e){
+    e.preventDefault(); zone.classList.remove('drag-over');
+    addFiles(e.dataTransfer.files);
+  });
+  input.addEventListener('change', function(){ addFiles(this.files); this.value=''; });
+
+  function addFiles(newFiles){
+    for(var i=0;i<newFiles.length;i++) files.push(newFiles[i]);
+    render();
+  }
+  function removeFile(i){ files.splice(i,1); render(); }
+
+  function render(){
+    var total = files.reduce(function(s,f){return s+f.size;},0);
+    var over  = total > MAX_BYTES;
+    sizeWarn.style.display = over ? 'block' : 'none';
+    btn.disabled = over || files.length === 0;
+    list.innerHTML = '';
+    files.forEach(function(f,i){
+      var item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = '📄 ' + f.name + '<span>' + (f.size/1024).toFixed(0) + ' KB &nbsp;<button onclick="removeFile('+i+')" style="background:none;border:none;color:#e05050;cursor:pointer;font-size:13px;">✕</button></span>';
+      list.appendChild(item);
+    });
+  }
+  window.removeFile = removeFile;
+
+  document.getElementById('uploadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var ad  = document.getElementById('u_ad').value.trim();
+    var tel = document.getElementById('u_tel').value.trim();
+    if(!ad || !tel){ alert('Ad Soyad ve Telefon zorunludur.'); return; }
+    if(files.length === 0){ alert('Lütfen en az bir dosya seçin.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Gönderiliyor…';
+    status.className = 'upload-status';
+    status.textContent = '';
+
+    var fd = new FormData();
+    fd.append('Ad Soyad', ad);
+    fd.append('Telefon', tel);
+    fd.append('_subject', 'KREDİZMİR Evrak – ' + ad);
+    files.forEach(function(f){ fd.append('evrak', f, f.name); });
+
+    fetch(ENDPOINT, { method:'POST', body:fd, headers:{ 'Accept':'application/json' } })
+      .then(function(r){ return r.json(); })
+      .then(function(r){
+        if(r.ok){
+          status.className='upload-status ok';
+          status.textContent='✅ Evraklar başarıyla gönderildi!';
+          files=[]; render();
+          document.getElementById('u_ad').value='';
+          document.getElementById('u_tel').value='';
+        } else {
+          throw new Error('Formspree hatası');
+        }
+      })
+      .catch(function(){
+        status.className='upload-status err';
+        status.textContent='❌ Gönderilemedi, lütfen tekrar deneyin.';
+        btn.disabled=false;
+        btn.textContent='Evrakları Gönder';
+      });
+  });
+})();
 </script>
 
 </body>

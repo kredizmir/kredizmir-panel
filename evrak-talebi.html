@@ -231,26 +231,13 @@ h1 span{color:#e8c47a}
 </div>
 
 <div class="upload-section">
-  <div class="upload-title">📎 Evrak Yükle</div>
-  <p class="upload-desc">PDF veya fotoğraf yükleyin — e-posta ile danışmanımıza iletilir</p>
-  <form id="uploadForm">
-    <div class="upload-inputs">
-      <input id="u_ad"  type="text" placeholder="Ad Soyad *" required autocomplete="name">
-      <input id="u_tel" type="tel"  placeholder="Telefon *"  required autocomplete="tel">
-    </div>
-    <div class="upload-zone" id="uploadZone">
-      📁 Dosyaları buraya sürükleyin veya tıklayın<br>
-      <small style="font-size:11px;opacity:.6">(PDF, JPG, PNG — toplam max 5 MB)</small>
-      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" hidden>
-    </div>
-    <div class="size-warn" id="sizeWarn">⚠ Toplam dosya boyutu 5 MB'ı aşıyor, lütfen daha az dosya seçin.</div>
-    <div class="file-list" id="fileList"></div>
-    <button type="submit" class="btn-upload" id="btnUpload" disabled>Evrakları Gönder</button>
-    <div class="upload-status" id="uploadStatus"></div>
-  </form>
-  <div style="margin-top:14px;padding:12px 14px;background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.25);border-radius:10px;text-align:center;font-size:13px;font-weight:700;color:#6ee8a0;letter-spacing:.5px;">
-    💬 İSTERSENİZ WHATSAPP ÜZERİNDEN DE ULAŞTIRABİLİRSİNİZ.
-  </div>
+  <div class="upload-title">📎 Evrak Gönder</div>
+  <p class="upload-desc">Evraklarınızı PDF veya fotoğraf olarak WhatsApp üzerinden iletebilirsiniz.</p>
+  <a href="https://wa.me/905307258789?text=Merhaba%20KREDİZMİR%2C%20evraklarımı%20göndermek%20istiyorum." target="_blank"
+     style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#1a7a47;border:1px solid rgba(0,200,100,.3);border-radius:10px;color:#d4ffea;font-size:14px;font-weight:700;text-decoration:none;transition:.2s;"
+     onmouseover="this.style.background='#1e8f52'" onmouseout="this.style.background='#1a7a47'">
+    💬 WhatsApp'tan Evrak Gönder
+  </a>
 </div>
 
 <div class="bar">
@@ -301,87 +288,6 @@ function mesajiKopyala(){
   }
 }
 
-// ── EVRAK YÜKLEME ──────────────────────────────────────────
-(function(){
-  var ENDPOINT = 'https://formspree.io/f/xbdpjavp';
-  var MAX_BYTES = 5 * 1024 * 1024; // 5 MB
-  var zone     = document.getElementById('uploadZone');
-  var input    = document.getElementById('fileInput');
-  var list     = document.getElementById('fileList');
-  var btn      = document.getElementById('btnUpload');
-  var status   = document.getElementById('uploadStatus');
-  var sizeWarn = document.getElementById('sizeWarn');
-  var files    = [];
-
-  zone.addEventListener('click', function(){ input.click(); });
-  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', function(){ zone.classList.remove('drag-over'); });
-  zone.addEventListener('drop', function(e){
-    e.preventDefault(); zone.classList.remove('drag-over');
-    addFiles(e.dataTransfer.files);
-  });
-  input.addEventListener('change', function(){ addFiles(this.files); this.value=''; });
-
-  function addFiles(newFiles){
-    for(var i=0;i<newFiles.length;i++) files.push(newFiles[i]);
-    render();
-  }
-  function removeFile(i){ files.splice(i,1); render(); }
-
-  function render(){
-    var total = files.reduce(function(s,f){return s+f.size;},0);
-    var over  = total > MAX_BYTES;
-    sizeWarn.style.display = over ? 'block' : 'none';
-    btn.disabled = over || files.length === 0;
-    list.innerHTML = '';
-    files.forEach(function(f,i){
-      var item = document.createElement('div');
-      item.className = 'file-item';
-      item.innerHTML = '📄 ' + f.name + '<span>' + (f.size/1024).toFixed(0) + ' KB &nbsp;<button onclick="removeFile('+i+')" style="background:none;border:none;color:#e05050;cursor:pointer;font-size:13px;">✕</button></span>';
-      list.appendChild(item);
-    });
-  }
-  window.removeFile = removeFile;
-
-  document.getElementById('uploadForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    var ad  = document.getElementById('u_ad').value.trim();
-    var tel = document.getElementById('u_tel').value.trim();
-    if(!ad || !tel){ alert('Ad Soyad ve Telefon zorunludur.'); return; }
-    if(files.length === 0){ alert('Lütfen en az bir dosya seçin.'); return; }
-
-    btn.disabled = true;
-    btn.textContent = 'Gönderiliyor…';
-    status.className = 'upload-status';
-    status.textContent = '';
-
-    var fd = new FormData();
-    fd.append('Ad Soyad', ad);
-    fd.append('Telefon', tel);
-    fd.append('_subject', 'KREDİZMİR Evrak – ' + ad);
-    files.forEach(function(f){ fd.append('evrak', f, f.name); });
-
-    fetch(ENDPOINT, { method:'POST', body:fd, headers:{ 'Accept':'application/json' } })
-      .then(function(r){ return r.json(); })
-      .then(function(r){
-        if(r.ok){
-          status.className='upload-status ok';
-          status.textContent='✅ Evraklar başarıyla gönderildi!';
-          files=[]; render();
-          document.getElementById('u_ad').value='';
-          document.getElementById('u_tel').value='';
-        } else {
-          throw new Error('Formspree hatası');
-        }
-      })
-      .catch(function(){
-        status.className='upload-status err';
-        status.textContent='❌ Gönderilemedi, lütfen tekrar deneyin.';
-        btn.disabled=false;
-        btn.textContent='Evrakları Gönder';
-      });
-  });
-})();
 </script>
 
 </body>

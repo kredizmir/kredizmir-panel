@@ -459,7 +459,7 @@ function pinKontrol(inp){
     hosgeldinGoster(k.hosgeldin);
   } else {
     inp.classList.add('shake');
-    document.getElementById('pinHata').textContent = 'Hatalı kullanıcı adı veya PIN';
+    document.getElementById('pinHata').textContent = 'SİSTEM GÜNCELLENİYOR. YENİ SİSTEMDE KAYDINIZ BULUNMAMAKTA';
     setTimeout(function(){ inp.classList.remove('shake'); inp.value=''; document.getElementById('pinHata').textContent=''; }, 700);
   }
 }

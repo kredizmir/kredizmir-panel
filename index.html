@@ -251,8 +251,8 @@
     <div style="font-size:12px;color:#7a9cc0;">Kullanıcı adı ve PIN ile giriş yapın</div>
     <input id="kullanici" type="text" placeholder="Kullanıcı adınız" autocomplete="off"
            onkeydown="if(event.key==='Enter')document.getElementById('pinInput').focus()">
-    <input id="pinInput" type="password" inputmode="numeric" maxlength="4"
-           placeholder="••••" autocomplete="off" oninput="pinKontrol(this)">
+    <input id="pinInput" type="password" inputmode="numeric" maxlength="6"
+           placeholder="••••••" autocomplete="off" oninput="pinKontrol(this)">
     <div id="pinHata"></div>
   </div>
 </div>
@@ -389,7 +389,7 @@
 <script>
 var KULLANICILAR = {
   'yonetici': { pin: '1313', rol: 'yonetici', ad: 'Yönetici',  hosgeldin: 'Hoş Geldiniz 👑'         },
-  'hakan':    { pin: '2525', rol: 'ekip',     ad: 'Hakan',     hosgeldin: 'Hoşgeldin Sarışın 👋'     },
+  'hakan':    { pin: '898989', rol: 'ekip',     ad: 'Hakan',     hosgeldin: 'Hoşgeldin Sarışın 👋'     },
   'yagmur':   { pin: '3535', rol: 'ekip',     ad: 'Yağmur',    hosgeldin: 'Hoşgeldin Güzel Kız 🌸'  }
 };
 
